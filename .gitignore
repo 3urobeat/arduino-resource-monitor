@@ -1,0 +1,5 @@
+.pio
+.vscode
+build
+.ycm_extra_conf.py
+arduino-resource-monitor.code-workspace
