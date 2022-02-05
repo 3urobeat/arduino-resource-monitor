@@ -3,3 +3,4 @@ arduino-resource-monitor/.vscode
 arduino-resource-monitor/build
 arduino-resource-monitor/.ycm_extra_conf.py
 arduino-resource-monitor.code-workspace
+server/*/build
