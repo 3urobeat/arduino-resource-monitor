@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 05.02.2022 12:29:41
+ * Last Modified: 05.02.2022 15:09:04
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -20,19 +20,23 @@
 #include "helpers/helpers.h"
 
 const int maxcol = 20;
-
+const unsigned int baud = 19200;
 char version[] = "v0.1.0";
 
 LiquidCrystal_I2C lcd(0x27, maxcol, 4);
 
+char inputString[81]; //our 4x20 display can show 80 chars
+bool stringComplete = false;
 
+
+//Setup stuff on poweron
 void setup() {
 
     //initiate display
     lcd.init();
     lcd.backlight();
 
-    Serial.begin(9600);
+    Serial.begin(baud);
 
     //Print startup screen
     centerPrint("Resource Monitor", 0, true);
@@ -48,8 +52,32 @@ void setup() {
     lcd.clear();
 }
 
+
+//Check every few ms for new data
 void loop() {
 
-    centerPrint("Done!", 2, false);
+    //Update screen if a new and complete string was recieved
+    if (stringComplete) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print(inputString); //the string is always 80 chars long and lcd.print() will always continue writing in the next line
 
+        delay(100);
+
+        //reset
+        memset(inputString, 0, sizeof inputString);
+        stringComplete = false;
+    }
+}
+
+
+//SerialEvent occurs whenever a new data is being recieved and runs between loop() iterations
+void serialEvent() {
+    while (Serial.available() && !stringComplete) {
+        char inChar = (char) Serial.read();
+
+        //set stringComplete to true if we reached the last char, which is a line break, or inputString is full otherwise append char to string
+        if (inChar == '\n' || strlen(inputString) >= 80) stringComplete = true;
+            else strncat(inputString, &inChar, 1); //add recieved char to the end of inputString
+    }
 }
