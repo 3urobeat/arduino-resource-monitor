@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 19:15:35
+ * Last Modified: 06.02.2022 19:45:55
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -21,12 +21,13 @@
 #include "helpers/helpers.h"
 
 const int maxcol = 20;
+const int maxrow = 4;
 const unsigned int baud = 19200;
 char version[] = "v0.1.0";
 
 LiquidCrystal_PCF8574 lcd(0x27, maxcol, 4);
 
-char inputString[81]; //our 4x20 display can show 80 chars
+char inputStrings[maxrow][maxcol + 1]; //our 4x20 display can show 80 chars
 bool stringComplete = false;
 
 
@@ -43,7 +44,7 @@ void setup() {
     //Print startup screen
     centerPrint("Resource Monitor", 0, true);
     centerPrint(version, 1, true);
-    delay(1000);
+    delay(500);
 
     //wait for serial connection
     centerPrint("Waiting...", 3, true);
@@ -57,16 +58,15 @@ void setup() {
 
 //Check every few ms for new data
 void loop() {
-
     //Update screen if a new and complete string was recieved
     if (stringComplete) {
-        lcd.setCursor(0, 0);
-        lcd.print(inputString); //the string is always 80 chars long and lcd.print() will always continue writing in the next line
+        for (int i = 0; i < maxrow; i++) {
+            lcd.setCursor(0, i);
+            lcd.print(inputStrings[i]);
 
-        delay(100);
+            memset(inputStrings[i], 0, sizeof inputStrings[i]); //reset content of row in inputStrings
+        }
 
-        //reset
-        memset(inputString, 0, sizeof inputString);
         stringComplete = false;
     }
 }
@@ -74,11 +74,21 @@ void loop() {
 
 //SerialEvent occurs whenever a new data is being recieved and runs between loop() iterations
 void serialEvent() {
+    int currentrow = 0;
+    
     while (Serial.available() && !stringComplete) {
         char inChar = (char) Serial.read();
 
-        //set stringComplete to true if we reached the last char, which is a line break, or inputString is full otherwise append char to string
-        if (inChar == '\n' || strlen(inputString) >= 79) stringComplete = true;
-            else strncat(inputString, &inChar, 1); //add recieved char to the end of inputString
+        //continue with next line if this char is a line break and set stringComplete to true if text for all rows was recieved
+        if (inChar == 0x0a) {
+            currentrow++;
+
+            if (currentrow >= maxrow) {
+                currentrow = 0;
+                stringComplete = true;
+            }
+        } else {
+            strncat(inputStrings[currentrow], &inChar, 1); //add recieved char to the end of inputString
+        }
     }
 }
