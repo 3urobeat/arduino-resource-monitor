@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 19:45:55
+ * Last Modified: 06.02.2022 20:15:22
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -78,6 +78,8 @@ void serialEvent() {
     
     while (Serial.available() && !stringComplete) {
         char inChar = (char) Serial.read();
+
+        delay(25); //without this delay the Arduino never considers the string as completely recieved and does not print anything. idk exactly why but it works now
 
         //continue with next line if this char is a line break and set stringComplete to true if text for all rows was recieved
         if (inChar == 0x0a) {
