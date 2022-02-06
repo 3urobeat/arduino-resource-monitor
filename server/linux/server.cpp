@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 18:56:29
+ * Last Modified: 06.02.2022 20:11:56
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -86,11 +86,13 @@ char *mystrcat(char *dest, const char *src) //Credit: https://stackoverflow.com/
 }
 
 
-//Fills a row with spaces until it reaches displayCols, effectively resulting in a line break on the display
+//Fills a row with spaces to overwite any left over characters and appends a line break, telling the Arduino to use the next row
 void fillRow(int row) {
-    for (int i = strlen(fullStr); i < row * displayCols; i++) {
+    for (int i = strlen(fullStr); i < (row * displayCols) - 2; i++) {
         p = mystrcat(p, " ");
     }
+
+    p = mystrcat(p, "\n");
 }
 
 
@@ -131,28 +133,28 @@ void intervalEvent() {
 
     //Format data to make on big string
     memset(fullStr, 0, sizeof fullStr);
-    strcpy(fullStr, "Resource Monitor    "); //display a title in the first line
+    strcpy(fullStr, "Resource Monitor\n"); //display a title in the first line
     p = fullStr; //reset pointer
     
-    p = mystrcat(p, "C: ");
+    p = mystrcat(p, "CPU: ");
     p = mystrcat(p, cpuLoad);
-    p = mystrcat(p, "    ");
+    p = mystrcat(p, "   ");
     p = mystrcat(p, cpuTemp);
     fillRow(2);
     
     p = mystrcat(p, "R: ");
     p = mystrcat(p, ramUsage);
-    p = mystrcat(p, " S: ");
+    p = mystrcat(p, "  S: ");
     p = mystrcat(p, swapUsage);
     fillRow(3);
 
-    p = mystrcat(p, "G: ");
+    p = mystrcat(p, "GPU: ");
     p = mystrcat(p, nvidiaLoad);
     p = mystrcat(p, "   ");
     p = mystrcat(p, nvidiaTemp);
     fillRow(4);
 
-    cout << "Sending (" << strlen(fullStr) << "): " << fullStr << endl;
+    //cout << "Sending (" << strlen(fullStr) << "):\n" << fullStr << endl;
 
     //Send data
     connection.write(fullStr); //send data using library
