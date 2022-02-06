@@ -1,0 +1,65 @@
+###########################################
+# Syntax Coloring Map For NoiascaLiquidCrystal 2.0
+###########################################
+
+###########################################
+# Datatypes (KEYWORD1)
+###########################################
+
+NoiascaLiquidCrystal.h	KEYWORD1
+LiquidCrystal_4bit	KEYWORD1
+LiquidCrystal_PCF8574	KEYWORD1
+LiquidCrystal_PCF8574_fast	KEYWORD1
+LiquidCrystal_MCP23017_custompin	KEYWORD1
+LiquidCrystal_MCP23S08	KEYWORD1
+LiquidCrystal_Wire	KEYWORD1
+LiquidCrystal_Wire_RGB	KEYWORD1
+
+###########################################
+# Methods and Functions (KEYWORD2)
+###########################################
+autoscroll	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalAutoscroll
+noAutoscroll	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalNoAutoscroll
+init	KEYWORD2
+begin	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalBegin
+backlight	KEYWORD2
+noBacklight	KEYWORD2
+clear	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalClear
+createChar	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalCreateChar
+createChar_P	KEYWORD2
+createUml	KEYWORD2
+blink	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalBlink
+#blink_on	KEYWORD2
+#blink_off	KEYWORD2
+noBlink	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalNoBlink
+blinkBacklight	KEYWORD2
+noBlinkBacklight	KEYWORD2
+cursor	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalCursor
+#cursor_on	KEYWORD2
+#cursor_off	KEYWORD2
+noCursor	KEYWORD2
+display	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalDisplay
+noDisplay	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalNoDisplay
+home	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalHome
+#scrollDisplayLeft	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalScrollDisplayLeft
+#scrollDisplayRight	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalScrollDisplayRight
+setBacklight	KEYWORD2
+#setBacklightPositive	KEYWORD2
+#setBacklightNegative	KEYWORD2
+setRGB	KEYWORD2
+setCursor	KEYWORD2 https://www.arduino.cc/en/Reference/LiquidCrystalSetCursor
+#shiftIncrement	KEYWORD2
+#shiftDecrement	KEYWORD2
+#leftToRight	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalLeftToRight
+#rightToLeft	KEYWORD2  https://www.arduino.cc/en/Reference/LiquidCrystalRightToLeft
+load_custom_character	KEYWORD2
+#printstr	KEYWORD2
+writeOld	KEYWORD2
+write	KEYWORD2
+###########################################
+# Constants (LITERAL1)
+###########################################
+ADDE	LITERAL1
+PRINT	LITERAL1
+PRINT2	LITERAL1
+NOPRINT	LITERAL1
