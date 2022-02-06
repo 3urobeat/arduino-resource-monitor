@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 19:05:13
+ * Last Modified: 06.02.2022 19:15:35
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -60,7 +60,6 @@ void loop() {
 
     //Update screen if a new and complete string was recieved
     if (stringComplete) {
-        lcd.clear();
         lcd.setCursor(0, 0);
         lcd.print(inputString); //the string is always 80 chars long and lcd.print() will always continue writing in the next line
 
@@ -79,7 +78,7 @@ void serialEvent() {
         char inChar = (char) Serial.read();
 
         //set stringComplete to true if we reached the last char, which is a line break, or inputString is full otherwise append char to string
-        if (inChar == '\n' || strlen(inputString) >= 80) stringComplete = true;
+        if (inChar == '\n' || strlen(inputString) >= 79) stringComplete = true;
             else strncat(inputString, &inChar, 1); //add recieved char to the end of inputString
     }
 }
