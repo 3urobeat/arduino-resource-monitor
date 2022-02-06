@@ -9,6 +9,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# stuff so that threads work https://stackoverflow.com/a/61439452
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_HAVE_THREADS_LIBRARY 1)
+set(CMAKE_USE_WIN32_THREADS_INIT 0)
+set(CMAKE_USE_PTHREADS_INIT 1)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
 include_directories(../lib/include)
 
 set(serial_SRCS ../lib/src/serial.cc ../lib/include/serial/serial.h 
