@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 17:21:42
+ * Last Modified: 06.02.2022 18:56:29
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -28,6 +28,9 @@
 
 using namespace std;
 
+const unsigned int displayCols = 20;
+const unsigned int displayRows = 4;
+
 const char port[] = "/dev/ttyUSB0";
 const unsigned int baud = 19200;
 const char version[] = "v0.1.0";
@@ -35,8 +38,20 @@ const unsigned int checkInterval = 1000; //1 second is lowest value possibe as m
 const char cpuTempSensor[] = "k10temp-pci-00c3";
 
 char cpuTempCmd[128];
+char fullStr[displayCols * displayRows + 5];
+char *p = fullStr;
 
 serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); //make a connection
+
+
+//Command responses sometimes have a trailing line break, this function removes them
+void removeLineBreak(char *str) {
+    if (str[strlen(str) - 1] == '\n') {
+        char buf[16] = "";
+        strncat(buf, str, strlen(str) - 1);
+        strcpy(str, buf);
+    }
+}
 
 
 //Function to run command and get output
@@ -55,7 +70,26 @@ void getStdoutFromCommand(char* dest, const char* cmd) { //https://www.jeremymor
     if (stream) {
         while (!feof(stream))
             if (fgets(buffer, max_buffer, stream) != NULL) strcat(dest, buffer);
+
+        removeLineBreak(dest);
         pclose(stream);
+    }
+}
+
+
+//Better concat function
+char *mystrcat(char *dest, const char *src) //Credit: https://stackoverflow.com/a/21881314
+{
+    while (*dest) dest++;
+    while ((*dest++ = *src++));
+    return --dest;
+}
+
+
+//Fills a row with spaces until it reaches displayCols, effectively resulting in a line break on the display
+void fillRow(int row) {
+    for (int i = strlen(fullStr); i < row * displayCols; i++) {
+        p = mystrcat(p, " ");
     }
 }
 
@@ -67,41 +101,61 @@ void intervalEvent() {
     char cpuLoad[8] = "";
     getStdoutFromCommand(cpuLoad, "mpstat 1 1 | egrep -v '^Linux|^$' | awk -v c=\"%idle\" 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-1)}' | tail -1 | awk '{print 100-$1}'"); //using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
     gcvt(atof(cpuLoad), 2, cpuLoad); //convert to float, remove digits and convert float back to char arr
+    strcat(cpuLoad, "%");
 
     char cpuTemp[8] = "";
     getStdoutFromCommand(cpuTemp, cpuTempCmd);
     gcvt(atof(cpuTemp), 2, cpuTemp); //convert to float, remove digits and convert float back to char arr
+    strcat(cpuTemp, "°C");
 
     //Get RAM and Swap usage
-    char ramUsage[12] = "";
+    char ramUsage[16] = "";
     getStdoutFromCommand(ramUsage, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
+    gcvt(atof(ramUsage), 2, ramUsage); //convert to float, reduce digits and convert float back to char arr
+    strcat(ramUsage, "GB");
 
-    char swapUsage[12] = "";
+    char swapUsage[16] = "";
     getStdoutFromCommand(swapUsage, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
+    gcvt(atof(swapUsage), 2, swapUsage); //convert to float, reduce digits and convert float back to char arr
+    strcat(swapUsage, "GB");
 
     //Get nvidia gpu load and temp stats
     char nvidiaLoad[8] = "";
     getStdoutFromCommand(nvidiaLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); //awk cuts response down to only the graphics parameter
+    strcat(nvidiaLoad, "%");
 
     char nvidiaTemp[8] = "";
     getStdoutFromCommand(nvidiaTemp, "nvidia-settings -q GPUCoreTemp -t");
+    strcat(nvidiaTemp, "°C");
 
-    //Output for debugging
-    cout << "cpuLoad: " << cpuLoad << endl;
-    cout << "cpuTemp: " << cpuTemp << endl;
-    cout << "ramUsage: " << ramUsage;
-    cout << "swapUsage: " << swapUsage;
-    cout << "nvidiaLoad: " << nvidiaLoad;
-    cout << "nvidiaTemp: " << nvidiaTemp;
-    cout << endl;
+
+    //Format data to make on big string
+    memset(fullStr, 0, sizeof fullStr);
+    strcpy(fullStr, "Resource Monitor    "); //display a title in the first line
+    p = fullStr; //reset pointer
+    
+    p = mystrcat(p, "C: ");
+    p = mystrcat(p, cpuLoad);
+    p = mystrcat(p, "    ");
+    p = mystrcat(p, cpuTemp);
+    fillRow(2);
+    
+    p = mystrcat(p, "R: ");
+    p = mystrcat(p, ramUsage);
+    p = mystrcat(p, " S: ");
+    p = mystrcat(p, swapUsage);
+    fillRow(3);
+
+    p = mystrcat(p, "G: ");
+    p = mystrcat(p, nvidiaLoad);
+    p = mystrcat(p, "   ");
+    p = mystrcat(p, nvidiaTemp);
+    fillRow(4);
+
+    cout << "Sending (" << strlen(fullStr) << "): " << fullStr << endl;
 
     //Send data
-    //char *temp;
-
-    //strncpy(temp, str, 80); //cut string to make sure it is not too long
-
-    //cout << str << endl;
-    //connection.write(temp); //send data using library
+    connection.write(fullStr); //send data using library
 }
 
 
