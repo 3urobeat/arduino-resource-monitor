@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 17:11:11
+ * Last Modified: 06.02.2022 17:21:42
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -107,12 +107,13 @@ void intervalEvent() {
 
 //Entry point
 int main() {
-    cout << "arduino-resource-monitor Server for Linux " << version << " starting..." << endl;
+    cout << "arduino-resource-monitor by 3urobeat" << endl;
+    cout << "Server for Linux " << version << " starting...\n" << endl;
     cout << "Opening port " << port << " and setting " << baud << " Baud..." << endl;
 
     //Check if port is now open
     if (connection.isOpen()) {
-        cout << "\nPort opened successfully!" << endl;
+        cout << "Port opened successfully!" << endl;
     } else {
         cout << "Error: Port failed to open! Exiting..." << endl;
         exit(1);
@@ -126,7 +127,7 @@ int main() {
     strcat(cpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'"); //get temp1_input line and remove everything except the temp value
     
     //Start getting and sending sensor data
-    cout << "Starting to send data...\n" << endl;
+    cout << "\nStarting to send data..." << endl;
 
     //run intervalEvent() every checkInterval ms
     while (true) {
