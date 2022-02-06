@@ -1,0 +1,29 @@
+This software is not licensed under one of the known BSM, MIT, LGPL, GPL licenses.
+
+The creator keeps full control over his/her work.
+
+The software is provided by the creator under fair use principle.
+
+The user can 
+- You can use this software in any of your non-commercial projects. 
+
+The user should
+- You should include the download link of the library beside the #include directive in your source code.
+  If you share code which includes this library you should give others a chance to find the library.
+
+The user must not
+- You must not use this software or parts of it in any commercial project. 
+  If you need a license for your commerical project, contact the rights owner.
+  
+- You must not use any code parts of this software in other software.
+  If you want to reuse parts of code contact the rights owner and ask for permission.
+
+- You must not remove any copyright information from any file in this library.
+  As you should not change the software there is no legitime reason 
+  to change any copyright information neither.
+  
+The user should not
+- You should not distribute modified versions of this software. 
+  If you need changes inform the rights owner and ask for the adoption of the software.
+  
+License Version 2021-05-16

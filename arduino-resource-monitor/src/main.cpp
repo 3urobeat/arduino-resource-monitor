@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 05.02.2022 15:09:04
+ * Last Modified: 06.02.2022 19:05:13
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -15,7 +15,8 @@
  */
 
 
-#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include <NoiascaLiquidCrystal.h> // Article (german): https://werner.rothschopf.net/202003_arduino_liquid_crystal_umlaute.htm | Direct download: https://werner.rothschopf.net/2020/NoiascaLiquidCrystal.zip
 #include <ESP8266WiFi.h>          //needed so that Serial is declared, pls remove when changing board
 #include "helpers/helpers.h"
 
@@ -23,7 +24,7 @@ const int maxcol = 20;
 const unsigned int baud = 19200;
 char version[] = "v0.1.0";
 
-LiquidCrystal_I2C lcd(0x27, maxcol, 4);
+LiquidCrystal_PCF8574 lcd(0x27, maxcol, 4);
 
 char inputString[81]; //our 4x20 display can show 80 chars
 bool stringComplete = false;
@@ -33,7 +34,8 @@ bool stringComplete = false;
 void setup() {
 
     //initiate display
-    lcd.init();
+    Wire.begin();
+    lcd.begin();
     lcd.backlight();
 
     Serial.begin(baud);
