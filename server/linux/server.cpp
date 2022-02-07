@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 20:11:56
+ * Last Modified: 07.02.2022 18:10:17
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -24,6 +24,7 @@
 #include "../lib/include/serial/serial.h" //include library (Tutorial used: https://youtu.be/uHw7QyL4CM8)
 #include <iostream>
 #include <chrono>
+#include <math.h>
 #include <thread>
 
 using namespace std;
@@ -102,12 +103,12 @@ void intervalEvent() {
     //Get CPU stats
     char cpuLoad[8] = "";
     getStdoutFromCommand(cpuLoad, "mpstat 1 1 | egrep -v '^Linux|^$' | awk -v c=\"%idle\" 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-1)}' | tail -1 | awk '{print 100-$1}'"); //using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
-    gcvt(atof(cpuLoad), 2, cpuLoad); //convert to float, remove digits and convert float back to char arr
+    gcvt(round(atof(cpuLoad)), 3, cpuLoad); //convert to float, floor, restrict digits to max 3 and convert float back to char arr
     strcat(cpuLoad, "%");
 
     char cpuTemp[8] = "";
     getStdoutFromCommand(cpuTemp, cpuTempCmd);
-    gcvt(atof(cpuTemp), 2, cpuTemp); //convert to float, remove digits and convert float back to char arr
+    gcvt(round(atof(cpuTemp)), 3, cpuTemp); //convert to float, floor, restrict digits to max 3 and convert float back to char arr
     strcat(cpuTemp, "°C");
 
     //Get RAM and Swap usage
@@ -142,9 +143,9 @@ void intervalEvent() {
     p = mystrcat(p, cpuTemp);
     fillRow(2);
     
-    p = mystrcat(p, "R: ");
+    p = mystrcat(p, "RAM: ");
     p = mystrcat(p, ramUsage);
-    p = mystrcat(p, "  S: ");
+    p = mystrcat(p, " ");
     p = mystrcat(p, swapUsage);
     fillRow(3);
 
