@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 08.02.2022 12:32:49
+ * Last Modified: 08.02.2022 13:15:56
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -22,6 +22,7 @@
 
 const int maxcol = 20;
 const int maxrow = 4;
+const unsigned int checkInterval = 10; //ms between checks for stringComplete
 const unsigned int baud = 19200;
 char version[] = "v0.2.0";
 
@@ -29,6 +30,9 @@ LiquidCrystal_PCF8574 lcd(0x27, maxcol, 4);
 
 char inputStrings[maxrow][maxcol + 2]; //our 4x20 display can show 80 chars
 bool stringComplete = false;
+
+unsigned int timeSinceLastSignal = 0;
+bool displayingConnectionLostMsg = false;
 
 
 //Setup stuff on poweron
@@ -67,8 +71,29 @@ void loop() {
             memset(inputStrings[i], 0, sizeof inputStrings[i]); //reset content of row in inputStrings
         }
 
+        //reset
         stringComplete = false;
+        timeSinceLastSignal = 0;
+        displayingConnectionLostMsg = false;
+    } else {
+        //Count checkInterval and display Lost Connection message after 10 seconds
+        if (timeSinceLastSignal >= 10000) {
+            if (displayingConnectionLostMsg) return;
+
+            lcd.clear();
+            lcd.setCursor(0, 0);
+
+            centerPrint("Resource Monitor", 0, true);
+            centerPrint(version, 1, true);
+            centerPrint("Lost Connection!", 3, true);
+
+            displayingConnectionLostMsg = true;
+        } else {
+            timeSinceLastSignal += checkInterval;
+        }
     }
+
+    delay(checkInterval);
 }
 
 
