@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 09.02.2022 00:12:09
+ * Last Modified: 09.02.2022 00:12:50
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -23,7 +23,7 @@ const int maxcol = 20;
 const int maxrow = 4;
 const unsigned int checkInterval = 25; //ms between checks for stringComplete
 const unsigned int baud = 9600;
-char version[] = "v0.2.0";
+char version[] = "v0.3.0";
 
 LiquidCrystal_PCF8574 lcd(0x27, maxcol, 4);
 
