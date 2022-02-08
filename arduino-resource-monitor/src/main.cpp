@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 08.02.2022 13:15:56
+ * Last Modified: 08.02.2022 19:01:11
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -17,7 +17,6 @@
 
 #include <Wire.h>
 #include <NoiascaLiquidCrystal.h> // Article (german): https://werner.rothschopf.net/202003_arduino_liquid_crystal_umlaute.htm | Direct download: https://werner.rothschopf.net/2020/NoiascaLiquidCrystal.zip
-#include <ESP8266WiFi.h>          //needed so that Serial is declared, pls remove when changing board
 #include "helpers/helpers.h"
 
 const int maxcol = 20;
@@ -28,7 +27,7 @@ char version[] = "v0.2.0";
 
 LiquidCrystal_PCF8574 lcd(0x27, maxcol, 4);
 
-char inputStrings[maxrow][maxcol + 2]; //our 4x20 display can show 80 chars
+char inputStrings[maxrow][maxcol + 5]; //our 4x20 display can show 80 chars
 bool stringComplete = false;
 
 unsigned int timeSinceLastSignal = 0;
@@ -75,25 +74,7 @@ void loop() {
         stringComplete = false;
         timeSinceLastSignal = 0;
         displayingConnectionLostMsg = false;
-    } else {
-        //Count checkInterval and display Lost Connection message after 10 seconds
-        if (timeSinceLastSignal >= 10000) {
-            if (displayingConnectionLostMsg) return;
-
-            lcd.clear();
-            lcd.setCursor(0, 0);
-
-            centerPrint("Resource Monitor", 0, true);
-            centerPrint(version, 1, true);
-            centerPrint("Lost Connection!", 3, true);
-
-            displayingConnectionLostMsg = true;
-        } else {
-            timeSinceLastSignal += checkInterval;
-        }
     }
-
-    delay(checkInterval);
 }
 
 
@@ -104,7 +85,7 @@ void serialEvent() {
     while (Serial.available() && !stringComplete) {
         char inChar = (char) Serial.read();
 
-        delay(25); //without this delay the Arduino never considers the string as completely recieved and does not print anything. idk exactly why but it works now
+        //delay(25); //without this delay the Arduino never considers the string as completely recieved and does not print anything. idk exactly why but it works now
 
         //continue with next line if this char is a line break and set stringComplete to true if text for all rows was recieved
         if (inChar == 0x0a) {

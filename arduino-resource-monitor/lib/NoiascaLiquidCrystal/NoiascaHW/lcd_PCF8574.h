@@ -18,6 +18,7 @@
 #pragma once
 #include <NoiascaLiquidCrystal.h>
 #include <Print.h>
+#include <Wire.h> //3urobeat: Added import because of "not declared in this scope" error
 
 #ifndef TwoWire_h
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega2560__)
@@ -62,11 +63,11 @@ class LiquidCrystal_PCF8574_base : public Print, public LiquidCrystal_dummy {
       DEBUG_PRINTLN(F("PCF8574_base begin"));
       hwInit();
       // Datasheet p46 Figure 24 - 4bit
-      delayMicroseconds(41);                               // wait for more than 40µs
+      delayMicroseconds(41);                               // wait for more than 40ï¿½s
       write4bits((functionset | functionset_8bit) >> 4);   // 01 function set (interface is 8 bits long)
       delay(5);                                            // wait for more than 4.1ms
       write4bits((functionset | functionset_8bit) >> 4);   // 02 function set (interface is 8 bits long)
-      delayMicroseconds(101);                              // wait for mor than 100µs
+      delayMicroseconds(101);                              // wait for mor than 100ï¿½s
       write4bits((functionset | functionset_8bit) >> 4);   // 03 function set (interface is 8 bits long)
       write4bits(functionset >> 4);                        // 04 function set (Set interface to be 4 bits long)
       // nun functionset_font | entfernt:
@@ -221,8 +222,8 @@ class LiquidCrystal_PCF8574_custompin : public LiquidCrystal_PCF8574 {
     const uint8_t dataPin[4];          // GPIOs for data pins of LCD
    
     
-    // erweitern: abhängig von current row  den  en oder en2 pulsen (if col 40 && row 4 )
-    // oder besser, den en2 einmal im constructor abhängig von 40/4 ander setzen und hier nur mehr abhängig von der ROW 
+    // erweitern: abhï¿½ngig von current row  den  en oder en2 pulsen (if col 40 && row 4 )
+    // oder besser, den en2 einmal im constructor abhï¿½ngig von 40/4 ander setzen und hier nur mehr abhï¿½ngig von der ROW 
 
     void write4bits(uint8_t value, uint8_t rs = rsIR, uint8_t rw = rwWrite) override {  // HW access 
       DEBUG_PRINTLN(F("PCF8574_custompin write4bits"));
