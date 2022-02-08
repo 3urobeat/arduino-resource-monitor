@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 07.02.2022 18:10:17
+ * Last Modified: 08.02.2022 12:28:38
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -39,8 +39,7 @@ const unsigned int checkInterval = 1000; //1 second is lowest value possibe as m
 const char cpuTempSensor[] = "k10temp-pci-00c3";
 
 char cpuTempCmd[128];
-char fullStr[displayCols * displayRows + 5];
-char *p = fullStr;
+char fullStr[displayRows][displayCols + 2];
 
 serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); //make a connection
 
@@ -89,11 +88,18 @@ char *mystrcat(char *dest, const char *src) //Credit: https://stackoverflow.com/
 
 //Fills a row with spaces to overwite any left over characters and appends a line break, telling the Arduino to use the next row
 void fillRow(int row) {
-    for (int i = strlen(fullStr); i < (row * displayCols) - 2; i++) {
-        p = mystrcat(p, " ");
-    }
+    strncat(fullStr[row], "                    ", displayCols - strlen(fullStr[row]));
+    strcat(fullStr[row], "\n");
+}
 
-    p = mystrcat(p, "\n");
+
+//Positions a str with the last char to a fixed column by adding spaces and then concats str to fullStr
+void catFixedRight(char *str, int col, int row) {
+    int spacesToAdd = (col - 1) - ((strlen(fullStr[row]) - 1) + (strlen(str) - 1));
+
+    if (spacesToAdd > 0) strncat(fullStr[row], "                    ", spacesToAdd);
+    
+    strcat(fullStr[row], str);
 }
 
 
@@ -112,14 +118,16 @@ void intervalEvent() {
     strcat(cpuTemp, "°C");
 
     //Get RAM and Swap usage
+    char ramUsageTemp[16] = "";
     char ramUsage[16] = "";
-    getStdoutFromCommand(ramUsage, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
-    gcvt(atof(ramUsage), 2, ramUsage); //convert to float, reduce digits and convert float back to char arr
+    getStdoutFromCommand(ramUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
+    strncpy(ramUsage, ramUsageTemp, 3); //cut ramUsage to max 3 digits, idc about roounding and precision here
     strcat(ramUsage, "GB");
 
+    char swapUsageTemp[16] = "";
     char swapUsage[16] = "";
-    getStdoutFromCommand(swapUsage, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
-    gcvt(atof(swapUsage), 2, swapUsage); //convert to float, reduce digits and convert float back to char arr
+    getStdoutFromCommand(swapUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
+    strncpy(swapUsage, swapUsageTemp, 3); //cut ramUsage to max 3 digits, idc about rounding and precision here
     strcat(swapUsage, "GB");
 
     //Get nvidia gpu load and temp stats
@@ -132,33 +140,43 @@ void intervalEvent() {
     strcat(nvidiaTemp, "°C");
 
 
-    //Format data to make on big string
-    memset(fullStr, 0, sizeof fullStr);
-    strcpy(fullStr, "Resource Monitor\n"); //display a title in the first line
-    p = fullStr; //reset pointer
+    //Clear fullStr
+    for (int i = 0; i < displayRows; i++) memset(fullStr[i], 0, sizeof fullStr[i]);
+
+
+    //Format data in each row
+    strcpy(fullStr[0], "Resource Monitor"); //display a title in the first line
+    fillRow(0);
     
-    p = mystrcat(p, "CPU: ");
-    p = mystrcat(p, cpuLoad);
-    p = mystrcat(p, "   ");
-    p = mystrcat(p, cpuTemp);
+    strcpy(fullStr[1], "CPU:");
+    catFixedRight(cpuLoad, 8, 1);
+    catFixedRight(cpuTemp, 17, 1);
+    fillRow(1);
+    
+    strcpy(fullStr[2], "RAM:");
+    catFixedRight(ramUsage, 9, 2);
+    catFixedRight(swapUsage, 16, 2);
     fillRow(2);
-    
-    p = mystrcat(p, "RAM: ");
-    p = mystrcat(p, ramUsage);
-    p = mystrcat(p, " ");
-    p = mystrcat(p, swapUsage);
+
+    strcpy(fullStr[3], "GPU:");
+    catFixedRight(nvidiaLoad, 8, 3);
+    catFixedRight(nvidiaTemp, 17, 3);
     fillRow(3);
 
-    p = mystrcat(p, "GPU: ");
-    p = mystrcat(p, nvidiaLoad);
-    p = mystrcat(p, "   ");
-    p = mystrcat(p, nvidiaTemp);
-    fillRow(4);
 
-    //cout << "Sending (" << strlen(fullStr) << "):\n" << fullStr << endl;
+    //Join array to one big string
+    char tempStr[displayRows * displayCols + 6] = "";
+    char *p = tempStr;
+
+    p = mystrcat(p, fullStr[0]);
+    p = mystrcat(p, fullStr[1]);
+    p = mystrcat(p, fullStr[2]);
+    p = mystrcat(p, fullStr[3]);
+
+    //cout << "Sending (" << strlen(tempStr) << "):\n" << tempStr << endl;
 
     //Send data
-    connection.write(fullStr); //send data using library
+    connection.write(tempStr); //send data using library
 }
 
 
