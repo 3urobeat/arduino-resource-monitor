@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 08.02.2022 12:32:46
+ * Last Modified: 09.02.2022 00:11:09
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -32,14 +32,15 @@ using namespace std;
 const unsigned int displayCols = 20;
 const unsigned int displayRows = 4;
 
-const char port[] = "/dev/ttyUSB0";
-const unsigned int baud = 19200;
+const char port[] = "/dev/ttyUSB1";
+const unsigned int baud = 9600;
 const char version[] = "v0.2.0";
 const unsigned int checkInterval = 1000; //1 second is lowest value possibe as mpstat takes a second to collect data
 const char cpuTempSensor[] = "k10temp-pci-00c3";
 
 char cpuTempCmd[128];
 char fullStr[displayRows][displayCols + 2];
+bool firstLineSent = false;
 
 serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); //make a connection
 
@@ -86,10 +87,9 @@ char *mystrcat(char *dest, const char *src) //Credit: https://stackoverflow.com/
 }
 
 
-//Fills a row with spaces to overwite any left over characters and appends a line break, telling the Arduino to use the next row
+//Fills a row with spaces to overwite any left over characters
 void fillRow(int row) {
-    strncat(fullStr[row], "                    ", displayCols - strlen(fullStr[row]));
-    strcat(fullStr[row], "\n");
+    strncat(fullStr[row], "                    ", displayCols - strlen(fullStr[row])); //interestingly an degree symbol ° is not counted by strlen, causing in the hashtag being offset by one char in the CPU and GPU row
 }
 
 
@@ -163,20 +163,26 @@ void intervalEvent() {
     catFixedRight(nvidiaTemp, 17, 3);
     fillRow(3);
 
+    //Send each row separately 
+    for (int i = 0; i < displayRows; i++) { //skip first line after first time
+        if (i != 0 || !firstLineSent) {
+            firstLineSent = true;
 
-    //Join array to one big string
-    char tempStr[displayRows * displayCols + 6] = "";
-    char *p = tempStr;
+            char tempStr[displayCols + 5] = "~"; //start with line start char for string validation on Arduino
 
-    p = mystrcat(p, fullStr[0]);
-    p = mystrcat(p, fullStr[1]);
-    p = mystrcat(p, fullStr[2]);
-    p = mystrcat(p, fullStr[3]);
+            tempStr[1] = '0' + i; //cool lifehack to convert ints < 10 to chars
+            strcat(tempStr, fullStr[i]); //add text
+            strcat(tempStr, "#"); //add line end char for string validation
 
-    //cout << "Sending (" << strlen(tempStr) << "):\n" << tempStr << endl;
+            //cout << "Sending (" << strlen(tempStr) << "): " << tempStr << endl;
 
-    //Send data
-    connection.write(tempStr); //send data using library
+            connection.write(tempStr);
+
+            //wait a moment to let the Arduino relax
+            auto x = chrono::steady_clock::now() + chrono::milliseconds(250);
+            this_thread::sleep_until(x);
+        }
+    }
 }
 
 
@@ -193,6 +199,10 @@ int main() {
         cout << "Error: Port failed to open! Exiting..." << endl;
         exit(1);
     }
+
+    //Wait a moment after establishing connection before starting to write
+    auto x = chrono::steady_clock::now() + chrono::milliseconds(1000);
+    this_thread::sleep_until(x);
 
     connection.flushOutput(); //clear anything that may be buffered
 
