@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 08.02.2022 12:28:38
+ * Last Modified: 08.02.2022 12:32:46
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -34,7 +34,7 @@ const unsigned int displayRows = 4;
 
 const char port[] = "/dev/ttyUSB0";
 const unsigned int baud = 19200;
-const char version[] = "v0.1.0";
+const char version[] = "v0.2.0";
 const unsigned int checkInterval = 1000; //1 second is lowest value possibe as mpstat takes a second to collect data
 const char cpuTempSensor[] = "k10temp-pci-00c3";
 
