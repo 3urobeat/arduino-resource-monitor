@@ -4,7 +4,7 @@
  * Created Date: 05.02.2022 12:22:33
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 19:05:20
+ * Last Modified: 08.02.2022 18:35:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -15,7 +15,7 @@
  */
 
 
-#include <LiquidCrystal_I2C.h>
+#include <NoiascaLiquidCrystal.h>
 #include <NoiascaHW/lcd_PCF8574.h>
 
 extern LiquidCrystal_PCF8574 lcd;
