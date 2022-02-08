@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 06.02.2022 20:15:22
+ * Last Modified: 07.02.2022 18:40:11
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -27,7 +27,7 @@ char version[] = "v0.1.0";
 
 LiquidCrystal_PCF8574 lcd(0x27, maxcol, 4);
 
-char inputStrings[maxrow][maxcol + 1]; //our 4x20 display can show 80 chars
+char inputStrings[maxrow][maxcol + 2]; //our 4x20 display can show 80 chars
 bool stringComplete = false;
 
 
