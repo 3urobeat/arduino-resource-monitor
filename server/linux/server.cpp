@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 09.02.2022 00:12:56
+ * Last Modified: 09.02.2022 11:40:11
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -32,15 +32,15 @@ using namespace std;
 const unsigned int displayCols = 20;
 const unsigned int displayRows = 4;
 
-const char port[] = "/dev/ttyUSB1";
+const char port[] = "/dev/ttyUSB0";
 const unsigned int baud = 9600;
 const char version[] = "v0.3.0";
 const unsigned int checkInterval = 1000; //1 second is lowest value possibe as mpstat takes a second to collect data
 const char cpuTempSensor[] = "k10temp-pci-00c3";
 
-char cpuTempCmd[128];
-char fullStr[displayRows][displayCols + 2];
-bool firstLineSent = false;
+char cpuTempCmd[128]; //for constructing the cpuTempCmd once on start
+char fullStr[displayRows][displayCols + 2]; //for constructing what is going to be sent to the Arduino now
+char lcdCache[displayRows][displayCols + 5]; //save what has been sent previously to avoid sending identical stuff multiple times
 
 serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); //make a connection
 
@@ -165,18 +165,19 @@ void intervalEvent() {
 
     //Send each row separately 
     for (int i = 0; i < displayRows; i++) { //skip first line after first time
-        if (i != 0 || !firstLineSent) {
-            firstLineSent = true;
+        char tempStr[displayCols + 5] = "~"; //start with line start char for string validation on Arduino
 
-            char tempStr[displayCols + 5] = "~"; //start with line start char for string validation on Arduino
+        tempStr[1] = '0' + i; //cool lifehack to convert ints < 10 to chars
+        strcat(tempStr, fullStr[i]); //add text
+        strcat(tempStr, "#"); //add line end char for string validation
 
-            tempStr[1] = '0' + i; //cool lifehack to convert ints < 10 to chars
-            strcat(tempStr, fullStr[i]); //add text
-            strcat(tempStr, "#"); //add line end char for string validation
-
+        //Don't send message again if it didn't change
+        if (strcmp(tempStr, lcdCache[i])) {
             //cout << "Sending (" << strlen(tempStr) << "): " << tempStr << endl;
 
             connection.write(tempStr);
+
+            strcpy(lcdCache[i], tempStr); //put into cache
 
             //wait a moment to let the Arduino relax
             auto x = chrono::steady_clock::now() + chrono::milliseconds(250);
