@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 09.02.2022 11:40:11
+ * Last Modified: 10.02.2022 11:22:26
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -41,6 +41,7 @@ const char cpuTempSensor[] = "k10temp-pci-00c3";
 char cpuTempCmd[128]; //for constructing the cpuTempCmd once on start
 char fullStr[displayRows][displayCols + 2]; //for constructing what is going to be sent to the Arduino now
 char lcdCache[displayRows][displayCols + 5]; //save what has been sent previously to avoid sending identical stuff multiple times
+chrono::time_point<chrono::steady_clock> lastWriteTime; //track time to decide if we have to send an alive ping so the Arduino doesn't display the Lost Connection screen
 
 serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); //make a connection
 
@@ -178,10 +179,20 @@ void intervalEvent() {
             connection.write(tempStr);
 
             strcpy(lcdCache[i], tempStr); //put into cache
+            lastWriteTime = chrono::steady_clock::now(); //refresh lastWriteTime
 
             //wait a moment to let the Arduino relax
             auto x = chrono::steady_clock::now() + chrono::milliseconds(250);
             this_thread::sleep_until(x);
+
+        } else {
+            
+            //Send alive ping if nothing was written in the last 5 secs to prevent Connection Lost screen from showing
+            if (chrono::steady_clock::now() - lastWriteTime > chrono::milliseconds(5000)) {
+                //cout << "Sending alive ping!" << endl;
+                connection.write("~0Resource Monitor    #");
+                lastWriteTime = chrono::steady_clock::now();
+            }
         }
     }
 }
