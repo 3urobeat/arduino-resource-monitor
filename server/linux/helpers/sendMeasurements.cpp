@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 20:44:46
+ * Last Modified: 24.01.2023 21:05:52
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -37,18 +37,18 @@ void sendMeasurements()
     fillRow(0);
     
     strcpy(fullStr[1], "CPU:");
-    catFixedRight(measurements::cpuLoad, 8, 1);
-    catFixedRight(measurements::cpuTemp, 17, 1);
+    catFixedRight(measurements::cpuLoad, 9, 1);
+    catFixedRight(measurements::cpuTemp, 18, 1);
     fillRow(1);
     
     strcpy(fullStr[2], "RAM:");
-    catFixedRight(measurements::ramUsage, 9, 2);
-    catFixedRight(measurements::swapUsage, 16, 2);
+    catFixedRight(measurements::ramUsage, 10, 2);
+    catFixedRight(measurements::swapUsage, 17, 2);
     fillRow(2);
 
     strcpy(fullStr[3], "GPU:");
-    catFixedRight(measurements::nvidiaLoad, 8, 3);
-    catFixedRight(measurements::nvidiaTemp, 17, 3);
+    catFixedRight(measurements::nvidiaLoad, 9, 3);
+    catFixedRight(measurements::nvidiaTemp, 18, 3);
     fillRow(3);
 
 
