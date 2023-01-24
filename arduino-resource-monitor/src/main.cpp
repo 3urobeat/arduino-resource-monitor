@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 15:41:29
+ * Last Modified: 24.01.2023 15:54:19
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -15,22 +15,25 @@
  */
 
 
-#include "helpers/helpers.h"
+#include "main.h"
 
 
-const int maxcol = 20;
-const int maxrow = 4;
-const unsigned int checkInterval = 25; // ms between checks for stringComplete
-const unsigned int baud = 9600;
+// Config variables
+const uint8_t  maxcol = 20;
+const uint8_t  maxrow = 4;
+const uint32_t checkInterval = 25; // ms between checks for stringComplete
+const uint32_t baud = 9600;
 
 char version[] = "v0.3.0";
 
 
-lcdHelper<LiquidCrystal_PCF8574> lcd(0x27, maxcol, 4);
+// Create lcd obj
+lcdHelper<LiquidCrystal_PCF8574> lcd(0x27, maxcol, maxrow);
 
 
-unsigned int timeSinceLastSignal = 0;
-bool displayingConnectionLostMsg = false;
+// Runtime vars
+uint32_t timeSinceLastSignal = 0;
+bool     displayingConnectionLostMsg = false;
 
 
 // Setup stuff on poweron
@@ -44,12 +47,12 @@ void setup() {
     Serial.begin(baud);
 
     // Print startup screen
-    centerPrint("Resource Monitor", 0, true);
-    centerPrint(version, 1, true);
+    lcd.centerPrint("Resource Monitor", 0, true);
+    lcd.centerPrint(version, 1, true);
     delay(500);
 
     // Wait for serial connection
-    centerPrint("Waiting...", 3, true);
+    lcd.centerPrint("Waiting...", 3, true);
     
     while (!Serial.available()) { }
 
@@ -68,9 +71,9 @@ void loop() {
         lcd.clear();
         lcd.setCursor(0, 0);
 
-        centerPrint("Resource Monitor", 0, true);
-        centerPrint(version, 1, true);
-        centerPrint("Lost Connection!", 3, true);
+        lcd.centerPrint("Resource Monitor", 0, true);
+        lcd.centerPrint(version, 1, true);
+        lcd.centerPrint("Lost Connection!", 3, true);
 
         displayingConnectionLostMsg = true;
     } else {
@@ -89,7 +92,7 @@ void printInputString(char *str) {
     int row = str[1] - '0'; // Get row by converting char to int: https://stackoverflow.com/a/868508
 
     lcd.setCursor(0, row);
-    lcd.print(tempStr);
+    lcd.limitedPrint(tempStr, maxcol);
 
     timeSinceLastSignal = 0; // Reset time since last signal
     displayingConnectionLostMsg = false;
@@ -112,9 +115,10 @@ void serialEvent() {
                 printInputString(inputString);
             }
 
-            memset(inputString, 0, sizeof inputString); // Necessary as inputString otherwise still contains this data in the next iteration
+            // Clear data from inputString when it has been printed
+            memset(inputString, 0, sizeof(inputString));
         } else {
-            strncat(inputString, &inChar, 1); // Add recieved char to the end of inputString
+            strncat(inputString, &inChar, 1); // Add received char to the end of inputString
         }
     }
 }
