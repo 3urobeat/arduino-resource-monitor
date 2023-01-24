@@ -4,7 +4,7 @@
  * Created Date: 05.02.2022 12:22:33
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 15:43:14
+ * Last Modified: 24.01.2023 15:53:23
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -19,7 +19,3 @@
 #include <NoiascaLiquidCrystal.h> // Article (german): https://werner.rothschopf.net/202003_arduino_liquid_crystal_umlaute.htm | Direct download: https://werner.rothschopf.net/2020/NoiascaLiquidCrystal.zip
 #include <NoiascaHW/lcd_PCF8574.h>
 #include <lcdHelper.h>
-
-
-extern lcdHelper<LiquidCrystal_PCF8574> lcd;
-extern const int maxcol;
