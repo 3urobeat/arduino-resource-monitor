@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 23.10.2022 11:42:34
+ * Last Modified: 24.01.2023 16:06:25
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -15,13 +15,14 @@
  */
 
 
-//CMake Build Tutorial: https://cmake.org/cmake/help/latest/guide/tutorial/A%20Basic%20Starting%20Point.html#build-and-run
-//Run command from build folder: cmake .. 
-//Then compile from build folder with command: cmake --build .
+// CMake Build Tutorial: https://cmake.org/cmake/help/latest/guide/tutorial/A%20Basic%20Starting%20Point.html#build-and-run
+// Run command from build folder: cmake .. 
+// Then compile from build folder with command: cmake --build .
 
-//I was unable to tell CMake to include other directories and wasted over an hour on it - so fuck it, I'm going to put everything in this file, idc about chaos right now.
+// I was unable to tell CMake to include other directories and wasted over an hour on it - so fuck it, I'm going to put everything in this file, idc about chaos right now.
 
-#include "../lib/include/serial/serial.h" //include library (Tutorial used: https://youtu.be/uHw7QyL4CM8)
+
+#include "../lib/include/serial/serial.h" // Include library (Tutorial used: https://youtu.be/uHw7QyL4CM8)
 #include <iostream>
 #include <chrono>
 #include <math.h>
@@ -29,24 +30,30 @@
 
 using namespace std;
 
+
+// Configuration variables
 const unsigned int displayCols = 20;
 const unsigned int displayRows = 4;
 
 const char port[] = "/dev/ttyUSB0";
 const unsigned int baud = 9600;
-const char version[] = "v0.3.0";
-const unsigned int checkInterval = 1000; //1 second is lowest value possibe as mpstat takes a second to collect data
+
+const unsigned int checkInterval = 1000; // 1 second is lowest value possibe as mpstat takes a second to collect data
 const char cpuTempSensor[] = "k10temp-pci-00c3";
 
-char cpuTempCmd[128]; //for constructing the cpuTempCmd once on start
-char fullStr[displayRows][displayCols + 2]; //for constructing what is going to be sent to the Arduino now
-char lcdCache[displayRows][displayCols + 5]; //save what has been sent previously to avoid sending identical stuff multiple times
-chrono::time_point<chrono::steady_clock> lastWriteTime; //track time to decide if we have to send an alive ping so the Arduino doesn't display the Lost Connection screen
+const char version[] = "v0.3.0";
+
+
+// Runtime vars
+char cpuTempCmd[128];                                   // For constructing the cpuTempCmd once on start
+char fullStr[displayRows][displayCols + 2];             // For constructing what is going to be sent to the Arduino now
+char lcdCache[displayRows][displayCols + 5];            // Save what has been sent previously to avoid sending identical stuff multiple times
+chrono::time_point<chrono::steady_clock> lastWriteTime; // Track time to decide if we have to send an alive ping so the Arduino doesn't display the Lost Connection screen
 
 serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); //make a connection
 
 
-//Command responses sometimes have a trailing line break, this function removes them
+// Command responses sometimes have a trailing line break, this function removes them
 void removeLineBreak(char *str) {
     if (str[strlen(str) - 1] == '\n') {
         char buf[16] = "";
@@ -56,8 +63,8 @@ void removeLineBreak(char *str) {
 }
 
 
-//Function to run command and get output
-void getStdoutFromCommand(char* dest, const char* cmd) { //https://www.jeremymorgan.com/tutorials/c-programming/how-to-capture-the-output-of-a-linux-command-in-c/  (converted from string to char arrs by me)
+// Function to run command and get output
+void getStdoutFromCommand(char* dest, const char* cmd) { // https://www.jeremymorgan.com/tutorials/c-programming/how-to-capture-the-output-of-a-linux-command-in-c/  (converted from string to char arrs by me)
     FILE * stream;
 
     const int max_buffer = 256;
@@ -79,8 +86,8 @@ void getStdoutFromCommand(char* dest, const char* cmd) { //https://www.jeremymor
 }
 
 
-//Better concat function
-char *mystrcat(char *dest, const char *src) //Credit: https://stackoverflow.com/a/21881314
+// Better concat function
+char *mystrcat(char *dest, const char *src) // Credit: https://stackoverflow.com/a/21881314
 {
     while (*dest) dest++;
     while ((*dest++ = *src++));
@@ -88,13 +95,13 @@ char *mystrcat(char *dest, const char *src) //Credit: https://stackoverflow.com/
 }
 
 
-//Fills a row with spaces to overwite any left over characters
+// Fills a row with spaces to overwite any left over characters
 void fillRow(int row) {
-    strncat(fullStr[row], "                    ", displayCols - strlen(fullStr[row])); //interestingly an degree symbol ° is not counted by strlen, causing in the hashtag being offset by one char in the CPU and GPU row
+    strncat(fullStr[row], "                    ", displayCols - strlen(fullStr[row])); // Interestingly a degree symbol ° is not counted by strlen, causing the hashtag being offset by one char in the CPU and GPU row
 }
 
 
-//Positions a str with the last char to a fixed column by adding spaces and then concats str to fullStr
+// Positions a str with the last char to a fixed column by adding spaces and then concats str to fullStr
 void catFixedRight(char *str, int col, int row) {
     int spacesToAdd = (col - 1) - ((strlen(fullStr[row]) - 1) + (strlen(str) - 1));
 
@@ -104,36 +111,36 @@ void catFixedRight(char *str, int col, int row) {
 }
 
 
-//Function that will get executed every checkInterval ms to get new sensor data and send it to the Arduino
+// Function that will get executed every checkInterval ms to get new sensor data and send it to the Arduino
 void intervalEvent() {
 
-    //Get CPU stats
+    // Get CPU stats
     char cpuLoad[8] = "";
-    getStdoutFromCommand(cpuLoad, "mpstat 1 1 | grep -E -v '^Linux|^$' | awk -v c=\"%idle\" 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-1)}' | tail -1 | awk '{print 100-$1}'"); //using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
-    gcvt(round(atof(cpuLoad)), 3, cpuLoad); //convert to float, floor, restrict digits to max 3 and convert float back to char arr
+    getStdoutFromCommand(cpuLoad, "mpstat 1 1 | grep -E -v '^Linux|^$' | awk -v c=\"%idle\" 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-1)}' | tail -1 | awk '{print 100-$1}'"); // using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
+    gcvt(round(atof(cpuLoad)), 3, cpuLoad); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
     strcat(cpuLoad, "%");
 
     char cpuTemp[8] = "";
     getStdoutFromCommand(cpuTemp, cpuTempCmd);
-    gcvt(round(atof(cpuTemp)), 3, cpuTemp); //convert to float, floor, restrict digits to max 3 and convert float back to char arr
+    gcvt(round(atof(cpuTemp)), 3, cpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
     strcat(cpuTemp, "°C");
 
-    //Get RAM and Swap usage
+    // Get RAM and Swap usage
     char ramUsageTemp[16] = "";
     char ramUsage[16] = "";
-    getStdoutFromCommand(ramUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
-    strncpy(ramUsage, ramUsageTemp, 3); //cut ramUsage to max 3 digits, idc about roounding and precision here
+    getStdoutFromCommand(ramUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
+    strncpy(ramUsage, ramUsageTemp, 3); // Cut ramUsage to max 3 digits, idc about roounding and precision here
     strcat(ramUsage, "GB");
 
     char swapUsageTemp[16] = "";
     char swapUsage[16] = "";
-    getStdoutFromCommand(swapUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); //awk converts MB to GB here
-    strncpy(swapUsage, swapUsageTemp, 3); //cut ramUsage to max 3 digits, idc about rounding and precision here
+    getStdoutFromCommand(swapUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
+    strncpy(swapUsage, swapUsageTemp, 3); // Cut ramUsage to max 3 digits, idc about rounding and precision here
     strcat(swapUsage, "GB");
 
-    //Get nvidia gpu load and temp stats
+    // Get nvidia gpu load and temp stats
     char nvidiaLoad[8] = "";
-    getStdoutFromCommand(nvidiaLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); //awk cuts response down to only the graphics parameter
+    getStdoutFromCommand(nvidiaLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
     strcat(nvidiaLoad, "%");
 
     char nvidiaTemp[8] = "";
@@ -141,12 +148,12 @@ void intervalEvent() {
     strcat(nvidiaTemp, "°C");
 
 
-    //Clear fullStr
+    // Clear fullStr
     for (int i = 0; i < displayRows; i++) memset(fullStr[i], 0, sizeof fullStr[i]);
 
 
-    //Format data in each row
-    strcpy(fullStr[0], "Resource Monitor"); //display a title in the first line
+    // Format data in each row
+    strcpy(fullStr[0], "Resource Monitor"); // Display a title in the first line
     fillRow(0);
     
     strcpy(fullStr[1], "CPU:");
@@ -164,32 +171,33 @@ void intervalEvent() {
     catFixedRight(nvidiaTemp, 17, 3);
     fillRow(3);
 
-    //Send each row separately 
-    for (int i = 0; i < displayRows; i++) { //skip first line after first time
-        char tempStr[displayCols + 5] = "~"; //start with line start char for string validation on Arduino
+    // Send each row separately 
+    for (int i = 0; i < displayRows; i++) { // Skip first line after first time
+        char tempStr[displayCols + 5] = "~"; // Start with line start char for string validation on Arduino
 
-        tempStr[1] = '0' + i; //cool lifehack to convert ints < 10 to chars
-        strcat(tempStr, fullStr[i]); //add text
-        strcat(tempStr, "#"); //add line end char for string validation
+        tempStr[1] = '0' + i; // Cool lifehack to convert ints < 10 to chars
+        strcat(tempStr, fullStr[i]); // Add text
+        strcat(tempStr, "#"); // Add line end char for string validation
 
-        //Don't send message again if it didn't change
+        // Don't send message again if it didn't change
         if (strcmp(tempStr, lcdCache[i])) {
             //cout << "Sending (" << strlen(tempStr) << "): " << tempStr << endl;
 
             connection.write(tempStr);
 
-            strcpy(lcdCache[i], tempStr); //put into cache
-            lastWriteTime = chrono::steady_clock::now(); //refresh lastWriteTime
+            strcpy(lcdCache[i], tempStr); // Put into cache
+            lastWriteTime = chrono::steady_clock::now(); // Refresh lastWriteTime
 
-            //wait a moment to let the Arduino relax
+            // Wait a moment to let the Arduino relax
             auto x = chrono::steady_clock::now() + chrono::milliseconds(250);
             this_thread::sleep_until(x);
 
         } else {
             
-            //Send alive ping if nothing was written in the last 5 secs to prevent Connection Lost screen from showing
+            // Send alive ping if nothing was written in the last 5 secs to prevent Connection Lost screen from showing
             if (chrono::steady_clock::now() - lastWriteTime > chrono::milliseconds(5000)) {
                 //cout << "Sending alive ping!" << endl;
+
                 connection.write("~0Resource Monitor    #");
                 lastWriteTime = chrono::steady_clock::now();
             }
@@ -198,13 +206,13 @@ void intervalEvent() {
 }
 
 
-//Entry point
+// Entry point
 int main() {
     cout << "arduino-resource-monitor by 3urobeat" << endl;
     cout << "Server for Linux " << version << " starting...\n" << endl;
     cout << "Opening port " << port << " and setting " << baud << " Baud..." << endl;
 
-    //Check if port is now open
+    // Check if port is now open
     if (connection.isOpen()) {
         cout << "Port opened successfully!" << endl;
     } else {
@@ -212,21 +220,21 @@ int main() {
         exit(1);
     }
 
-    //Wait a moment after establishing connection before starting to write
+    // Wait a moment after establishing connection before starting to write
     auto x = chrono::steady_clock::now() + chrono::milliseconds(1000);
     this_thread::sleep_until(x);
 
-    connection.flushOutput(); //clear anything that may be buffered
+    connection.flushOutput(); // Clear anything that may be buffered
 
-    //Construct cpuTempCmd
+    // Construct cpuTempCmd
     strcpy(cpuTempCmd, "sensors -u ");
     strcat(cpuTempCmd, cpuTempSensor);
-    strcat(cpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'"); //get temp1_input line and remove everything except the temp value
+    strcat(cpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'"); // Get temp1_input line and remove everything except the temp value
     
-    //Start getting and sending sensor data
+    // Start getting and sending sensor data
     cout << "\nStarting to send data..." << endl;
 
-    //run intervalEvent() every checkInterval ms
+    // Run intervalEvent() every checkInterval ms
     while (true) {
         intervalEvent();
         
