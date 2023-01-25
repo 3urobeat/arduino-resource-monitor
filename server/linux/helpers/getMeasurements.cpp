@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 20:53:49
+ * Last Modified: 25.01.2023 10:33:51
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -75,16 +75,39 @@ void getMeasurements()
     gcvt(round(atof(measurements::cpuTemp)), 3, measurements::cpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
     strcat(measurements::cpuTemp, "°C");
 
+
     // Get RAM and Swap usage
-    char ramUsageTemp[16] = ""; // TODO: Why do I need this?
+    char ramUsageTemp[16] = "";
     getStdoutFromCommand(ramUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
-    strncpy(measurements::ramUsage, ramUsageTemp, 3); // Cut ramUsage to max 3 digits, idc about roounding and precision here
-    strcat(measurements::ramUsage, "GB");
+
+    for (int i = 0; i < 4; i++) { // Use a stupid for loop to avoid doing dtoa() stuff
+        measurements::ramUsage[i] = ramUsageTemp[i];
+
+        // If dot was reached, add one decimal and break loop
+        if (ramUsageTemp[i] == '.') {
+            measurements::ramUsage[i + 1] = ramUsageTemp[i + 1];
+            measurements::ramUsage[i + 2] = '\0';
+            break;
+        }
+    }
+    strcat(measurements::ramUsage, "GB"); // Concat unit
+
 
     char swapUsageTemp[16] = "";
     getStdoutFromCommand(swapUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
-    strncpy(measurements::swapUsage, swapUsageTemp, 3); // Cut ramUsage to max 3 digits, idc about rounding and precision here
-    strcat(measurements::swapUsage, "GB");
+    
+    for (int i = 0; i < 4; i++) { // Use a stupid for loop to avoid doing dtoa() stuff
+        measurements::swapUsage[i] = swapUsageTemp[i];
+
+        // If dot was reached, add one decimal and break loop
+        if (swapUsageTemp[i] == '.') {
+            measurements::swapUsage[i + 1] = swapUsageTemp[i + 1];
+            measurements::swapUsage[i + 2] = '\0';
+            break;
+        }
+    }
+    strcat(measurements::swapUsage, "GB"); // Concat unit
+
 
     // Get nvidia gpu load and temp stats
     getStdoutFromCommand(measurements::nvidiaLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
