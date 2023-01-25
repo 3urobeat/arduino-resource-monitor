@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 20:39:02
+ * Last Modified: 24.01.2023 20:57:57
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -34,7 +34,7 @@
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
 #define cpuTempSensor "k10temp-pci-00c3"
 
-#define version "v0.3.0"
+#define version "v0.4.0"
 
 
 // Extern vars from server.cpp
