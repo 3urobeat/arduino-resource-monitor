@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  * 
- * Last Modified: 25.01.2023 10:33:51
+ * Last Modified: 24.02.2023 18:11:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -23,8 +23,8 @@ namespace measurements {
     char cpuTemp[8] = "";
     char ramUsage[16] = "";
     char swapUsage[16] = "";
-    char nvidiaLoad[8] = "";
-    char nvidiaTemp[8] = "";
+    char gpuLoad[8] = "";
+    char gpuTemp[8] = "";
 };
 
 
@@ -62,8 +62,8 @@ void getMeasurements()
     memset(measurements::cpuTemp,    0, 8);
     memset(measurements::ramUsage,   0, 16);
     memset(measurements::swapUsage,  0, 16);
-    memset(measurements::nvidiaLoad, 0, 8);
-    memset(measurements::nvidiaTemp, 0, 8);
+    memset(measurements::gpuLoad, 0, 8);
+    memset(measurements::gpuTemp, 0, 8);
 
 
     // Get CPU stats
@@ -110,9 +110,9 @@ void getMeasurements()
 
 
     // Get nvidia gpu load and temp stats
-    getStdoutFromCommand(measurements::nvidiaLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
-    strcat(measurements::nvidiaLoad, "%");
+    getStdoutFromCommand(measurements::gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
+    strcat(measurements::gpuLoad, "%");
 
-    getStdoutFromCommand(measurements::nvidiaTemp, "nvidia-settings -q GPUCoreTemp -t");
-    strcat(measurements::nvidiaTemp, "°C");
+    getStdoutFromCommand(measurements::gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
+    strcat(measurements::gpuTemp, "°C");
 }

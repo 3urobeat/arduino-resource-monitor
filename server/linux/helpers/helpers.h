@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 20:47:19
+ * Last Modified: 24.02.2023 18:11:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -25,8 +25,8 @@ namespace measurements {
     extern char cpuTemp[8];
     extern char ramUsage[16];
     extern char swapUsage[16];
-    extern char nvidiaLoad[8];
-    extern char nvidiaTemp[8];
+    extern char gpuLoad[8];
+    extern char gpuTemp[8];
 };
 
 extern void getMeasurements();

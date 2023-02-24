@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 21:05:52
+ * Last Modified: 24.02.2023 18:11:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -47,8 +47,8 @@ void sendMeasurements()
     fillRow(2);
 
     strcpy(fullStr[3], "GPU:");
-    catFixedRight(measurements::nvidiaLoad, 9, 3);
-    catFixedRight(measurements::nvidiaTemp, 18, 3);
+    catFixedRight(measurements::gpuLoad, 9, 3);
+    catFixedRight(measurements::gpuTemp, 18, 3);
     fillRow(3);
 
 
