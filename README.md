@@ -4,8 +4,8 @@ Display the resource usage of your PC on an 4x20 LCD display!
 This project retreives CPU, MEM & GPU usage and sends it via Serial to an Arduino Nano which is connected via USB.  
 
 <div>
-  <img width=49% height:auto src="https://raw.githubusercontent.com/HerrEurobeat/arduino-resource-monitor/main/.github/img/display.jpg">  
-  <img align="right" width=49% height:auto src="https://raw.githubusercontent.com/HerrEurobeat/arduino-resource-monitor/main/.github/img/server.jpg">  
+  <img width=45% height:auto src="https://raw.githubusercontent.com/HerrEurobeat/arduino-resource-monitor/main/.github/img/display.jpg">  
+  <img align="right" width=45% height:auto src="https://raw.githubusercontent.com/HerrEurobeat/arduino-resource-monitor/main/.github/img/server.jpg">  
 </div>
 
 &nbsp;
