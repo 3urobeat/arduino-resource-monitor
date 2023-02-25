@@ -73,6 +73,7 @@ Connect your display like this:
 ## Running
 Before running, make sure you are in the group uucp, otherwise you won't be able to execute the binary without root permissions:  
 `sudo usermod -aG uucp $USER`  
+You probably need to relog for this change to be applied. You can work around this until you relog by running `su $USER` in the terminal that you'll use to execute the binary in a few moments.  
   
 Make sure your binary is executable by running:  
 `sudo chmod +x ./arduino-resource-monitor-server-linux`  
