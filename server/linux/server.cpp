@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 20:44:21
+ * Last Modified: 25.02.2023 17:25:47
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -28,9 +28,12 @@ using namespace std;
 
 
 // Runtime vars
-char cpuTempCmd[128];                                   // For constructing the cpuTempCmd once on start
-char fullStr[displayRows][displayCols + 2];             // For constructing what is going to be sent to the Arduino now
-char lcdCache[displayRows][displayCols + 5];            // Save what has been sent previously to avoid sending identical stuff multiple times
+char cpuTempCmd[128];                        // For constructing the cpuTempCmd once on start
+char gpuUtilCmd[128];                        // AMD GPU only
+char gpuTempCmd[128];                        // AMD GPU only
+
+char fullStr[displayRows][displayCols + 2];  // For constructing what is going to be sent to the Arduino now
+char lcdCache[displayRows][displayCols + 5]; // Save what has been sent previously to avoid sending identical stuff multiple times
 
 serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); // Make a connection
 
@@ -57,11 +60,21 @@ int main()
 
     connection.flushOutput(); // Clear anything that may be buffered
 
-    // Construct cpuTempCmd
+
+    // Construct commands
     strcpy(cpuTempCmd, "sensors -u ");
     strcat(cpuTempCmd, cpuTempSensor);
     strcat(cpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'"); // Get temp1_input line and remove everything except the temp value
-    
+
+    strcpy(gpuUtilCmd, "radeontop -b ");
+    strcat(gpuUtilCmd, gpuBus);
+    strcat(gpuUtilCmd, " -l 1 -d- | cut -d',' -f 2 | sed 's/ gpu //' | tail -1"); // Get readout from radeontop, split at comma, get 2 element (which is the gpu readout), replace " gpu " and get the last line
+
+    strcpy(gpuTempCmd, "sensors -u ");
+    strcat(gpuTempCmd, gpuTempSensor);
+    strcat(gpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'");
+
+
     // Start getting and sending sensor data
     cout << "\nStarting to send data..." << endl;
 
