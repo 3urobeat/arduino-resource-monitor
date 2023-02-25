@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  * 
- * Last Modified: 25.02.2023 17:27:00
+ * Last Modified: 25.02.2023 17:44:39
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -58,16 +58,16 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
 void getMeasurements()
 {
     // Clear old data
-    memset(measurements::cpuLoad,    0, 8);
-    memset(measurements::cpuTemp,    0, 8);
-    memset(measurements::ramUsage,   0, 16);
-    memset(measurements::swapUsage,  0, 16);
-    memset(measurements::gpuLoad, 0, 8);
-    memset(measurements::gpuTemp, 0, 8);
+    memset(measurements::cpuLoad,   0,  8);
+    memset(measurements::cpuTemp,   0,  8);
+    memset(measurements::ramUsage,  0, 16);
+    memset(measurements::swapUsage, 0, 16);
+    memset(measurements::gpuLoad,   0,  8);
+    memset(measurements::gpuTemp,   0,  8);
 
 
     // Get CPU stats
-    getStdoutFromCommand(measurements::cpuLoad, "mpstat 1 1 | grep -E -v '^Linux|^$' | awk -v c=\"%idle\" 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-1)}' | tail -1 | awk '{print 100-$1}'"); // using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
+    getStdoutFromCommand(measurements::cpuLoad, "mpstat 1 1 | grep -E -v '^Linux|^$' | awk -v c='%idle' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i)}' | tail -1 | awk '{print 100-$1}'"); // using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
     gcvt(round(atof(measurements::cpuLoad)), 3, measurements::cpuLoad); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
     strcat(measurements::cpuLoad, "%");
 
