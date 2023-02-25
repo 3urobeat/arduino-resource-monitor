@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  * 
- * Last Modified: 25.02.2023 14:45:11
+ * Last Modified: 25.02.2023 17:47:58
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -38,7 +38,7 @@
 #define gpuTempSensor "amdgpu-pci-0300"  // sensors entry for your AMD GPU temp (ignore if you have an NVIDIA card)
 
 
-#define version "v0.4.0"
+#define version "v0.5.0"
 
 
 // Extern vars from server.cpp

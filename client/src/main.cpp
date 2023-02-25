@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 25.01.2023 10:34:18
+ * Last Modified: 25.02.2023 18:11:44
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
@@ -24,7 +24,7 @@ const uint8_t  maxrow = 4;
 const uint32_t checkInterval = 25; // ms between checks for stringComplete
 const uint32_t baud = 9600;
 
-char version[] = "v0.4.0";
+char version[] = "v0.5.0";
 
 
 // Create lcd obj
