@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  * 
- * Last Modified: 24.02.2023 18:11:00
+ * Last Modified: 25.02.2023 17:27:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -109,10 +109,20 @@ void getMeasurements()
     strcat(measurements::swapUsage, "GB"); // Concat unit
 
 
-    // Get nvidia gpu load and temp stats
-    getStdoutFromCommand(measurements::gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
-    strcat(measurements::gpuLoad, "%");
+    // Get nvidia or amd gpu load and temp stats
+    #if gpuType == 0
+        getStdoutFromCommand(measurements::gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
+        strcat(measurements::gpuLoad, "%");
 
-    getStdoutFromCommand(measurements::gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
-    strcat(measurements::gpuTemp, "°C");
+        getStdoutFromCommand(measurements::gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
+        strcat(measurements::gpuTemp, "°C");
+    #elif gpuType == 1
+        getStdoutFromCommand(measurements::gpuLoad, gpuUtilCmd);
+        gcvt(round(atof(measurements::gpuLoad)), 3, measurements::gpuLoad); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
+        strcat(measurements::gpuLoad, "%");
+
+        getStdoutFromCommand(measurements::gpuTemp, gpuTempCmd);
+        gcvt(round(atof(measurements::gpuTemp)), 3, measurements::gpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
+        strcat(measurements::gpuTemp, "°C");
+    #endif
 }

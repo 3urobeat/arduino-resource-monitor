@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  * 
- * Last Modified: 24.01.2023 20:57:57
+ * Last Modified: 25.02.2023 14:45:11
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/HerrEurobeat>
@@ -32,13 +32,20 @@
 #define baud 9600
 
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
-#define cpuTempSensor "k10temp-pci-00c3"
+#define cpuTempSensor "k10temp-pci-00c3" // sensors entry for your CPU temp
+#define gpuType 1                        // Set to 0 for NVIDIA or to 1 for AMD
+#define gpuBus "3"                       // If you are using an AMD GPU and you have multiple GPUs you need to specify the bus ID of the GPU to display.
+#define gpuTempSensor "amdgpu-pci-0300"  // sensors entry for your AMD GPU temp (ignore if you have an NVIDIA card)
+
 
 #define version "v0.4.0"
 
 
 // Extern vars from server.cpp
 extern char cpuTempCmd[128];
+extern char gpuUtilCmd[128];
+extern char gpuTempCmd[128];
+
 extern char fullStr[displayRows][displayCols + 2];
 extern char lcdCache[displayRows][displayCols + 5];
 
