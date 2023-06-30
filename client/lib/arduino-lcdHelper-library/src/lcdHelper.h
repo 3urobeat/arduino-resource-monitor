@@ -4,10 +4,10 @@
  * Created Date: 26.08.2022 12:04:51
  * Author: 3urobeat
  * 
- * Last Modified: 06.12.2022 12:40:45
+ * Last Modified: 30.06.2023 09:56:57
  * Modified By: 3urobeat
  * 
- * Copyright (c) 2022 3urobeat <https://github.com/HerrEurobeat>
+ * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
  * 
  * Licensed under the MIT license: https://opensource.org/licenses/MIT
  * Permission is granted to use, copy, modify, and redistribute the work.
