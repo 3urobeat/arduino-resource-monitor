@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 12.11.2023 16:59:58
+ * Last Modified: 12.11.2023 17:53:12
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -54,6 +54,7 @@ void setup() {
     delay(500);
 
     lcd.centerPrint("Waiting...", 3, true);
+
 }
 
 
@@ -113,13 +114,16 @@ void handleConnectionHandshake(char *serverHandshake) {
 
 // SerialEvent occurs whenever a new data is being recieved and runs between loop() iterations
 void serialEvent() {
-    char inputString[maxcol + 5] = "";
+    char inputString[64] = "";
 
     // Read bytes from the data stream while it is active
     while (Serial.available()) {
         char inChar = (char) Serial.read();
 
         delay(25);
+
+        // Abort if inputString is about to overflow, we sadly cannot process this transmission
+        if (strlen(inputString) > sizeof(inputString) - 2) return;
 
         // Process data if a full line was received, this is indicated by the trailing char #.
         if (inChar == '#') {
@@ -141,7 +145,4 @@ void serialEvent() {
             strncat(inputString, &inChar, 1); // Add received char to the end of inputString
         }
     }
-
-    // Clear input string once data stream has been closed
-    memset(inputString, 0, sizeof(inputString));
 }
