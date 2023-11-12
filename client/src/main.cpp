@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  * 
- * Last Modified: 30.06.2023 09:56:57
+ * Last Modified: 12.11.2023 16:59:58
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -24,7 +24,7 @@ const uint8_t  maxrow = 4;
 const uint32_t checkInterval = 25; // ms between checks for stringComplete
 const uint32_t baud = 9600;
 
-char version[] = "v0.5.0";
+char version[] = "v0.5.1";
 
 
 // Create lcd obj
@@ -33,7 +33,7 @@ lcdHelper<LiquidCrystal_PCF8574> lcd(0x27, maxcol, maxrow);
 
 // Runtime vars
 uint32_t timeSinceLastSignal = 0;
-bool     displayingConnectionLostMsg = false;
+bool     displayingSplashScreen = false;
 
 
 // Setup stuff on poweron
@@ -49,24 +49,20 @@ void setup() {
     // Print startup screen
     lcd.centerPrint("Resource Monitor", 0, true);
     lcd.centerPrint(version, 1, true);
+
+    displayingSplashScreen = true;
     delay(500);
 
-    // Wait for serial connection
     lcd.centerPrint("Waiting...", 3, true);
-    
-    while (!Serial.available()) { }
-
-    // Clear lcd when ready and enter loop()
-    lcd.clear();
 }
 
 
-// Check every few ms for new data
+// Check regularly if no data was received recently and display splash screen again
 void loop() {
 
     // Count checkInterval and display Lost Connection message after 10 seconds
     if (timeSinceLastSignal >= 10000) {
-        if (displayingConnectionLostMsg) return;
+        if (displayingSplashScreen) return;
 
         lcd.clear();
         lcd.setCursor(0, 0);
@@ -75,27 +71,43 @@ void loop() {
         lcd.centerPrint(version, 1, true);
         lcd.centerPrint("Lost Connection!", 3, true);
 
-        displayingConnectionLostMsg = true;
+        displayingSplashScreen = true;
     } else {
         timeSinceLastSignal += checkInterval;
     }
 
     delay(checkInterval);
+
 }
 
 
-// Refresh a line
+// Refresh a line on the screen
 void printInputString(char *str) {
     char tempStr[maxcol + 5] = "";
     strncpy(tempStr, str + 2, maxcol); // Subtring str to remove start char, row and end char
 
     int row = str[1] - '0'; // Get row by converting char to int: https://stackoverflow.com/a/868508
 
+    // Clear display if splash screen is currently shown
+    if (displayingSplashScreen) lcd.clear();
+
+    // Print result into the correct line
     lcd.setCursor(0, row);
     lcd.limitedPrint(tempStr, maxcol);
 
     timeSinceLastSignal = 0; // Reset time since last signal
-    displayingConnectionLostMsg = false;
+    displayingSplashScreen = false;
+}
+
+
+// Processes header received from server, checks version and replies
+void handleConnectionHandshake(char *serverHandshake) {
+
+    // Send success header
+    Serial.print("+0ResourceMonitorClient-");
+    Serial.print(version);
+    Serial.println("#");
+
 }
 
 
@@ -103,22 +115,33 @@ void printInputString(char *str) {
 void serialEvent() {
     char inputString[maxcol + 5] = "";
 
+    // Read bytes from the data stream while it is active
     while (Serial.available()) {
         char inChar = (char) Serial.read();
 
         delay(25);
 
-        // Continue with next line if this char is a line break and set stringComplete to true if text for all rows was recieved
+        // Process data if a full line was received, this is indicated by the trailing char #.
         if (inChar == '#') {
-            // Validate string and abort if it doesn't start with ~ and end with # or is too long. Tinti2013 and I spent 2 hours debugging and found out that the Arduino Nano is basically sometimes loosing chars which didn't happen with the ESP8266
-            if (inputString[0] == '~' && strlen(inputString) <= maxcol + 3) {                
+
+            // If transmission starts with ~ then the server sent us new measurements
+            if (inputString[0] == '~' && strlen(inputString) <= maxcol + 3) {
                 printInputString(inputString);
+            }
+
+            // If transmission starts with + then the server just initiated a new connection
+            if (inputString[0] == '+') {
+                handleConnectionHandshake(inputString);
             }
 
             // Clear data from inputString when it has been printed
             memset(inputString, 0, sizeof(inputString));
+
         } else {
             strncat(inputString, &inChar, 1); // Add received char to the end of inputString
         }
     }
+
+    // Clear input string once data stream has been closed
+    memset(inputString, 0, sizeof(inputString));
 }
