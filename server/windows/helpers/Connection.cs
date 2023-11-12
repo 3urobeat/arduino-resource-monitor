@@ -1,10 +1,10 @@
 ﻿/*
- * File: FindArduino.cs
+ * File: Connection.cs
  * Project: arduino-resource-monitor
  * Created Date: 12.11.2023 11:58:51
  * Author: 3urobeat
  *
- * Last Modified: 12.11.2023 17:09:25
+ * Last Modified: 12.11.2023 18:21:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,7 +18,7 @@
 using Microsoft.Win32;
 using System.IO.Ports;
 
-public class FindArduino
+public class Connection
 {
     static SerialPort? _serialPort;
 
@@ -56,7 +56,7 @@ public class FindArduino
 
 
     // Attempts to find and connect to the client. Returns the connection on success or null on failure.
-    public static async Task<SerialPort?> GetArduinoPort()
+    public static async Task<SerialPort?> ConnectToArduino()
     {
         int i = 0;
         var ports = EnumerateArduinos().ToList();
