@@ -15,4 +15,13 @@
  */
 
 
-Console.WriteLine("Hello World");
+public class MainClass
+{
+    // Entry point
+    public static async Task Main(string[] args)
+    {
+        Console.WriteLine("arduino-resource-monitor by 3urobeat");
+        Console.WriteLine($"Server for Windows v{Settings.version} starting...\n");
+        Console.WriteLine("Searching for Arduino...");
+    }
+}
