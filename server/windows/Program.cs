@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 12.11.2023 17:08:02
+ * Last Modified: 12.11.2023 18:21:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -31,7 +31,7 @@ public class MainClass
 
 
         // Find port our arduino is connected to
-        SerialPort? serialConnection = await FindArduino.GetArduinoPort();
+        SerialPort? serialConnection = await Connection.ConnectToArduino();
 
         if (serialConnection == null)
         {
