@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 12.11.2023 18:21:27
+ * Last Modified: 13.11.2023 23:08:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -15,6 +15,7 @@
  */
 
 
+using System.Globalization;
 using System.IO.Ports;
 
 
@@ -23,11 +24,20 @@ public class MainClass
     // Entry point
     public static async Task Main(string[] args)
     {
+        // Force CultureInfo to en-US to guarantee the same number formatting on different devices
+        Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+
+
+        // Set title and print welcome messages
         Console.Title = $"arduino-resource-monitor Server for Windows v{Settings.version} by 3urobeat";
 
         Console.WriteLine("arduino-resource-monitor by 3urobeat");
         Console.WriteLine($"Server for Windows v{Settings.version} starting...\n");
         Console.WriteLine("Searching for Arduino...");
+
+
+        // Find all sensors
+        Measurements.FindSensors();
 
 
         // Find port our arduino is connected to
@@ -42,5 +52,19 @@ public class MainClass
         }
 
         Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
+        Console.WriteLine("\nStarting to send data...");
+
+        // Get new measurements every checkInterval ms and send them to the Arduino
+        while (true)
+        {
+            // Get new measurements
+            Measurements.GetMeasurements();
+
+            // Send measurements
+            Communication.SendMeasurements(serialConnection);
+
+            // Delay next iteration for checkInterval ms
+            await Task.Delay(Settings.checkInterval);
+        }
     }
 }
