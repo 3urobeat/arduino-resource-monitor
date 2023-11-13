@@ -163,3 +163,49 @@ public class Measurements
         computer.Close();
     }
 
+
+    // Reads from all sensors and refreshes MeasurementsCache
+    public static void GetMeasurements()
+    {
+
+        // CPU Utilization in %
+        if (CpuLoadSensor != null)
+        {
+            MeasurementsCache.cpuLoad = ((int)CpuLoadSensor.Value).ToString() + "%";  // Ignore decimals
+
+            //Console.WriteLine("CPU Util: " + MeasurementsCache.cpuLoad);
+        }
+
+        // CPU Temperature in °C
+        if (CpuTempSensor != null)
+        {
+            MeasurementsCache.cpuTemp = ((int)CpuTempSensor.Value).ToString() + "°C"; // Ignore decimals
+
+            //Console.WriteLine("CPU Temp: " + MeasurementsCache.cpuTemp);
+        }
+
+        // RAM Usage in GB
+        if (RamUsedSensor != null)
+        {
+            MeasurementsCache.ramUsage = Math.Round((float)RamUsedSensor.Value, 1).ToString() + "GB";
+
+            //Console.WriteLine("RAM: " + MeasurementsCache.ramUsage);
+        }
+
+        // GPU Utilization in %
+        if (GpuLoadSensor != null)
+        {
+            MeasurementsCache.gpuLoad = ((int)GpuLoadSensor.Value).ToString() + "%";
+
+            //Console.WriteLine("GPU Util: " + MeasurementsCache.gpuLoad);
+        }
+
+        // GPU Core Temperature in °C
+        if (GpuTempSensor != null) {
+            MeasurementsCache.gpuTemp = ((int)GpuTempSensor.Value).ToString() + "°C";
+
+            //Console.WriteLine("GPU Temp: " + MeasurementsCache.gpuTemp);
+        }
+
+    }
+}
