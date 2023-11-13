@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 18:13:01
  * Author: 3urobeat
  *
- * Last Modified: 12.11.2023 18:21:54
+ * Last Modified: 13.11.2023 22:19:02
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -63,11 +63,11 @@ public class Measurements
 
 
     // Store sensors
-    public float CpuUsageSensor { get; private set; }
-    public float CpuTempSensor { get; private set; }
-    public float RamUsedSensor { get; private set; }
-    public float GpuUsageSensor { get; private set; }
-    public float GpuTempSensor { get; private set; }
+    public static ISensor? CpuLoadSensor { get; private set; }
+    public static ISensor? CpuTempSensor { get; private set; }
+    public static ISensor? RamUsedSensor { get; private set; }
+    public static ISensor? GpuLoadSensor { get; private set; }
+    public static ISensor? GpuTempSensor { get; private set; }
 
 
     // Find all sensors and store them above
@@ -76,8 +76,9 @@ public class Measurements
         computer.Open();
         computer.Accept(new UpdateVisitor());
 
-        int gpuId = 0;
 
+        // Track IDs
+        int gpuId = 0;
 
         int cpuLoadSensorIndex = 0;
         int cpuTempSensorIndex = 0;
@@ -100,36 +101,21 @@ public class Measurements
                 {
                     // CPU Utilization in %
                     case Settings.cpuLoadSensor:
-                        if (cpuLoadSensorIndex == Settings.cpuLoadSensorIndex)
-                        {
-                            MeasurementsCache.cpuLoad = ((int)sensor.Value).ToString() + "%";  // Ignore decimals
-
-                            Console.WriteLine("CPU Util: " + MeasurementsCache.cpuLoad);
-                        }
+                        if (cpuLoadSensorIndex == Settings.cpuLoadSensorIndex) CpuLoadSensor = sensor;
 
                         cpuLoadSensorIndex++;
                         break;
 
                     // CPU Temperature in °C
                     case Settings.cpuTempSensor:
-                        if (cpuTempSensorIndex == Settings.cpuTempSensorIndex)
-                        {
-                            MeasurementsCache.cpuTemp = ((int)sensor.Value).ToString() + "°C"; // Ignore decimals
-
-                            Console.WriteLine("CPU Temp: " + MeasurementsCache.cpuTemp);
-                        }
+                        if (cpuTempSensorIndex == Settings.cpuTempSensorIndex) CpuTempSensor = sensor;
 
                         cpuTempSensorIndex++;
                         break;
 
                     // RAM Usage in GB
                     case Settings.ramUsedSensor:
-                        if (ramUsedSensorIndex == Settings.ramUsedSensorIndex)
-                        {
-                            MeasurementsCache.ramUsage = Math.Round((float)sensor.Value, 1).ToString() + "GB";
-
-                            Console.WriteLine("RAM: " + MeasurementsCache.ramUsage);
-                        }
+                        if (ramUsedSensorIndex == Settings.ramUsedSensorIndex) RamUsedSensor = sensor;
 
                         ramUsedSensorIndex++;
                         break;
@@ -140,12 +126,7 @@ public class Measurements
                     case Settings.gpuLoadSensor:
                         if (gpuId == Settings.gpuID)
                         {
-                            if (gpuLoadSensorIndex == Settings.gpuLoadSensorIndex)
-                            {
-                                MeasurementsCache.gpuLoad = ((int)sensor.Value).ToString() + "%";
-
-                                Console.WriteLine("GPU Util: " + MeasurementsCache.gpuLoad);
-                            }
+                            if (gpuLoadSensorIndex == Settings.gpuLoadSensorIndex) GpuLoadSensor = sensor;
 
                             gpuLoadSensorIndex++;
                         }
@@ -155,12 +136,7 @@ public class Measurements
                     case Settings.gpuTempSensor:
                         if (gpuId == Settings.gpuID)
                         {
-                            if (gpuTempSensorIndex == Settings.gpuTempSensorIndex)
-                            {
-                                MeasurementsCache.gpuTemp = ((int)sensor.Value).ToString() + "°C";
-
-                                Console.WriteLine("GPU Temp: " + MeasurementsCache.gpuTemp);
-                            }
+                            if (gpuTempSensorIndex == Settings.gpuTempSensorIndex) GpuTempSensor = sensor;
 
                             gpuTempSensorIndex++;
                         }
@@ -175,6 +151,15 @@ public class Measurements
             }
         }
 
+
+        // Check if any of the sensors could not be found
+        if (CpuLoadSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching cpuLoadSensor!");
+        if (CpuTempSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching cpuTempSensor!");
+        if (RamUsedSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching ramUsedSensor!");
+        if (GpuLoadSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching gpuLoadSensor!");
+        if (GpuTempSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching gpuTempSensor!");
+
+
         computer.Close();
     }
-}
+
