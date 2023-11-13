@@ -19,9 +19,12 @@ public class Settings
 {
     public const string version = "0.5.1";
 
+
+    // Configuration variables
     public const int baud = 9600;
     public const int readTimeout = 2500;
 
+    public const int checkInterval = 1000; // How often new measurements should be made, min 1000ms (1 second)
     public const int gpuID = 1;            // Set an index here if you've got multiple GPUs. Check the Task Manager Performance tab for reference
 
 
