@@ -21,4 +21,23 @@ public class Settings
 
     public const int baud = 9600;
     public const int readTimeout = 2500;
+
+    public const int gpuID = 1;            // Set an index here if you've got multiple GPUs. Check the Task Manager Performance tab for reference
+
+
+    // Sensor names: These might change depending on your hardware
+    public const string cpuLoadSensor = "CPU Total"; // Name of the sensor
+    public const int cpuLoadSensorIndex = 0;         // Set index of the correct sensor should multiple exist
+
+    public const string cpuTempSensor = "Core (Tctl/Tdie)";
+    public const int cpuTempSensorIndex = 0;
+
+    public const string ramUsedSensor = "Memory Used";
+    public const int ramUsedSensorIndex = 0;
+
+    public const string gpuLoadSensor = "D3D 3D";
+    public const int gpuLoadSensorIndex = 0;
+
+    public const string gpuTempSensor = "GPU Core";
+    public const int gpuTempSensorIndex = 0;
 }
