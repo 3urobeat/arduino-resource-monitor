@@ -4,7 +4,7 @@
  * Created Date: 13.11.2023 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 14.11.2023 21:32:03
+ * Last Modified: 14.11.2023 21:44:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -80,7 +80,7 @@ public class Communication
             // Send string if it changed and update time & content tracking variables
             if (tempStr != lcdCache[i])
             {
-                Console.WriteLine("Sending: " + tempStr);
+                MainClass.LogDebug("Sending: " + tempStr);
 
                 lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 lcdCache[i]   = tempStr;
@@ -97,7 +97,7 @@ public class Communication
         // Check if we need to send an alive ping to keep the Arduino from switching to Connection Lost screen
         if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastWriteTime > 5000)
         {
-            Console.WriteLine("Sending alive ping!");
+            MainClass.LogDebug("Sending alive ping!");
 
             lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 

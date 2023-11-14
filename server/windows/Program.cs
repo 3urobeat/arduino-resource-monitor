@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 13.11.2023 23:08:53
+ * Last Modified: 14.11.2023 21:44:41
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -33,14 +33,27 @@ public class MainClass
 
         Console.WriteLine("arduino-resource-monitor by 3urobeat");
         Console.WriteLine($"Server for Windows v{Settings.version} starting...\n");
-        Console.WriteLine("Searching for Arduino...");
+
+
+        // Validate settings
+        if (Settings.checkInterval < 1000)
+        {
+            Console.WriteLine("Error: Setting checkInterval is too low! Please set it to at least 1000!");
+            System.Threading.Thread.Sleep(5000);
+            System.Environment.Exit(1);
+            return;
+        }
 
 
         // Find all sensors
+        Console.WriteLine("Attempting to find configured sensors...");
+
         Measurements.FindSensors();
 
 
         // Find port our arduino is connected to
+        Console.WriteLine("Searching for Arduino...");
+
         SerialPort? serialConnection = await Connection.ConnectToArduino();
 
         if (serialConnection == null)
@@ -65,6 +78,16 @@ public class MainClass
 
             // Delay next iteration for checkInterval ms
             await Task.Delay(Settings.checkInterval);
+        }
+    }
+
+
+    // Logs debug messages if enabled in Settings
+    public static void LogDebug(string str)
+    {
+        if (Settings.printDebug)
+        {
+            Console.WriteLine(str);
         }
     }
 }
