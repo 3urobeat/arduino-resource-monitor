@@ -4,7 +4,7 @@
  * Created Date: 13.11.2023 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 13.11.2023 23:09:19
+ * Last Modified: 14.11.2023 21:32:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,14 +17,21 @@
 
 using System.IO.Ports;
 
+
 public class Communication
 {
+    // Stores what is currently displayed on the Arduino's screen. This allows us to check and avoid sending unnecessary data
+    private static string[] lcdCache = new string[4];
+
+    private static long lastWriteTime = 0;
+
+
     // Positions a str with the last char to a fixed column by adding spaces and returns it
     private static string StrFixedRight(string strContent, string strToAdd, int column)
     {
         int spacesToAdd = (column - 1) - ((strContent.Length - 1) + (strToAdd.Length - 1));
 
-        for (int i = 0; i <= spacesToAdd + 1; i++)
+        for (int i = 0; i < spacesToAdd + 1; i++)
         {
             strContent += ' ';
         }
@@ -36,7 +43,8 @@ public class Communication
     // Sends current measurements to the Arduino
     public static async void SendMeasurements(SerialPort serialConnection)
     {
-        string tempStr = "";
+        string tempStr;
+
 
         // Send each row separately
         for (int i = 0; i < 4; i++)
@@ -51,16 +59,16 @@ public class Communication
                     break;
                 case 1:
                     tempStr += "CPU:";
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.cpuLoad, 9);
+                    tempStr = StrFixedRight(tempStr, MeasurementsCache.cpuLoad, 10);
                     tempStr = StrFixedRight(tempStr, MeasurementsCache.cpuTemp, 18);
                     break;
                 case 2:
                     tempStr += "RAM:";
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.ramUsage, 10);
+                    tempStr = StrFixedRight(tempStr, MeasurementsCache.ramUsage, 11);
                     break;
                 case 3:
                     tempStr += "GPU:";
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.gpuLoad, 9);
+                    tempStr = StrFixedRight(tempStr, MeasurementsCache.gpuLoad, 10);
                     tempStr = StrFixedRight(tempStr, MeasurementsCache.gpuTemp, 18);
                     break;
             }
@@ -69,12 +77,31 @@ public class Communication
             tempStr += "#";
 
 
-            // Send string
-            serialConnection.Write(tempStr);
+            // Send string if it changed and update time & content tracking variables
+            if (tempStr != lcdCache[i])
+            {
+                Console.WriteLine("Sending: " + tempStr);
+
+                lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                lcdCache[i]   = tempStr;
+
+                serialConnection.Write(tempStr);
+            }
 
 
             // Wait a moment to let the Arduino relax
             await Task.Delay(250);
+        }
+
+
+        // Check if we need to send an alive ping to keep the Arduino from switching to Connection Lost screen
+        if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastWriteTime > 5000)
+        {
+            Console.WriteLine("Sending alive ping!");
+
+            lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            serialConnection.Write("~0Resource Monitor   #");
         }
     }
 
