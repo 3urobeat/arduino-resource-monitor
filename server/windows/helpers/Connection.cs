@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:58:51
  * Author: 3urobeat
  *
- * Last Modified: 12.11.2023 18:21:11
+ * Last Modified: 14.11.2023 21:44:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -70,7 +70,7 @@ public class Connection
 
             char[] buffer = new char[32];
 
-            Console.WriteLine($"Attempting to connect to port '{port}', timeout is set to {Settings.readTimeout}ms...");
+            MainClass.LogDebug($"Attempting to connect to port '{port}', timeout is set to {Settings.arduinoReplyTimeout}ms...");
 
             // Attempt to connect to this port
             try
@@ -80,7 +80,7 @@ public class Connection
                 // Set connection information and attempt to open connection
                 _serialPort.PortName    = port;
                 _serialPort.BaudRate    = Settings.baud;
-                _serialPort.ReadTimeout = Settings.readTimeout;
+                _serialPort.ReadTimeout = Settings.arduinoReplyTimeout;
 
                 _serialPort.Open();
 
@@ -90,7 +90,7 @@ public class Connection
                 // Attempt to send client our header. A header starts with a +, normal data with a ~
                 _serialPort.WriteLine($"+0ResourceMonitorWindowsServer-v{Settings.version}#");
 
-                // Attempt to read response. Stop if connection got closed or buffer is exceeded. ReadTimeout has been set above
+                // Attempt to read response. Stop if connection got closed or buffer is exceeded. arduinoReplyTimeout has been set above
                 int offset = 0;
 
                 while (_serialPort.IsOpen && offset < 32)
@@ -110,12 +110,12 @@ public class Connection
 
 
                 // Break loop if catch didn't trigger, aka a connection was made successfully
-                Console.WriteLine("Received valid response from client: " + responseStr);
+                MainClass.LogDebug("Received valid response from client: " + responseStr);
                 break;
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Failed to connect to device {i} at '{port}': {e.Message}");
+                MainClass.LogDebug($"Failed to connect to device {i} at '{port}': {e.Message}");
 
                 // Close serial port if still open
                 if (_serialPort != null && _serialPort.IsOpen)
