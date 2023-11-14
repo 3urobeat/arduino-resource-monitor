@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 18:13:01
  * Author: 3urobeat
  *
- * Last Modified: 13.11.2023 22:19:02
+ * Last Modified: 14.11.2023 21:17:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,6 @@
 
 
 using LibreHardwareMonitor.Hardware;
-using LibreHardwareMonitor.Hardware.Cpu;
 
 
 // Stores the current measurements
@@ -61,6 +60,8 @@ public class Measurements
         IsStorageEnabled = false
     };
 
+    static IVisitor updateVisitor = new UpdateVisitor();
+
 
     // Store sensors
     public static ISensor? CpuLoadSensor { get; private set; }
@@ -74,8 +75,7 @@ public class Measurements
     public static void FindSensors()
     {
         computer.Open();
-        computer.Accept(new UpdateVisitor());
-
+        computer.Accept(updateVisitor);
 
         // Track IDs
         int gpuId = 0;
@@ -160,13 +160,14 @@ public class Measurements
         if (GpuTempSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching gpuTempSensor!");
 
 
-        computer.Close();
+        // Don't call computer.close() here, otherwise GetMeasurements() won't be able to refresh readouts
     }
 
 
     // Reads from all sensors and refreshes MeasurementsCache
     public static void GetMeasurements()
     {
+        computer.Accept(updateVisitor); // Update all sensor values
 
         // CPU Utilization in %
         if (CpuLoadSensor != null)
@@ -206,6 +207,5 @@ public class Measurements
 
             //Console.WriteLine("GPU Temp: " + MeasurementsCache.gpuTemp);
         }
-
     }
 }
