@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 18:13:01
  * Author: 3urobeat
  *
- * Last Modified: 14.11.2023 21:44:43
+ * Last Modified: 15.11.2023 20:27:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -97,6 +97,9 @@ public class Measurements
             {
                 //Console.WriteLine("\tSensor: {0}, value: {1}", sensor.Name, sensor.Value); // Enable to log all sensors
 
+                // Disable sensor value history to decrease memory usage
+                sensor.ValuesTimeWindow = TimeSpan.Zero;
+
                 switch (sensor.Name)
                 {
                     // CPU Utilization in %
@@ -167,7 +170,7 @@ public class Measurements
     // Reads from all sensors and refreshes MeasurementsCache
     public static void GetMeasurements()
     {
-        computer.Accept(updateVisitor); // Update all sensor values
+        computer.Accept(updateVisitor); // Update all sensor
 
         MainClass.LogDebug("Updating sensor values...");
 
@@ -186,7 +189,7 @@ public class Measurements
         // RAM Usage in GB
         if (RamUsedSensor != null)
         {
-            MeasurementsCache.ramUsage = Math.Round((float)RamUsedSensor.Value, 1).ToString() + "GB";
+            MeasurementsCache.ramUsage = Math.Round((float)RamUsedSensor.Value, 1).ToString(".0") + "GB";
         }
 
         // GPU Utilization in %
