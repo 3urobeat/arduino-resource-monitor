@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:58:51
  * Author: 3urobeat
  *
- * Last Modified: 14.11.2023 21:44:45
+ * Last Modified: 15.11.2023 20:54:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,7 @@
 
 using Microsoft.Win32;
 using System.IO.Ports;
+
 
 public class Connection
 {
@@ -100,12 +101,19 @@ public class Connection
                 }
 
 
-                // Check the response
+                // Check the response and compare version
                 string responseStr = new string(buffer); // Construct new string using the buffer char array
 
                 if (responseStr.Length == 0 || !responseStr.StartsWith("+0ResourceMonitorClient")) // Check response
                 {
                     throw new Exception("Received invalid response from client: " + responseStr);
+                }
+
+                string clientVersion = responseStr.Split("-")[1].Replace("#", "").Trim();
+
+                if (clientVersion != ("v" + Settings.version))
+                {
+                    throw new Exception($"Version mismatch! Client runs on {clientVersion} but we are on v{Settings.version}!");
                 }
 
 
@@ -115,7 +123,7 @@ public class Connection
             }
             catch (Exception e)
             {
-                MainClass.LogDebug($"Failed to connect to device {i} at '{port}': {e.Message}");
+                Console.WriteLine($"Failed to connect to device {i} at '{port}': {e.Message}");
 
                 // Close serial port if still open
                 if (_serialPort != null && _serialPort.IsOpen)
