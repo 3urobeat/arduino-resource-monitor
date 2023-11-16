@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 30.06.2023 09:56:57
+ * Last Modified: 16.11.2023 17:05:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,7 @@ char gpuTempCmd[128];                        // AMD GPU only
 char fullStr[displayRows][displayCols + 2];  // For constructing what is going to be sent to the Arduino now
 char lcdCache[displayRows][displayCols + 5]; // Save what has been sent previously to avoid sending identical stuff multiple times
 
-serial::Serial connection(port, baud, serial::Timeout::simpleTimeout(3000)); // Make a connection
+serial::Serial *connection; // Make a connection
 
 
 
@@ -46,19 +46,9 @@ int main()
     cout << "Server for Linux " << version << " starting...\n" << endl;
     cout << "Opening port " << port << " and setting " << baud << " Baud..." << endl;
 
-    // Check if port is now open
-    if (connection.isOpen()) {
-        cout << "Port opened successfully!" << endl;
-    } else {
-        cout << "Error: Port failed to open! Exiting..." << endl;
-        exit(1);
-    }
 
-    // Wait a moment after establishing connection before starting to write
-    auto x = chrono::steady_clock::now() + chrono::milliseconds(1000);
-    this_thread::sleep_until(x);
-
-    connection.flushOutput(); // Clear anything that may be buffered
+    // Find and establish connection to Arduino
+    connection = makeConnection();
 
 
     // Construct commands

@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 15.11.2023 22:29:06
+ * Last Modified: 16.11.2023 17:01:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -64,7 +64,7 @@ void sendMeasurements()
         if (strcmp(tempStr, lcdCache[i])) {
             //cout << "Sending (" << strlen(tempStr) << "): " << tempStr << endl;
 
-            connection.write(tempStr);
+            connection->write(tempStr);
 
             strcpy(lcdCache[i], tempStr); // Put into cache
             lastWriteTime = chrono::steady_clock::now(); // Refresh lastWriteTime
@@ -79,7 +79,7 @@ void sendMeasurements()
     if (chrono::steady_clock::now() - lastWriteTime > chrono::milliseconds(5000)) {
         //cout << "Sending alive ping!" << endl;
 
-        connection.write("~0Resource Monitor    #");
+        connection->write("~0Resource Monitor    #");
         lastWriteTime = chrono::steady_clock::now();
     }
 }
