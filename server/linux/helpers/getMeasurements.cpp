@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  * 
- * Last Modified: 04.11.2023 21:35:55
+ * Last Modified: 17.11.2023 09:56:22
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -124,5 +124,8 @@ void getMeasurements()
         getStdoutFromCommand(measurements::gpuTemp, gpuTempCmd);
         gcvt(round(atof(measurements::gpuTemp)), 3, measurements::gpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
         strcat(measurements::gpuTemp, "°C");
+    #else
+        strcpy(measurements::gpuLoad, "/%");
+        strcpy(measurements::gpuTemp, "/°C");
     #endif
 }
