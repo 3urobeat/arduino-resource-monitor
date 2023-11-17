@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 11:14:21
+ * Last Modified: 17.11.2023 14:03:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -45,6 +45,14 @@ int main()
     cout << "arduino-resource-monitor by 3urobeat" << endl;
     cout << "Server for Linux " << version << " starting...\n" << endl;
     cout << "Searching for eligible devices..." << endl;
+
+
+    // Validate settings
+    if (checkInterval < 1000)
+    {
+        printf("Error: Setting checkInterval is too low! Please set it to at least 1000!\n");
+        exit(1);
+    }
 
 
     // Find and establish connection to Arduino
