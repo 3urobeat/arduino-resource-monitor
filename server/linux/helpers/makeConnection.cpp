@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 12:47:10
+ * Last Modified: 17.11.2023 13:45:54
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -59,7 +59,7 @@ serial::Serial* makeConnection()
             // Open a new connection with timeout set in config
             _connection = new serial::Serial(port, baud, serial::Timeout::simpleTimeout(25));
 
-            this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(1000));
+            this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(2500)); // Necessary atm because Arduino resets for some reason
 
             if (!_connection->isOpen())
             {
@@ -89,8 +89,8 @@ serial::Serial* makeConnection()
             {
                 buffer[offset] = *_connection->read(1).c_str();
 
-                // Do not increment iteration if nothing was read and let next iteration overwrite char
-                if (buffer[offset] == '\0') continue;
+                // Do not increment iteration if nothing was read or pipeline was cleared and let next iteration overwrite char
+                if (buffer[offset] == '\0' || buffer[offset] == '\n') continue;
 
                 // Break loop if end char was received
                 if (buffer[offset] == '#') break;
@@ -116,7 +116,23 @@ serial::Serial* makeConnection()
                 continue;
             }
 
+            // Compare version
+            char versionStr[16] = "";
+
+            strncpy(versionStr, buffer + strlen("+0ResourceMonitorClient-"), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
+            versionStr[strlen(versionStr) - 1] = '\0'; // Remove last char which is the end char #
+
+            if (strcmp(versionStr, version) != 0)
+            {
+                cout << "Version mismatch! Client runs on " << versionStr << " but we are on " << version << "!" << endl;
+                _connection->close();
+                _connection = nullptr;
+                continue;
+            }
+
+
             cout << "Received valid response from client: " << buffer << endl;
+            break;
         }
         catch(const std::exception& e)
         {
