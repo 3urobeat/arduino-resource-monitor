@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  *
- * Last Modified: 15.11.2023 22:30:58
+ * Last Modified: 17.11.2023 18:27:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -16,15 +16,6 @@
 
 
 #include "main.h"
-
-
-// Config variables
-const uint8_t  maxcol = 20;
-const uint8_t  maxrow = 4;
-const uint32_t checkInterval = 25; // ms between checks for stringComplete
-const uint32_t baud = 9600;
-
-const char version[] = "v0.6.0";
 
 
 // Create lcd obj
@@ -74,40 +65,10 @@ void loop() {
 
         displayingSplashScreen = true;
     } else {
-        timeSinceLastSignal += checkInterval;
+        timeSinceLastSignal += 25;
     }
 
-    delay(checkInterval);
-
-}
-
-
-// Refresh a line on the screen
-void printInputString(char *str) {
-    char tempStr[maxcol + 5] = "";
-    strncpy(tempStr, str + 2, maxcol); // Subtring str to remove start char, row and end char
-
-    int row = str[1] - '0'; // Get row by converting char to int: https://stackoverflow.com/a/868508
-
-    // Clear display if splash screen is currently shown
-    if (displayingSplashScreen) lcd.clear();
-
-    // Print result into the correct line
-    lcd.setCursor(0, row);
-    lcd.limitedPrint(tempStr, maxcol);
-
-    timeSinceLastSignal = 0; // Reset time since last signal
-    displayingSplashScreen = false;
-}
-
-
-// Processes header received from server, checks version and replies
-void handleConnectionHandshake(char *serverHandshake) {
-
-    // Send success header
-    Serial.print("+0ResourceMonitorClient-");
-    Serial.print(version);
-    Serial.println("#");
+    delay(25);
 
 }
 
