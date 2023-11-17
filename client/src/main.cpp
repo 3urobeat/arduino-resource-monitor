@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 19:00:07
+ * Last Modified: 17.11.2023 21:50:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -91,7 +91,8 @@ void serialEvent() {
 
             // If transmission starts with ~ then the server sent us new measurements
             if (inputString[0] == '~' && strlen(inputString) <= maxcol + 3) {
-                handleDataInput(inputString);
+                handleDataInput(inputString); // Process input
+                printCurrentDataToDisplay();  // ...and update the screen
             }
 
             // If transmission starts with + then the server just initiated a new connection
