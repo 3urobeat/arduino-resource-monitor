@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 16.11.2023 17:01:39
+ * Last Modified: 17.11.2023 23:04:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,63 +17,97 @@
 
 #include "helpers.h"
 
-
 using namespace std;
+
+
+// Specifies the IDs which data messages are prefixed with to indicate their type
+enum measurementTypes {
+    titleRowID  = 0,
+    cpuLoadID   = 1,
+    cpuTempID   = 2,
+    ramUsageID  = 3,
+    swapUsageID = 4,
+    gpuLoadID   = 5,
+    gpuTempID   = 6
+};
+
+
+// Store what we last sent to the Arduino to avoid unnecessary
+namespace arduinoCache {
+    char cpuLoad[8] = "";
+    char cpuTemp[8] = "";
+    char ramUsage[16] = "";
+    char swapUsage[16] = "";
+    char gpuLoad[8] = "";
+    char gpuTemp[8] = "";
+};
 
 chrono::time_point<chrono::steady_clock> lastWriteTime; // Track time to decide if we have to send an alive ping so the Arduino doesn't display the Lost Connection screen
 
 
+char sendTempStr[32];
+
 /**
- * Send current measurements to Arduino
+ * Sends the actual serial message
+ */
+void _sendSerial(char *str, measurementTypes id)
+{
+    memset(sendTempStr, '\0', sizeof(sendTempStr));
+
+    // Construct string to send
+    sendTempStr[0] = '~';      // Data prefix
+    sendTempStr[1] = id + '0'; // Simple hack to "convert" id to char. Only supports id <= 10 ofc
+    sendTempStr[2] = '-';      // Add a separator
+
+    strncat(sendTempStr, str, sizeof(sendTempStr) - 5); // 5 because of prefix char, type char, separator, end delimiter and null byte
+    strcat(sendTempStr, "#");
+
+    // Send content (team yippee)
+    connection->write(sendTempStr);
+
+    //cout << "Sending (" << strlen(sendTempStr) << "): " << sendTempStr << endl;
+
+    // Refresh lastWriteTime
+    lastWriteTime = chrono::steady_clock::now();
+}
+
+
+/**
+ * Send updated measurements to the Arduino
  */
 void sendMeasurements()
 {
-    // Clear fullStr
-    for (int i = 0; i < displayRows; i++) memset(fullStr[i], 0, sizeof fullStr[i]);
-
-
-    // Format data in each row
-    strcpy(fullStr[0], "Resource Monitor"); // Display a title in the first line
-    fillRow(0);
-
-    strcpy(fullStr[1], "CPU:");
-    catFixedRight(measurements::cpuLoad, 9, 1);
-    catFixedRight(measurements::cpuTemp, 18, 1);
-    fillRow(1);
-
-    strcpy(fullStr[2], "RAM:");
-    catFixedRight(measurements::ramUsage, 10, 2);
-    catFixedRight(measurements::swapUsage, 17, 2);
-    fillRow(2);
-
-    strcpy(fullStr[3], "GPU:");
-    catFixedRight(measurements::gpuLoad, 9, 3);
-    catFixedRight(measurements::gpuTemp, 18, 3);
-    fillRow(3);
-
-
-    // Send each row separately
-    for (int i = 0; i < displayRows; i++) { // Skip first line after first time
-        char tempStr[displayCols + 5] = "~"; // Start with line start char for string validation on Arduino
-
-        tempStr[1] = '0' + i; // Cool lifehack to convert ints < 10 to chars
-        strcat(tempStr, fullStr[i]); // Add text
-        strcat(tempStr, "#"); // Add line end char for string validation
-
-        // Don't send message again if it didn't change
-        if (strcmp(tempStr, lcdCache[i])) {
-            //cout << "Sending (" << strlen(tempStr) << "): " << tempStr << endl;
-
-            connection->write(tempStr);
-
-            strcpy(lcdCache[i], tempStr); // Put into cache
-            lastWriteTime = chrono::steady_clock::now(); // Refresh lastWriteTime
-
-            // Wait a moment to let the Arduino relax
-            auto x = chrono::steady_clock::now() + chrono::milliseconds(250);
-            std::this_thread::sleep_until(x);
-        }
+    // Send what changed
+    if (strcmp(measurements::cpuLoad, arduinoCache::cpuLoad) != 0) {
+        _sendSerial(measurements::cpuLoad, cpuLoadID);
+        strcpy(arduinoCache::cpuLoad, measurements::cpuLoad);
     }
+
+    if (strcmp(measurements::cpuTemp, arduinoCache::cpuTemp) != 0) {
+        _sendSerial(measurements::cpuTemp, cpuTempID);
+        strcpy(arduinoCache::cpuTemp, measurements::cpuTemp);
+    }
+
+    if (strcmp(measurements::ramUsage, arduinoCache::ramUsage) != 0) {
+        _sendSerial(measurements::ramUsage, ramUsageID);
+        strcpy(arduinoCache::ramUsage, measurements::ramUsage);
+    }
+
+    if (strcmp(measurements::swapUsage, arduinoCache::swapUsage) != 0) {
+        _sendSerial(measurements::cpuLoad, swapUsageID);
+        strcpy(arduinoCache::swapUsage, measurements::swapUsage);
+    }
+
+    if (strcmp(measurements::gpuLoad, arduinoCache::gpuLoad) != 0) {
+        _sendSerial(measurements::gpuLoad, gpuLoadID);
+        strcpy(arduinoCache::gpuLoad, measurements::gpuLoad);
+    }
+
+    if (strcmp(measurements::gpuTemp, arduinoCache::gpuTemp) != 0) {
+        _sendSerial(measurements::gpuTemp, gpuTempID);
+        strcpy(arduinoCache::gpuTemp, measurements::gpuTemp);
+    }
+
 
     // Send alive ping if nothing was written in the last 5 secs to prevent Connection Lost screen from showing
     if (chrono::steady_clock::now() - lastWriteTime > chrono::milliseconds(5000)) {

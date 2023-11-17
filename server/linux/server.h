@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 14:03:22
+ * Last Modified: 17.11.2023 22:34:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -50,8 +50,5 @@
 extern char cpuTempCmd[128];
 extern char gpuUtilCmd[128];
 extern char gpuTempCmd[128];
-
-extern char fullStr[displayRows][displayCols + 2];
-extern char lcdCache[displayRows][displayCols + 5];
 
 extern serial::Serial *connection;

@@ -3,15 +3,15 @@
  * Project: arduino-resource-monitor
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
- * 
- * Last Modified: 17.11.2023 09:56:22
+ *
+ * Last Modified: 17.11.2023 22:36:08
  * Modified By: 3urobeat
- * 
+ *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>. 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -26,6 +26,17 @@ namespace measurements {
     char gpuLoad[8] = "";
     char gpuTemp[8] = "";
 };
+
+
+// Command responses sometimes have a trailing line break, this function removes them
+void _removeLineBreak(char *str)
+{
+    if (str[strlen(str) - 1] == '\n') {
+        char buf[16] = "";
+        strncat(buf, str, strlen(str) - 1);
+        strcpy(str, buf);
+    }
+}
 
 
 // Function to run command and get output
@@ -46,7 +57,7 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
         while (!feof(stream))
             if (fgets(buffer, max_buffer, stream) != NULL) strcat(dest, buffer);
 
-        removeLineBreak(dest);
+        _removeLineBreak(dest);
         pclose(stream);
     }
 }
@@ -95,7 +106,7 @@ void getMeasurements()
 
     char swapUsageTemp[16] = "";
     getStdoutFromCommand(swapUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
-    
+
     for (int i = 0; i < 4; i++) { // Use a stupid for loop to avoid doing dtoa() stuff
         measurements::swapUsage[i] = swapUsageTemp[i];
 
