@@ -26,7 +26,7 @@ set(serial_SRCS lib/src/serial.cc lib/include/serial/serial.h
     lib/include/serial/v8stdint.h lib/src/impl/list_ports/list_ports_linux.cc)
 list(APPEND serial_SRCS lib/src/impl/unix.cc)
 
-add_library(serial STATIC ${serial_SRCS}) # vllt suche ich nach cross compiling
+add_library(serial STATIC ${serial_SRCS})
 target_link_libraries(serial rt)
 
 

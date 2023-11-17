@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 16.11.2023 17:01:29
+ * Last Modified: 17.11.2023 14:03:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -28,10 +28,6 @@
 
 
 // Configuration variables
-#define displayCols 20
-#define displayRows 4
-
-#define baud 9600
 #define arduinoReplyTimeout 5000
 
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
@@ -42,6 +38,12 @@
 
 
 #define version "v0.5.0"
+// Do not modify
+#define displayCols 20
+#define displayRows 4
+
+#define baud 9600
+
 
 
 // Extern vars from server.cpp

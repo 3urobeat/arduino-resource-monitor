@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 18:13:33
  * Author: 3urobeat
  * 
- * Last Modified: 30.06.2023 09:56:57
+ * Last Modified: 17.11.2023 13:53:50
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -30,7 +30,7 @@ char *mystrcat(char *dest, const char *src) // Credit: https://stackoverflow.com
 // Fills a row with spaces to overwite any left over characters
 void fillRow(int row)
 {
-    strncat(fullStr[row], "                    ", displayCols - strlen(fullStr[row])); // Interestingly a degree symbol ° is not counted by strlen, causing the hashtag being offset by one char in the CPU and GPU row
+    strncat(fullStr[row], "                    ", displayCols - strlen(fullStr[row])); // Degree symbol ° is not counted by strlen, causing the hashtag being offset by one char in the CPU and GPU row
 }
 
 
