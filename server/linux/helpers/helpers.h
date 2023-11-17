@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 16.11.2023 17:00:44
+ * Last Modified: 17.11.2023 22:36:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -34,8 +34,3 @@ extern void getMeasurements();
 extern serial::Serial* makeConnection();
 
 extern void sendMeasurements();
-
-extern char *mystrcat(char *dest, const char *src);
-extern void fillRow(int row);
-extern void catFixedRight(char *str, int col, int row);
-extern void removeLineBreak(char *str);

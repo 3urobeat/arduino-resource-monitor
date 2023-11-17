@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 14:03:27
+ * Last Modified: 17.11.2023 21:41:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -28,12 +28,10 @@ using namespace std;
 
 
 // Runtime vars
-char cpuTempCmd[128];                        // For constructing the cpuTempCmd once on start
-char gpuUtilCmd[128];                        // AMD GPU only
-char gpuTempCmd[128];                        // AMD GPU only
+char cpuTempCmd[128]; // For constructing the cpuTempCmd once on start
+char gpuUtilCmd[128]; // AMD GPU only
+char gpuTempCmd[128]; // AMD GPU only
 
-char fullStr[displayRows][displayCols + 2];  // For constructing what is going to be sent to the Arduino now
-char lcdCache[displayRows][displayCols + 5]; // Save what has been sent previously to avoid sending identical stuff multiple times
 
 serial::Serial *connection; // Make a connection
 
