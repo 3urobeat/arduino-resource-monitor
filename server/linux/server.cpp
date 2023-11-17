@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 16.11.2023 17:05:23
+ * Last Modified: 17.11.2023 11:14:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -44,11 +44,17 @@ int main()
 {
     cout << "arduino-resource-monitor by 3urobeat" << endl;
     cout << "Server for Linux " << version << " starting...\n" << endl;
-    cout << "Opening port " << port << " and setting " << baud << " Baud..." << endl;
+    cout << "Searching for eligible devices..." << endl;
 
 
     // Find and establish connection to Arduino
     connection = makeConnection();
+
+    if (connection == NULL)
+    {
+        printf("Couldn't connect! Exiting...\n");
+        exit(1);
+    }
 
 
     // Construct commands
