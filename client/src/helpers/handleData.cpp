@@ -4,7 +4,7 @@
  * Created Date: 17.11.2023 17:48:54
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 17:57:06
+ * Last Modified: 17.11.2023 20:42:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,20 +18,79 @@
 #include "helpers.h"
 
 
-// Refresh a line on the screen
-void printInputString(char *str) {
-    char tempStr[maxcol + 5] = "";
-    strncpy(tempStr, str + 2, maxcol); // Subtring str to remove start char, row and end char
+// Specifies the IDs which data messages are prefixed with to indicate their type
+enum measurementTypes {
+    titleRowID  = 0,
+    cpuLoadID   = 1,
+    cpuTempID   = 2,
+    ramUsageID  = 3,
+    swapUsageID = 4,
+    gpuLoadID   = 5,
+    gpuTempID   = 6
+};
 
-    int row = str[1] - '0'; // Get row by converting char to int: https://stackoverflow.com/a/868508
+
+// Stores all current measurements
+namespace measurementsCache {
+    char titleRow[32] = "";
+    char cpuLoad[8] = "";
+    char cpuTemp[8] = "";
+    char ramUsage[16] = "";
+    char swapUsage[16] = "";
+    char gpuLoad[8] = "";
+    char gpuTemp[8] = "";
+};
+
+
+// Handles incoming measurement data messages and updates measurementsCache accordingly
+void handleDataInput(char *str) {
+
+    // Get measurement type by converting char to int: https://stackoverflow.com/a/868508
+    int typeChar = str[1] - '0';
+
+    // Specify limit for removing trailing char
+    uint8_t sizeLim = strlen(str) - 1;
+
+
+    // Write into the correct register
+    char *registerP = nullptr; // Point to register so we only need to
+
+    switch (typeChar) {
+        case titleRowID:
+            registerP = measurementsCache::titleRow;
+            break;
+        case cpuLoadID:
+            registerP = measurementsCache::cpuLoad;
+            break;
+        case cpuTempID:
+            registerP = measurementsCache::cpuTemp;
+            break;
+        case ramUsageID:
+            registerP = measurementsCache::ramUsage;
+            break;
+        case swapUsageID:
+            registerP = measurementsCache::swapUsage;
+            break;
+        case gpuLoadID:
+            registerP = measurementsCache::gpuLoad;
+            break;
+        case gpuTempID:
+            registerP = measurementsCache::gpuTemp;
+            break;
+        default:
+            return; // Unsupported type
+            break;
+    }
+
+    if (sizeLim > sizeof(*registerP) - 1) sizeLim = sizeof(*registerP) - 1; // Check if input is longer than the register's size and prevent overflow
+
+    strncpy(registerP, str + 2, sizeLim); // Copy into the correct register, offset by 2 to skip control char and type id
+
 
     // Clear display if splash screen is currently shown
     if (displayingSplashScreen) lcd.clear();
 
-    // Print result into the correct line
-    lcd.setCursor(0, row);
-    lcd.limitedPrint(tempStr, maxcol);
-
     timeSinceLastSignal = 0; // Reset time since last signal
     displayingSplashScreen = false;
+
 }
