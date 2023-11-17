@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 16.11.2023 17:05:09
+ * Last Modified: 17.11.2023 12:47:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,33 +17,122 @@
 
 #include "helpers.h"
 
+#include <dirent.h>
+
 using namespace std;
 
 
 /**
  * Attempts to find and connect to Arduino over Serial
  */
-serial::Serial* makeConnection() {
+serial::Serial* makeConnection()
+{
 
-    // Attempt to connect
-    serial::Serial *_connection = new serial::Serial(port, baud, serial::Timeout::simpleTimeout(3000));
+    serial::Serial *_connection;
 
+    // Get all used USB ports by iterating through /sys/class/tty/
+    DIR *dp;
+    struct dirent *ep;
+    dp = opendir("/sys/class/tty/");
 
-    // Check if port is now open
-    if (_connection->isOpen()) {
-        cout << "Port opened successfully!" << endl;
-    } else {
-        cout << "Error: Port failed to open! Exiting..." << endl;
-        exit(1);
+    if (dp == NULL)
+    {
+        printf("Error: Failed to open '/sys/class/tty/' to find all used USB ports!");
     }
 
 
-    // Wait a moment after establishing connection before starting to write
-    auto x = chrono::steady_clock::now() + chrono::milliseconds(1000);
-    this_thread::sleep_until(x);
+    // Iterate through all ttyUSB* files
+    while ((ep = readdir(dp)) != NULL)
+    {
+        // Ignore port if not an USB port
+        if (strstr(ep->d_name, "ttyUSB") == NULL) continue;
 
-    _connection->flushOutput(); // Clear anything that may be buffered
+        char port[16] = "/dev/";
+        strncat(port, ep->d_name, sizeof(port) - 1);
 
+        cout << "Attempting to connect on port '" << port << "', timeout is set to " << arduinoReplyTimeout << "ms..." << endl;
+
+
+        // Attempt to connect to this port
+        try
+        {
+            // Open a new connection with timeout set in config
+            _connection = new serial::Serial(port, baud, serial::Timeout::simpleTimeout(25));
+
+            this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(1000));
+
+            if (!_connection->isOpen())
+            {
+                cout << "Failed to connect to device '" << port << "': Port did not open" << endl;
+
+                _connection = nullptr;
+                continue;
+            }
+
+
+            // Attempt to send client our header. A header starts with a +, normal data with a ~
+            _connection->flushOutput(); // Clear anything that may be buffered
+
+            char headerStr[64] = "+0ResourceMonitorLinuxServer-";
+            strcat(headerStr, version);
+            strcat(headerStr, "#"); // strcat null terminates here because "#" is a null terminated string
+
+            _connection->write(headerStr);
+
+
+            // Attempt to listen for a response as long as port is open, buffer has enough space and we haven't run into arduinoReplyTimeout
+            char buffer[64] = "";
+            unsigned int offset = 0;
+            auto timestamp = chrono::steady_clock::now();
+
+            while (_connection->isOpen() && timestamp + chrono::milliseconds(arduinoReplyTimeout) > chrono::steady_clock::now() && offset < sizeof(buffer) - 1)
+            {
+                buffer[offset] = *_connection->read(1).c_str();
+
+                // Do not increment iteration if nothing was read and let next iteration overwrite char
+                if (buffer[offset] == '\0') continue;
+
+                // Break loop if end char was received
+                if (buffer[offset] == '#') break;
+
+                offset++;
+            }
+
+
+            // Check the response
+            if (strlen(buffer) == 0)
+            {
+                cout << "Received no response from client!" << endl;
+                _connection->close();
+                _connection = nullptr;
+                continue;
+            }
+
+            if (strstr(buffer, "+0ResourceMonitorClient") == NULL)
+            {
+                cout << "Received invalid response from client: " << buffer << endl;
+                _connection->close();
+                _connection = nullptr;
+                continue;
+            }
+
+            cout << "Received valid response from client: " << buffer << endl;
+        }
+        catch(const std::exception& e)
+        {
+            cout << "Failed to connect to device '" << port << "': " << e.what() << endl;
+
+            // Close connection if still open
+            if (_connection->isOpen())
+            {
+                _connection->close();
+            }
+
+            _connection = nullptr;
+        }
+    }
+
+    (void) closedir(dp);
 
     return _connection;
 

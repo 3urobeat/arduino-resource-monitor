@@ -31,8 +31,8 @@
 #define displayCols 20
 #define displayRows 4
 
-#define port "/dev/ttyUSB0"
 #define baud 9600
+#define arduinoReplyTimeout 5000
 
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
 #define cpuTempSensor "k10temp-pci-00c3" // sensors entry for your CPU temp
