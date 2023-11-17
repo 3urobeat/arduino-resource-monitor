@@ -24,7 +24,7 @@ const uint8_t  maxrow = 4;
 const uint32_t checkInterval = 25; // ms between checks for stringComplete
 const uint32_t baud = 9600;
 
-char version[] = "v0.5.1";
+const char version[] = "v0.6.0";
 
 
 // Create lcd obj
