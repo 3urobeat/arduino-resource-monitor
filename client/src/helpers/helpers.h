@@ -1,10 +1,10 @@
 /*
  * File: helpers.h
- * Project: steam-comment-service-bot
+ * Project: arduino-resource-monitor
  * Created Date: 17.11.2023 17:18:28
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 19:29:22
+ * Last Modified: 17.11.2023 21:51:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -33,5 +33,7 @@ namespace measurementsCache {
 
 
 void handleDataInput(char *str);
+
+void printCurrentDataToDisplay();
 
 void handleConnectionHandshake(char *serverHandshake);
