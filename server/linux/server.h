@@ -37,13 +37,13 @@
 #define gpuTempSensor "amdgpu-pci-0300"  // sensors entry for your AMD GPU temp (ignore if you have an NVIDIA card)
 
 
-#define version "v0.5.0"
 // Do not modify
 #define displayCols 20
 #define displayRows 4
 
 #define baud 9600
 
+#define version "v0.6.0"
 
 
 // Extern vars from server.cpp
