@@ -4,7 +4,7 @@
  * Created Date: 17.11.2023 19:04:54
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 21:51:26
+ * Last Modified: 18.11.2023 14:14:50
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -19,7 +19,7 @@
 
 
 // Fills a str with spaces to match maxcol to overwite any left over characters on the display. Make sure `str` is at least as large as maxcol! Returns pointer to str.
-char* fillRow(char *str) {
+char* _fillRow(char *str) {
     strncat(str, "                    ", maxcol - strlen(str));
 
     return str;
@@ -29,44 +29,29 @@ char* fillRow(char *str) {
 // Refreshes display content
 void printCurrentDataToDisplay() {
 
-    // Temp str used for constructing all rows
-    char tempStr[maxcol + 2] = "";
-
-
     // Construct title
-    strncpy(tempStr, measurementsCache::titleRow, maxcol);
-
     lcd.setCursor(0, 0);
-    lcd.print(fillRow(tempStr));
+    lcd.print("Resource Monitor    ");
 
 
     // Construct the CPU row
-    strcpy(tempStr, "CPU: ");
-    fillRow(tempStr);
-
     lcd.setCursor(0, 1);
-    lcd.print(tempStr);
-    lcd.alignedPrint("right", measurementsCache::cpuLoad, 10);
-    lcd.alignedPrint("right", measurementsCache::cpuTemp, 17);
+    lcd.print("CPU: ");
+    lcd.alignedPrint("right", measurementsCache::cpuLoad, 5); // 5 from the last print (aka 5 + 5 in this case)
+    lcd.alignedPrint("right", measurementsCache::cpuTemp, 8); // 8 from the last print (aka 8 + 5 + 5 in this case)
 
 
     // Construct the RAM row
-    strcpy(tempStr, "RAM: ");
-    fillRow(tempStr);
-
     lcd.setCursor(0, 2);
-    lcd.print(tempStr);
-    lcd.alignedPrint("right", measurementsCache::ramUsage, 11);
-    lcd.alignedPrint("right", measurementsCache::swapUsage, 18);
+    lcd.print("RAM: ");
+    lcd.alignedPrint("right", measurementsCache::ramUsage, 6);
+    lcd.alignedPrint("right", measurementsCache::swapUsage, 7);
 
 
     // Construct the GPU row
-    strcpy(tempStr, "GPU: ");
-    fillRow(tempStr);
-
     lcd.setCursor(0, 3);
-    lcd.print(tempStr);
-    lcd.alignedPrint("right", measurementsCache::gpuLoad, 10);
-    lcd.alignedPrint("right", measurementsCache::gpuTemp, 17);
+    lcd.print("GPU: ");
+    lcd.alignedPrint("right", measurementsCache::gpuLoad, 5);
+    lcd.alignedPrint("right", measurementsCache::gpuTemp, 8);
 
 }

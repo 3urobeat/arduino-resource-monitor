@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 13:27:07
+ * Last Modified: 18.11.2023 14:17:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -94,7 +94,7 @@ void sendMeasurements()
     }
 
     if (strcmp(measurements::swapUsage, arduinoCache::swapUsage) != 0) {
-        _sendSerial(measurements::cpuLoad, swapUsageID);
+        _sendSerial(measurements::swapUsage, swapUsageID);
         strcpy(arduinoCache::swapUsage, measurements::swapUsage);
     }
 
