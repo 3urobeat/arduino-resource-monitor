@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 21:50:31
+ * Last Modified: 18.11.2023 14:20:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -77,34 +77,30 @@ void loop() {
 void serialEvent() {
     char inputString[64] = "";
 
-    // Read bytes from the data stream while it is active
-    while (Serial.available()) {
+    // Read bytes from the data stream while it is active and is not about to overflow inputString
+    while (Serial.available() && strlen(inputString) < sizeof(inputString)) {
         char inChar = (char) Serial.read();
 
+        // Break loop if end delimiter # was received. Don't append it.
+        if (inChar == '#') break;
+
+        // Add received char to the end of inputString
+        strncat(inputString, &inChar, 1);
+
         delay(25);
-
-        // Abort if inputString is about to overflow, we sadly cannot process this transmission
-        if (strlen(inputString) > sizeof(inputString) - 2) return;
-
-        // Process data if a full line was received, this is indicated by the trailing char #.
-        if (inChar == '#') {
-
-            // If transmission starts with ~ then the server sent us new measurements
-            if (inputString[0] == '~' && strlen(inputString) <= maxcol + 3) {
-                handleDataInput(inputString); // Process input
-                printCurrentDataToDisplay();  // ...and update the screen
-            }
-
-            // If transmission starts with + then the server just initiated a new connection
-            if (inputString[0] == '+') {
-                handleConnectionHandshake(inputString);
-            }
-
-            // Clear data from inputString when it has been printed
-            memset(inputString, 0, sizeof(inputString));
-
-        } else {
-            strncat(inputString, &inChar, 1); // Add received char to the end of inputString
-        }
     }
+
+    // If transmission starts with ~ then the server sent us new measurements
+    if (inputString[0] == '~' && strlen(inputString) <= maxcol + 3) {
+        handleDataInput(inputString); // Process input
+        printCurrentDataToDisplay();  // ...and update the screen
+    }
+
+    // If transmission starts with + then the server just initiated a new connection
+    if (inputString[0] == '+') {
+        handleConnectionHandshake(inputString);
+    }
+
+    // Clear data from inputString when it has been printed
+    memset(inputString, 0, sizeof(inputString));
 }
