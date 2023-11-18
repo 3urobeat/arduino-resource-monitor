@@ -1,10 +1,10 @@
 /*
  * File: handshake.cpp
- * Project: steam-comment-service-bot
+ * Project: arduino-resource-monitor
  * Created Date: 17.11.2023 17:18:57
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 17:39:49
+ * Last Modified: 18.11.2023 14:32:43
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@
 void handleConnectionHandshake(char *serverHandshake) {
 
     // Send success header
-    Serial.print("+0ResourceMonitorClient-");
+    Serial.print("+ResourceMonitorClient-");
     Serial.print(version);
     Serial.println("#");
 

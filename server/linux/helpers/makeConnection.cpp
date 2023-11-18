@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 13:45:54
+ * Last Modified: 18.11.2023 14:32:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -27,7 +27,6 @@ using namespace std;
  */
 serial::Serial* makeConnection()
 {
-
     serial::Serial *_connection;
 
     // Get all used USB ports by iterating through /sys/class/tty/
@@ -73,7 +72,7 @@ serial::Serial* makeConnection()
             // Attempt to send client our header. A header starts with a +, normal data with a ~
             _connection->flushOutput(); // Clear anything that may be buffered
 
-            char headerStr[64] = "+0ResourceMonitorLinuxServer-";
+            char headerStr[64] = "+ResourceMonitorLinuxServer-";
             strcat(headerStr, version);
             strcat(headerStr, "#"); // strcat null terminates here because "#" is a null terminated string
 
@@ -108,7 +107,7 @@ serial::Serial* makeConnection()
                 continue;
             }
 
-            if (strstr(buffer, "+0ResourceMonitorClient") == NULL)
+            if (strstr(buffer, "+ResourceMonitorClient") == NULL)
             {
                 cout << "Received invalid response from client: " << buffer << endl;
                 _connection->close();
@@ -119,7 +118,7 @@ serial::Serial* makeConnection()
             // Compare version
             char versionStr[16] = "";
 
-            strncpy(versionStr, buffer + strlen("+0ResourceMonitorClient-"), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
+            strncpy(versionStr, buffer + strlen("+ResourceMonitorClient-"), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
             versionStr[strlen(versionStr) - 1] = '\0'; // Remove last char which is the end char #
 
             if (strcmp(versionStr, version) != 0)
@@ -151,5 +150,4 @@ serial::Serial* makeConnection()
     (void) closedir(dp);
 
     return _connection;
-
 }
