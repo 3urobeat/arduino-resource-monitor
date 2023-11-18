@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 14.11.2023 21:44:41
+ * Last Modified: 18.11.2023 15:14:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -21,6 +21,9 @@ using System.IO.Ports;
 
 public class MainClass
 {
+    public static SerialPort? serialConnection;
+
+
     // Entry point
     public static async Task Main(string[] args)
     {
@@ -54,7 +57,7 @@ public class MainClass
         // Find port our arduino is connected to
         Console.WriteLine("Searching for Arduino...");
 
-        SerialPort? serialConnection = await Connection.ConnectToArduino();
+        serialConnection = await Connection.ConnectToArduino();
 
         if (serialConnection == null)
         {
@@ -74,7 +77,7 @@ public class MainClass
             Measurements.GetMeasurements();
 
             // Send measurements
-            Communication.SendMeasurements(serialConnection);
+            Communication.SendMeasurements();
 
             // Delay next iteration for checkInterval ms
             await Task.Delay(Settings.checkInterval);

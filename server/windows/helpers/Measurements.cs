@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 18:13:01
  * Author: 3urobeat
  *
- * Last Modified: 15.11.2023 20:27:01
+ * Last Modified: 18.11.2023 15:14:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -177,30 +177,30 @@ public class Measurements
         // CPU Utilization in %
         if (CpuLoadSensor != null)
         {
-            MeasurementsCache.cpuLoad = ((int)CpuLoadSensor.Value).ToString() + "%";  // Ignore decimals
+            MeasurementsCache.cpuLoad = ((int)CpuLoadSensor.Value).ToString();  // Ignore decimals
         }
 
         // CPU Temperature in °C
         if (CpuTempSensor != null)
         {
-            MeasurementsCache.cpuTemp = ((int)CpuTempSensor.Value).ToString() + "°C"; // Ignore decimals
+            MeasurementsCache.cpuTemp = ((int)CpuTempSensor.Value).ToString(); // Ignore decimals
         }
 
         // RAM Usage in GB
         if (RamUsedSensor != null)
         {
-            MeasurementsCache.ramUsage = Math.Round((float)RamUsedSensor.Value, 1).ToString(".0") + "GB";
+            MeasurementsCache.ramUsage = Math.Round((float)RamUsedSensor.Value, 1).ToString(".0");
         }
 
         // GPU Utilization in %
         if (GpuLoadSensor != null)
         {
-            MeasurementsCache.gpuLoad = ((int)GpuLoadSensor.Value).ToString() + "%";
+            MeasurementsCache.gpuLoad = ((int)GpuLoadSensor.Value).ToString();
         }
 
         // GPU Core Temperature in °C
         if (GpuTempSensor != null) {
-            MeasurementsCache.gpuTemp = ((int)GpuTempSensor.Value).ToString() + "°C";
+            MeasurementsCache.gpuTemp = ((int)GpuTempSensor.Value).ToString();
         }
     }
 }

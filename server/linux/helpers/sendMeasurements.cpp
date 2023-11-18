@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:35:11
+ * Last Modified: 18.11.2023 14:46:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -32,7 +32,7 @@ enum measurementTypes {
 };
 
 
-// Store what we last sent to the Arduino to avoid unnecessary
+// Store what we last sent to the Arduino to avoid unnecessary refreshes
 namespace arduinoCache {
     char cpuLoad[dataSize] = "";
     char cpuTemp[dataSize] = "";
@@ -41,6 +41,7 @@ namespace arduinoCache {
     char gpuLoad[dataSize] = "";
     char gpuTemp[dataSize] = "";
 };
+
 
 chrono::time_point<chrono::steady_clock> lastWriteTime; // Track time to decide if we have to send an alive ping so the Arduino doesn't display the Lost Connection screen
 

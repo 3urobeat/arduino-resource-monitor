@@ -4,7 +4,7 @@
  * Created Date: 13.11.2023 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 14.11.2023 21:44:46
+ * Last Modified: 18.11.2023 15:14:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -15,93 +15,91 @@
  */
 
 
-using System.IO.Ports;
+using static MainClass;
 
 
 public class Communication
 {
-    // Stores what is currently displayed on the Arduino's screen. This allows us to check and avoid sending unnecessary data
-    private static string[] lcdCache = new string[4];
+    // Specifies the IDs which data messages are prefixed with to indicate their type
+    enum MeasurementTypes
+    {
+        pingID = 0, // Empty data message only used by server for preventing connection loss screen
+        cpuLoadID = 1,
+        cpuTempID = 2,
+        ramUsageID = 3,
+        //swapUsageID = 4, // Unsupported by this server
+        gpuLoadID = 5,
+        gpuTempID = 6
+    };
+
+
+    // Store what we last sent to the Arduino to avoid unnecessary refreshes
+    public class ArduinoCache
+    {
+        public static string cpuLoad = "";
+        public static string cpuTemp = "";
+        public static string ramUsage = "";
+        //public static string swapUsage = ""; // Unsupported by this server
+        public static string gpuLoad = "";
+        public static string gpuTemp = "";
+    }
+
 
     private static long lastWriteTime = 0;
 
 
-    // Positions a str with the last char to a fixed column by adding spaces and returns it
-    private static string StrFixedRight(string strContent, string strToAdd, int column)
+    // Sends the actual serial message
+    private static void SendSerial(string str, MeasurementTypes id)
     {
-        int spacesToAdd = (column - 1) - ((strContent.Length - 1) + (strToAdd.Length - 1));
+        serialConnection.Write($"~{(int) id}-{str}#");
 
-        for (int i = 0; i < spacesToAdd + 1; i++)
-        {
-            strContent += ' ';
-        }
+        LogDebug("Sending: " + $"~{(int) id}-{str}#");
 
-        return strContent + strToAdd;
+        lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
     }
 
 
     // Sends current measurements to the Arduino
-    public static async void SendMeasurements(SerialPort serialConnection)
+    public static void SendMeasurements()
     {
-        string tempStr;
-
-
-        // Send each row separately
-        for (int i = 0; i < 4; i++)
+        // Send what changed
+        if (ArduinoCache.cpuLoad != MeasurementsCache.cpuLoad)
         {
-            // Construct line to send. It consists of a data control char ~, the line number, the data and the end control char #
-            tempStr = $"~{i}";
+            SendSerial(MeasurementsCache.cpuLoad, MeasurementTypes.cpuLoadID);
+            ArduinoCache.cpuLoad = MeasurementsCache.cpuLoad;
+        }
 
-            switch (i)
-            {
-                case 0:
-                    tempStr += "Resource Monitor   ";
-                    break;
-                case 1:
-                    tempStr += "CPU:";
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.cpuLoad, 10);
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.cpuTemp, 18);
-                    break;
-                case 2:
-                    tempStr += "RAM:";
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.ramUsage, 11);
-                    break;
-                case 3:
-                    tempStr += "GPU:";
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.gpuLoad, 10);
-                    tempStr = StrFixedRight(tempStr, MeasurementsCache.gpuTemp, 18);
-                    break;
-            }
+        if (ArduinoCache.cpuTemp != MeasurementsCache.cpuTemp)
+        {
+            SendSerial(MeasurementsCache.cpuTemp, MeasurementTypes.cpuTempID);
+            ArduinoCache.cpuTemp = MeasurementsCache.cpuTemp;
+        }
 
-            tempStr = StrFixedRight(tempStr, " ", 20); // Fill blank space to make sure
-            tempStr += "#";
+        if (ArduinoCache.ramUsage != MeasurementsCache.ramUsage)
+        {
+            SendSerial(MeasurementsCache.ramUsage, MeasurementTypes.ramUsageID);
+            ArduinoCache.ramUsage = MeasurementsCache.ramUsage;
+        }
 
+        if (ArduinoCache.gpuLoad != MeasurementsCache.gpuLoad)
+        {
+            SendSerial(MeasurementsCache.gpuLoad, MeasurementTypes.gpuLoadID);
+            ArduinoCache.gpuLoad = MeasurementsCache.gpuLoad;
+        }
 
-            // Send string if it changed and update time & content tracking variables
-            if (tempStr != lcdCache[i])
-            {
-                MainClass.LogDebug("Sending: " + tempStr);
-
-                lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                lcdCache[i]   = tempStr;
-
-                serialConnection.Write(tempStr);
-            }
-
-
-            // Wait a moment to let the Arduino relax
-            await Task.Delay(250);
+        if (ArduinoCache.gpuTemp != MeasurementsCache.gpuTemp)
+        {
+            SendSerial(MeasurementsCache.gpuTemp, MeasurementTypes.gpuTempID);
+            ArduinoCache.gpuTemp = MeasurementsCache.gpuTemp;
         }
 
 
         // Check if we need to send an alive ping to keep the Arduino from switching to Connection Lost screen
         if (DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastWriteTime > 5000)
         {
-            MainClass.LogDebug("Sending alive ping!");
+            LogDebug("Sending alive ping!");
 
-            lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-            serialConnection.Write("~0Resource Monitor   #");
+            SendSerial("", MeasurementTypes.pingID);
         }
     }
 
