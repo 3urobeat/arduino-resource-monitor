@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 23:04:53
+ * Last Modified: 18.11.2023 13:27:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@ using namespace std;
 
 // Specifies the IDs which data messages are prefixed with to indicate their type
 enum measurementTypes {
-    titleRowID  = 0,
+    pingID      = 0, // Empty data message only used by server for preventing connection loss screen
     cpuLoadID   = 1,
     cpuTempID   = 2,
     ramUsageID  = 3,
@@ -113,7 +113,6 @@ void sendMeasurements()
     if (chrono::steady_clock::now() - lastWriteTime > chrono::milliseconds(5000)) {
         //cout << "Sending alive ping!" << endl;
 
-        connection->write("~0Resource Monitor    #");
-        lastWriteTime = chrono::steady_clock::now();
+        _sendSerial("", pingID);
     }
 }

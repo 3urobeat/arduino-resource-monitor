@@ -4,7 +4,7 @@
  * Created Date: 17.11.2023 17:48:54
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 20:42:12
+ * Last Modified: 18.11.2023 13:29:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,7 +20,7 @@
 
 // Specifies the IDs which data messages are prefixed with to indicate their type
 enum measurementTypes {
-    titleRowID  = 0,
+    pingID      = 0, // Empty data message only used by server for preventing connection loss screen
     cpuLoadID   = 1,
     cpuTempID   = 2,
     ramUsageID  = 3,
@@ -32,7 +32,6 @@ enum measurementTypes {
 
 // Stores all current measurements
 namespace measurementsCache {
-    char titleRow[32] = "";
     char cpuLoad[8] = "";
     char cpuTemp[8] = "";
     char ramUsage[16] = "";
@@ -56,9 +55,6 @@ void handleDataInput(char *str) {
     char *registerP = nullptr; // Point to register so we only need to
 
     switch (typeChar) {
-        case titleRowID:
-            registerP = measurementsCache::titleRow;
-            break;
         case cpuLoadID:
             registerP = measurementsCache::cpuLoad;
             break;
@@ -78,6 +74,7 @@ void handleDataInput(char *str) {
             registerP = measurementsCache::gpuTemp;
             break;
         default:
+            lcd.centerPrint("Unsupported type!", 0, true);
             return; // Unsupported type
             break;
     }
@@ -87,9 +84,8 @@ void handleDataInput(char *str) {
     strncpy(registerP, str + 2, sizeLim); // Copy into the correct register, offset by 2 to skip control char and type id
 
 
-    // Clear display if splash screen is currently shown
-    if (displayingSplashScreen) lcd.clear();
 
+    // Update connection loss check vars
     timeSinceLastSignal = 0; // Reset time since last signal
     displayingSplashScreen = false;
 
