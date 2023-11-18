@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 22:36:08
+ * Last Modified: 18.11.2023 14:35:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,13 +18,14 @@
 #include "helpers.h"
 
 
+// Stores all current measurements
 namespace measurements {
-    char cpuLoad[8] = "";
-    char cpuTemp[8] = "";
-    char ramUsage[16] = "";
-    char swapUsage[16] = "";
-    char gpuLoad[8] = "";
-    char gpuTemp[8] = "";
+    char cpuLoad[dataSize] = "";
+    char cpuTemp[dataSize] = "";
+    char ramUsage[dataSize] = "";
+    char swapUsage[dataSize] = "";
+    char gpuLoad[dataSize] = "";
+    char gpuTemp[dataSize] = "";
 };
 
 

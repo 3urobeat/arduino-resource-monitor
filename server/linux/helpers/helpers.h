@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 22:36:13
+ * Last Modified: 18.11.2023 14:34:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,13 +20,16 @@
 #include "server.h"
 
 
+#define dataSize 16
+
+// Stores all current measurements
 namespace measurements {
-    extern char cpuLoad[8];
-    extern char cpuTemp[8];
-    extern char ramUsage[16];
-    extern char swapUsage[16];
-    extern char gpuLoad[8];
-    extern char gpuTemp[8];
+    extern char cpuLoad[dataSize];
+    extern char cpuTemp[dataSize];
+    extern char ramUsage[dataSize];
+    extern char swapUsage[dataSize];
+    extern char gpuLoad[dataSize];
+    extern char gpuTemp[dataSize];
 };
 
 extern void getMeasurements();
