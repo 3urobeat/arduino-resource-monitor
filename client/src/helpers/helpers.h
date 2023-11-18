@@ -4,7 +4,7 @@
  * Created Date: 17.11.2023 17:18:28
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 21:51:31
+ * Last Modified: 18.11.2023 13:27:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,6 @@
 
 // Stores all current measurements
 namespace measurementsCache {
-    extern char titleRow[32];
     extern char cpuLoad[8];
     extern char cpuTemp[8];
     extern char ramUsage[16];
