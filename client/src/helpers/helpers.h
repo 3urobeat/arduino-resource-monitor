@@ -4,7 +4,7 @@
  * Created Date: 17.11.2023 17:18:28
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:29:23
+ * Last Modified: 18.11.2023 15:31:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,16 +20,16 @@
 #include "main.h"
 
 
-#define dataSize 16
+#define dataSize 16 // Intentionally larger than in the server code because we need to store the units here as well
 
 // Stores all current measurements
 namespace measurementsCache {
-    extern char cpuLoad[dataSize];
-    extern char cpuTemp[dataSize];
-    extern char ramUsage[dataSize];
-    extern char swapUsage[dataSize];
-    extern char gpuLoad[dataSize];
-    extern char gpuTemp[dataSize];
+    extern char cpuLoad[dataSize];   // in %
+    extern char cpuTemp[dataSize];   // in °C
+    extern char ramUsage[dataSize];  // in GB
+    extern char swapUsage[dataSize]; // in GB
+    extern char gpuLoad[dataSize];   // in %
+    extern char gpuTemp[dataSize];   // in °C
 };
 
 

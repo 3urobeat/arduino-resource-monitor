@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:34:39
+ * Last Modified: 18.11.2023 15:17:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,7 +20,7 @@
 #include "server.h"
 
 
-#define dataSize 16
+#define dataSize 8
 
 // Stores all current measurements
 namespace measurements {
