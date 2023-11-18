@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:58:51
  * Author: 3urobeat
  *
- * Last Modified: 15.11.2023 20:54:18
+ * Last Modified: 18.11.2023 14:32:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -89,7 +89,7 @@ public class Connection
 
 
                 // Attempt to send client our header. A header starts with a +, normal data with a ~
-                _serialPort.WriteLine($"+0ResourceMonitorWindowsServer-v{Settings.version}#");
+                _serialPort.WriteLine($"+ResourceMonitorWindowsServer-v{Settings.version}#");
 
                 // Attempt to read response. Stop if connection got closed or buffer is exceeded. arduinoReplyTimeout has been set above
                 int offset = 0;
@@ -104,7 +104,7 @@ public class Connection
                 // Check the response and compare version
                 string responseStr = new string(buffer); // Construct new string using the buffer char array
 
-                if (responseStr.Length == 0 || !responseStr.StartsWith("+0ResourceMonitorClient")) // Check response
+                if (responseStr.Length == 0 || !responseStr.StartsWith("+ResourceMonitorClient")) // Check response
                 {
                     throw new Exception("Received invalid response from client: " + responseStr);
                 }
