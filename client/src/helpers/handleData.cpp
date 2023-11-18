@@ -1,10 +1,10 @@
 /*
  * File: handleData.cpp
- * Project: steam-comment-service-bot
+ * Project: arduino-resource-monitor
  * Created Date: 17.11.2023 17:48:54
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 13:29:27
+ * Last Modified: 18.11.2023 14:29:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -32,12 +32,12 @@ enum measurementTypes {
 
 // Stores all current measurements
 namespace measurementsCache {
-    char cpuLoad[8] = "";
-    char cpuTemp[8] = "";
-    char ramUsage[16] = "";
-    char swapUsage[16] = "";
-    char gpuLoad[8] = "";
-    char gpuTemp[8] = "";
+    char cpuLoad[dataSize] = "";
+    char cpuTemp[dataSize] = "";
+    char ramUsage[dataSize] = "";
+    char swapUsage[dataSize] = "";
+    char gpuLoad[dataSize] = "";
+    char gpuTemp[dataSize] = "";
 };
 
 
@@ -47,12 +47,9 @@ void handleDataInput(char *str) {
     // Get measurement type by converting char to int: https://stackoverflow.com/a/868508
     int typeChar = str[1] - '0';
 
-    // Specify limit for removing trailing char
-    uint8_t sizeLim = strlen(str) - 1;
-
 
     // Write into the correct register
-    char *registerP = nullptr; // Point to register so we only need to
+    char *registerP = NULL; // Point to register so we can dedup the code below
 
     switch (typeChar) {
         case cpuLoadID:
@@ -74,15 +71,12 @@ void handleDataInput(char *str) {
             registerP = measurementsCache::gpuTemp;
             break;
         default:
-            lcd.centerPrint("Unsupported type!", 0, true);
             return; // Unsupported type
             break;
     }
 
-    if (sizeLim > sizeof(*registerP) - 1) sizeLim = sizeof(*registerP) - 1; // Check if input is longer than the register's size and prevent overflow
-
-    strncpy(registerP, str + 2, sizeLim); // Copy into the correct register, offset by 2 to skip control char and type id
-
+    // Copy into the correct register, offset by 3 to skip control char, separator and type id. Limit by 16 to prevent overflow.
+    strncpy(registerP, str + 3, dataSize);
 
 
     // Update connection loss check vars
