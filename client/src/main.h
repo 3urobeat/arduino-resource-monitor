@@ -4,7 +4,7 @@
  * Created Date: 05.02.2022 12:22:33
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 18:27:39
+ * Last Modified: 18.11.2023 14:32:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -26,7 +26,7 @@
 
 
 // Config variables
-#define version "v0.6.0"
+#define version "v0.6.1"
 
 #define maxcol 20
 #define maxrow 4
