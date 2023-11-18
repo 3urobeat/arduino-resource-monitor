@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:35:32
+ * Last Modified: 18.11.2023 15:19:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -70,26 +70,24 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
 void getMeasurements()
 {
     // Clear old data
-    memset(measurements::cpuLoad,   0,  8);
-    memset(measurements::cpuTemp,   0,  8);
-    memset(measurements::ramUsage,  0, 16);
-    memset(measurements::swapUsage, 0, 16);
-    memset(measurements::gpuLoad,   0,  8);
-    memset(measurements::gpuTemp,   0,  8);
+    memset(measurements::cpuLoad,   0, dataSize);
+    memset(measurements::cpuTemp,   0, dataSize);
+    memset(measurements::ramUsage,  0, dataSize);
+    memset(measurements::swapUsage, 0, dataSize);
+    memset(measurements::gpuLoad,   0, dataSize);
+    memset(measurements::gpuTemp,   0, dataSize);
 
 
     // Get CPU stats
     getStdoutFromCommand(measurements::cpuLoad, "mpstat 1 1 | grep -E -v '^Linux|^$' | awk -v c='%idle' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i)}' | head -2 | tail -1 | awk '{print 100-$1}'"); // using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
     gcvt(round(atof(measurements::cpuLoad)), 3, measurements::cpuLoad); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
-    strcat(measurements::cpuLoad, "%");
 
     getStdoutFromCommand(measurements::cpuTemp, cpuTempCmd);
     gcvt(round(atof(measurements::cpuTemp)), 3, measurements::cpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
-    strcat(measurements::cpuTemp, "°C");
 
 
     // Get RAM and Swap usage
-    char ramUsageTemp[16] = "";
+    char ramUsageTemp[dataSize] = "";
     getStdoutFromCommand(ramUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
 
     for (int i = 0; i < 4; i++) { // Use a stupid for loop to avoid doing dtoa() stuff
@@ -102,10 +100,9 @@ void getMeasurements()
             break;
         }
     }
-    strcat(measurements::ramUsage, "GB"); // Concat unit
 
 
-    char swapUsageTemp[16] = "";
+    char swapUsageTemp[dataSize] = "";
     getStdoutFromCommand(swapUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
 
     for (int i = 0; i < 4; i++) { // Use a stupid for loop to avoid doing dtoa() stuff
@@ -118,26 +115,21 @@ void getMeasurements()
             break;
         }
     }
-    strcat(measurements::swapUsage, "GB"); // Concat unit
 
 
     // Get nvidia or amd gpu load and temp stats
     #if gpuType == 0
         getStdoutFromCommand(measurements::gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
-        strcat(measurements::gpuLoad, "%");
 
         getStdoutFromCommand(measurements::gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
-        strcat(measurements::gpuTemp, "°C");
     #elif gpuType == 1
         getStdoutFromCommand(measurements::gpuLoad, gpuUtilCmd);
         gcvt(round(atof(measurements::gpuLoad)), 3, measurements::gpuLoad); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
-        strcat(measurements::gpuLoad, "%");
 
         getStdoutFromCommand(measurements::gpuTemp, gpuTempCmd);
         gcvt(round(atof(measurements::gpuTemp)), 3, measurements::gpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
-        strcat(measurements::gpuTemp, "°C");
     #else
-        strcpy(measurements::gpuLoad, "/%");
-        strcpy(measurements::gpuTemp, "/°C");
+        strcpy(measurements::gpuLoad, "/");
+        strcpy(measurements::gpuTemp, "/");
     #endif
 }

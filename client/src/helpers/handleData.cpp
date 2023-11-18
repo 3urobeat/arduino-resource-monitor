@@ -4,7 +4,7 @@
  * Created Date: 17.11.2023 17:48:54
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:29:34
+ * Last Modified: 18.11.2023 15:30:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -47,6 +47,8 @@ void handleDataInput(char *str) {
     // Get measurement type by converting char to int: https://stackoverflow.com/a/868508
     int typeChar = str[1] - '0';
 
+    char unit[4] = "";
+
 
     // Write into the correct register
     char *registerP = NULL; // Point to register so we can dedup the code below
@@ -54,29 +56,36 @@ void handleDataInput(char *str) {
     switch (typeChar) {
         case cpuLoadID:
             registerP = measurementsCache::cpuLoad;
+            strcpy(unit, "%");
             break;
         case cpuTempID:
             registerP = measurementsCache::cpuTemp;
+            strcpy(unit, "°C");
             break;
         case ramUsageID:
             registerP = measurementsCache::ramUsage;
+            strcpy(unit, "GB");
             break;
         case swapUsageID:
             registerP = measurementsCache::swapUsage;
+            strcpy(unit, "GB");
             break;
         case gpuLoadID:
             registerP = measurementsCache::gpuLoad;
+            strcpy(unit, "%");
             break;
         case gpuTempID:
             registerP = measurementsCache::gpuTemp;
+            strcpy(unit, "°C");
             break;
         default:
             return; // Unsupported type
             break;
     }
 
-    // Copy into the correct register, offset by 3 to skip control char, separator and type id. Limit by 16 to prevent overflow.
-    strncpy(registerP, str + 3, dataSize);
+    // Copy into the correct register, offset by 3 to skip control char, separator and type id. Limit by 16 - unit size to prevent overflow.
+    strncpy(registerP, str + 3, dataSize - sizeof(unit));
+    strcat(registerP, unit);
 
 
     // Update connection loss check vars
