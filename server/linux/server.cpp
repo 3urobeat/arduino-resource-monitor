@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 17.11.2023 21:41:57
+ * Last Modified: 18.12.2023 12:39:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -36,7 +36,6 @@ char gpuTempCmd[128]; // AMD GPU only
 serial::Serial *connection; // Make a connection
 
 
-
 // Entry point
 int main()
 {
@@ -49,16 +48,6 @@ int main()
     if (checkInterval < 1000)
     {
         printf("Error: Setting checkInterval is too low! Please set it to at least 1000!\n");
-        exit(1);
-    }
-
-
-    // Find and establish connection to Arduino
-    connection = makeConnection();
-
-    if (connection == NULL)
-    {
-        printf("Couldn't connect! Exiting...\n");
         exit(1);
     }
 
@@ -77,11 +66,29 @@ int main()
     strcat(gpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'");
 
 
+    // Begin
+    connect();
+}
+
+
+// Attempts to find & connect to device and starts to measure & send data
+void connect()
+{
+    // Find and establish connection to Arduino
+    connection = makeConnection();
+
+    if (connection == NULL)
+    {
+        printf("Couldn't connect! Exiting...\n");
+        exit(1);
+    }
+
+
     // Start getting and sending sensor data
     cout << "\nStarting to send data..." << endl;
 
-    // Run intervalEvent() every checkInterval ms
-    while (true) {
+    // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
+    while (connection) {
         // Get current measurements
         getMeasurements();
 
@@ -92,4 +99,24 @@ int main()
         auto x = chrono::steady_clock::now() + chrono::milliseconds(checkInterval);
         this_thread::sleep_until(x);
     }
+}
+
+
+// Closes connection to the device and attempts to reconnect
+void reconnect()
+{
+    cout << "\nAttempting to reconnect in 5 seconds..." << endl;
+
+    this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(5000));
+
+    // Close connection if still open
+    if (connection->isOpen())
+    {
+        connection->close();
+    }
+
+    delete connection;
+    connection = nullptr;
+
+    connect();
 }
