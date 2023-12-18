@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 12:55:04
+ * Last Modified: 18.12.2023 14:51:50
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -31,6 +31,8 @@ using namespace std;
 char cpuTempCmd[128]; // For constructing the cpuTempCmd once on start
 char gpuUtilCmd[128]; // AMD GPU only
 char gpuTempCmd[128]; // AMD GPU only
+
+int connectionRetry = 0;
 
 
 serial::Serial *connection; // Make a connection
@@ -74,13 +76,27 @@ int main()
 // Attempts to find & connect to device and starts to measure & send data
 void connect()
 {
+    connectionRetry++;
+
     // Find and establish connection to Arduino
     connection = makeConnection();
 
     if (connection == NULL)
     {
-        printf("Couldn't connect! Exiting...\n");
-        exit(1);
+        if (connectionRetry > connectionRetryAmount)
+        {
+            printf("Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
+            exit(1);
+        }
+
+        int delay = connectionRetryTimeout * connectionRetryMultiplier * (connectionRetry + 1);
+
+        printf("Couldn't connect! Attempting again in %d seconds (attempt %d/%d)...\n", delay / 1000, connectionRetry + 1, connectionRetryAmount);
+
+        this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(delay));
+        connect();
+
+        return;
     }
 
 
@@ -118,8 +134,9 @@ void reconnect()
     delete connection;
     connection = nullptr;
 
-    // Reset data cache
+    // Reset data cache and connection tries
     resetCache();
+    connectionRetry = 0;
 
     connect();
 }

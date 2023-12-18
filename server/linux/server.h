@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 12:29:21
+ * Last Modified: 18.12.2023 13:07:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -28,7 +28,10 @@
 
 
 // Configuration variables
-#define arduinoReplyTimeout 5000
+#define arduinoReplyTimeout 5000         // How long to wait for an answer from the USB port in ms before giving up
+#define connectionRetryTimeout 5000      // How long to wait between attempts to connect again in ms after all USB ports have failed
+#define connectionRetryAmount 10         // How often to retry finding a connection
+#define connectionRetryMultiplier 0.5    // retry * connectionRetryTimeout * connectionRetryMultiplier
 
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
 #define cpuTempSensor "k10temp-pci-00c3" // sensors entry for your CPU temp
