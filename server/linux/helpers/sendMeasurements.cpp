@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 12:37:47
+ * Last Modified: 18.12.2023 12:50:37
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -124,4 +124,18 @@ void sendMeasurements()
 
         _sendSerial("", pingID);
     }
+}
+
+
+/**
+ * Resets the arduinoCache namespace. This causes sendMeasurements() to resend every measurement.
+ */
+void resetCache()
+{
+    memset(arduinoCache::cpuLoad,   0, dataSize);
+    memset(arduinoCache::cpuTemp,   0, dataSize);
+    memset(arduinoCache::ramUsage,  0, dataSize);
+    memset(arduinoCache::swapUsage, 0, dataSize);
+    memset(arduinoCache::gpuLoad,   0, dataSize);
+    memset(arduinoCache::gpuTemp,   0, dataSize);
 }

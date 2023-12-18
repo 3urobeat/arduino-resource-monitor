@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 12:39:15
+ * Last Modified: 18.12.2023 12:55:04
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -117,6 +117,9 @@ void reconnect()
 
     delete connection;
     connection = nullptr;
+
+    // Reset data cache
+    resetCache();
 
     connect();
 }

@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 15:17:52
+ * Last Modified: 18.12.2023 12:51:17
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -37,3 +37,5 @@ extern void getMeasurements();
 extern serial::Serial* makeConnection();
 
 extern void sendMeasurements();
+
+extern void resetCache();
