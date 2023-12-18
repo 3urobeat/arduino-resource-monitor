@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:32:24
+ * Last Modified: 18.12.2023 14:56:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -138,11 +138,12 @@ serial::Serial* makeConnection()
             cout << "Failed to connect to device '" << port << "': " << e.what() << endl;
 
             // Close connection if still open
-            if (_connection->isOpen())
+            if (_connection && _connection->isOpen())
             {
                 _connection->close();
             }
 
+            delete _connection;
             _connection = nullptr;
         }
     }
