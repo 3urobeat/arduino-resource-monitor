@@ -135,7 +135,7 @@ serial::Serial* makeConnection()
         }
         catch(const std::exception& e)
         {
-            cout << "Failed to connect to device '" << port << "': " << e.what() << endl;
+            cerr << "Failed to connect to device '" << port << "': " << e.what() << endl;
 
             // Close connection if still open
             if (_connection && _connection->isOpen())

@@ -56,5 +56,5 @@ extern char gpuTempCmd[128];
 
 extern serial::Serial *connection;
 
-void connect();
-void reconnect();
+extern void connect();
+extern void reconnect();
