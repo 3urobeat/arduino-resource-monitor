@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:33:03
+ * Last Modified: 18.12.2023 12:29:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -52,3 +52,6 @@ extern char gpuUtilCmd[128];
 extern char gpuTempCmd[128];
 
 extern serial::Serial *connection;
+
+void connect();
+void reconnect();
