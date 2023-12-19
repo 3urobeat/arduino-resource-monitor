@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 16:28:12
+ * Last Modified: 19.12.2023 16:38:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -41,6 +41,9 @@ serial::Serial *connection; // Make a connection
 // Entry point
 int main()
 {
+    // Set title and print welcome messages
+    printf("\033]0;arduino-resource-monitor Server for Linux %s by 3urobeat\007", version);
+
     printf("arduino-resource-monitor by 3urobeat\n");
     printf("Server for Linux %s starting...\n\n", version);
 
