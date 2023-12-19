@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 13:10:26
+ * Last Modified: 19.12.2023 13:51:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -87,7 +87,7 @@ public class MainClass
                 return;
             }
 
-            int delay = Settings.connectionRetryTimeout * ((int) (Settings.connectionRetryMultiplier * (connectionRetry + 1)));
+            int delay = (int) (Settings.connectionRetryMultiplier * Settings.connectionRetryTimeout) * (connectionRetry + 1);
 
             Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{Settings.connectionRetryAmount})...");
 
