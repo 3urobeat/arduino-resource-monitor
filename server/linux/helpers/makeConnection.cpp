@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 15:32:57
+ * Last Modified: 19.12.2023 15:49:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -77,7 +77,7 @@ serial::Serial* makeConnection()
 
             if (!_connection->isOpen())
             {
-                cout << "Failed to connect to device '" << port << "': Port did not open" << endl;
+                printf("Failed to connect to device '%s': Port did not open\n", port);
 
                 _connection = nullptr;
                 continue;
@@ -116,7 +116,7 @@ serial::Serial* makeConnection()
             // Check the response
             if (strlen(buffer) == 0)
             {
-                cout << "Received no response from client!" << endl;
+                printf("Received no response from client!\n");
                 _connection->close();
                 _connection = nullptr;
                 continue;
@@ -124,7 +124,7 @@ serial::Serial* makeConnection()
 
             if (strstr(buffer, "+ResourceMonitorClient") == NULL)
             {
-                cout << "Received invalid response from client: " << buffer << endl;
+                printf("Received invalid response from client: %s", buffer);
                 _connection->close();
                 _connection = nullptr;
                 continue;
@@ -138,7 +138,7 @@ serial::Serial* makeConnection()
 
             if (strcmp(versionStr, version) != 0)
             {
-                cout << "Version mismatch! Client runs on " << versionStr << " but we are on " << version << "!" << endl;
+                printf("Version mismatch! Client runs on %s but we are on %s!", versionStr, version);
                 _connection->close();
                 _connection = nullptr;
                 continue;
@@ -150,7 +150,7 @@ serial::Serial* makeConnection()
         }
         catch(const std::exception& e)
         {
-            cerr << "Failed to connect to device '" << port << "': " << e.what() << endl;
+            printf("Failed to connect to device '%s': %s", port, e.what());
 
             // Close connection if still open
             if (_connection && _connection->isOpen())

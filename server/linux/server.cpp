@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 14:57:21
+ * Last Modified: 19.12.2023 16:28:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -41,8 +41,8 @@ serial::Serial *connection; // Make a connection
 // Entry point
 int main()
 {
-    cout << "arduino-resource-monitor by 3urobeat" << endl;
-    cout << "Server for Linux " << version << " starting...\n" << endl;
+    printf("arduino-resource-monitor by 3urobeat\n");
+    printf("Server for Linux %s starting...\n\n", version);
 
 
     // Validate settings
@@ -78,7 +78,7 @@ void connect()
     connectionRetry++;
 
     // Find and establish connection to Arduino
-    cout << "Searching for Arduino..." << endl;
+    printf("Searching for Arduino...\n");
 
     connection = makeConnection();
 
@@ -104,8 +104,8 @@ void connect()
 
 
     // Start getting and sending sensor data
-    cout << "Successfully connected to Arduino on port '" << connection->getPort() << "'!" << endl;
-    cout << "\nStarting to send data..." << endl;
+    printf("Successfully connected to Arduino on port '%s'!\n", connection->getPort().c_str());
+    printf("\nStarting to send data...\n");
 
     // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
     while (connection)
@@ -125,7 +125,7 @@ void connect()
 // Closes connection to the device and attempts to reconnect
 void reconnect()
 {
-    cout << "\nAttempting to reconnect in 5 seconds..." << endl;
+    printf("\nAttempting to reconnect in 5 seconds...\n");
 
     // Close connection if still open
     if (connection->isOpen())

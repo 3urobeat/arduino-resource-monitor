@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 14:51:27
+ * Last Modified: 19.12.2023 15:49:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -77,7 +77,7 @@ void _sendSerial(char *str, measurementTypes id)
     }
     catch(const std::exception& e) // Handle big & spooky exception, for example when connection is lost
     {
-        cerr << "Failed to send data to device: " << e.what() << endl;
+        printf("Failed to send data to device: %s", e.what());
         reconnect();
     }
 }
