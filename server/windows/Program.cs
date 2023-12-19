@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 15:14:57
+ * Last Modified: 19.12.2023 12:49:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -111,6 +111,9 @@ public class MainClass
         }
 
         serialConnection = null;
+
+        // Reset data cache
+        Communication.ResetCache();
 
         System.Threading.Thread.Sleep(5000);
 
