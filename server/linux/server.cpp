@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 14:01:21
+ * Last Modified: 19.12.2023 14:57:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -78,7 +78,7 @@ void connect()
     connectionRetry++;
 
     // Find and establish connection to Arduino
-    cout << "Searching for eligible devices..." << endl;
+    cout << "Searching for Arduino..." << endl;
 
     connection = makeConnection();
 

@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 14:56:05
+ * Last Modified: 19.12.2023 15:32:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -40,7 +40,10 @@ serial::Serial* makeConnection()
     }
 
 
-    // Iterate through all ttyUSB* files
+    // Collect all valid ttyUSB* files
+    char usbPorts[32][16] = {};
+    int usbPortsFound = 0;
+
     while ((ep = readdir(dp)) != NULL)
     {
         // Ignore port if not an USB port
@@ -49,10 +52,22 @@ serial::Serial* makeConnection()
         char port[16] = "/dev/";
         strncat(port, ep->d_name, sizeof(port) - 1);
 
-        cout << "Attempting to connect on port '" << port << "', timeout is set to " << arduinoReplyTimeout << "ms..." << endl;
+        strncpy(usbPorts[usbPortsFound], port, sizeof(port) - 1);
+        usbPortsFound++;
+    }
+
+    (void) closedir(dp);
+
+    printf("Found %d eligible device(s)...\n", usbPortsFound);
 
 
-        // Attempt to connect to this port
+    // Attempt to connect to all ports
+    for (int i = 0; i < usbPortsFound; i++)
+    {
+        char *port = usbPorts[i];
+
+        logDebug("Attempting to connect on port '%s', timeout is set to %dms...", port, arduinoReplyTimeout);
+
         try
         {
             // Open a new connection with timeout set in config
@@ -130,7 +145,7 @@ serial::Serial* makeConnection()
             }
 
 
-            cout << "Received valid response from client: " << buffer << endl;
+            logDebug("Received valid response from client: %s", buffer);
             break;
         }
         catch(const std::exception& e)
@@ -147,8 +162,6 @@ serial::Serial* makeConnection()
             _connection = nullptr;
         }
     }
-
-    (void) closedir(dp);
 
     return _connection;
 }

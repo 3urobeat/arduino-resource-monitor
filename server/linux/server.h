@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 13:07:39
+ * Last Modified: 19.12.2023 15:33:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -39,6 +39,8 @@
 #define gpuBus "3"                       // If you are using an AMD GPU and you have multiple GPUs you need to specify the bus ID of the GPU to display.
 #define gpuTempSensor "amdgpu-pci-0300"  // sensors entry for your AMD GPU temp (ignore if you have an NVIDIA card)
 
+#define printDebug 0
+
 
 // Do not modify
 #define displayCols 20
@@ -58,3 +60,12 @@ extern serial::Serial *connection;
 
 extern void connect();
 extern void reconnect();
+
+// Logs debug messages if enabled
+#if printDebug
+    #define logDebug(...) \
+        printf(__VA_ARGS__, NULL); \
+        printf("\n");
+#else
+    #define logDebug(...) ;
+#endif
