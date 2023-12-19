@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 12:49:00
+ * Last Modified: 19.12.2023 13:10:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,6 +22,8 @@ using System.IO.Ports;
 public class MainClass
 {
     public static SerialPort? serialConnection;
+
+    private static int connectionRetry = 0;
 
 
     // Entry point
@@ -68,6 +70,8 @@ public class MainClass
     // Attempts to find & connect to device and starts to measure & send data
     public static async Task Connect()
     {
+        connectionRetry++;
+
         // Find port our arduino is connected to
         Console.WriteLine("Searching for Arduino...");
 
@@ -75,11 +79,25 @@ public class MainClass
 
         if (serialConnection == null)
         {
-            Console.WriteLine("Couldn't connect! Exiting in 5 seconds...");
-            System.Threading.Thread.Sleep(5000);
-            System.Environment.Exit(1);
+            if (connectionRetry > Settings.connectionRetryAmount)
+            {
+                Console.WriteLine($"Couldn't connect after {connectionRetry} attempts! Exiting in 5 seconds...");
+                System.Threading.Thread.Sleep(5000);
+                System.Environment.Exit(1);
+                return;
+            }
+
+            int delay = Settings.connectionRetryTimeout * ((int) (Settings.connectionRetryMultiplier * (connectionRetry + 1)));
+
+            Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{Settings.connectionRetryAmount})...");
+
+            System.Threading.Thread.Sleep(delay);
+            Connect();
+
             return;
         }
+
+        Communication.ResetCache();
 
         Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
         Console.WriteLine("\nStarting to send data...");
@@ -112,10 +130,10 @@ public class MainClass
 
         serialConnection = null;
 
-        // Reset data cache
-        Communication.ResetCache();
-
         System.Threading.Thread.Sleep(5000);
+
+        // Reset connection tries
+        connectionRetry = 0;
 
         Connect();
     }

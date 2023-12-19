@@ -4,7 +4,7 @@
  * Created Date: 13.11.2023 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 12:49:07
+ * Last Modified: 19.12.2023 13:10:29
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -117,6 +117,8 @@ public class Communication
     // Resets the ArduinoCache storage. This causes SendMeasurements() to resend every measurement.
     public static void ResetCache()
     {
+        LogDebug("Resetting ArduinoCache...");
+
         ArduinoCache.cpuLoad = "";
         ArduinoCache.cpuTemp = "";
         ArduinoCache.ramUsage = "";
