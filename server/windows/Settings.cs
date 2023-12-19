@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 13:10:15
+ * Last Modified: 19.12.2023 16:36:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,7 +17,7 @@
 
 public class Settings
 {
-    public const string version = "0.6.1";
+    public const string version = "0.6.2";
 
 
     // Configuration variables
