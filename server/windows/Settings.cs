@@ -4,7 +4,7 @@
  * Created Date: 12.11.2023 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 15:32:28
+ * Last Modified: 19.12.2023 13:10:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,10 @@ public class Settings
 
     // Configuration variables
     public const int baud = 9600;
-    public const int arduinoReplyTimeout = 2500; // How long we should wait for a response on initial connection before timing out
+    public const int arduinoReplyTimeout = 5000;         // How long to wait for an answer from the USB port in ms before giving up
+    public const int connectionRetryTimeout = 5000;      // How long to wait between attempts to connect again in ms after all USB ports have failed
+    public const int connectionRetryAmount = 10;         // How often to retry finding a connection
+    public const double connectionRetryMultiplier = 0.5; // retry * connectionRetryTimeout * connectionRetryMultiplier
 
     public const int checkInterval = 1000; // How often new measurements should be made, min 1000ms (1 second)
     public const int gpuID = 1;            // Set an index here if you've got multiple GPUs. Check the Task Manager Performance tab for reference
