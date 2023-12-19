@@ -25,7 +25,7 @@ public class MainClass
 
 
     // Entry point
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         // Force CultureInfo to en-US to guarantee the same number formatting on different devices
         Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
@@ -54,6 +54,20 @@ public class MainClass
         Measurements.FindSensors();
 
 
+        // Begin
+        Connect();
+
+        // So uhhh, this is the most clever thing you'll ever see:
+        // This while loop keeps the process alive. Calling async functions without await would cause the process to exit even though the async function is still doing something.
+        // Since I don't want to complicate the whole process flow with awaits (as Connect() is also called from try catch in Communication.cs), this should be okay.
+        // (I am aware of how async await works and how to use it, this is a "hack" which I'm 100% ok with in this project)
+        while (true) { }
+    }
+
+
+    // Attempts to find & connect to device and starts to measure & send data
+    public static async Task Connect()
+    {
         // Find port our arduino is connected to
         Console.WriteLine("Searching for Arduino...");
 
@@ -70,8 +84,8 @@ public class MainClass
         Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
         Console.WriteLine("\nStarting to send data...");
 
-        // Get new measurements every checkInterval ms and send them to the Arduino
-        while (true)
+        // Get new measurements every checkInterval ms and send them to the Arduino as long as a connection exists
+        while (serialConnection != null)
         {
             // Get new measurements
             Measurements.GetMeasurements();
@@ -82,6 +96,25 @@ public class MainClass
             // Delay next iteration for checkInterval ms
             await Task.Delay(Settings.checkInterval);
         }
+    }
+
+
+    // Closes connection to the device and attempts to reconnect
+    public static void Reconnect()
+    {
+        Console.WriteLine("\nAttempting to reconnect in 5 seconds...");
+
+        // Close serial port if still open
+        if (serialConnection != null && serialConnection.IsOpen)
+        {
+            serialConnection.Close();
+        }
+
+        serialConnection = null;
+
+        System.Threading.Thread.Sleep(5000);
+
+        Connect();
     }
 
 

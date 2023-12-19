@@ -51,11 +51,21 @@ public class Communication
     // Sends the actual serial message
     private static void SendSerial(string str, MeasurementTypes id)
     {
-        serialConnection.Write($"~{(int) id}-{str}#");
+        try
+        {
+            if (serialConnection == null) return;
 
-        LogDebug("Sending: " + $"~{(int) id}-{str}#");
+            serialConnection.Write($"~{(int)id}-{str}#");
 
-        lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            LogDebug("Sending: " + $"~{(int)id}-{str}#");
+
+            lastWriteTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to send data to device: " + e.Message);
+            Reconnect();
+        }
     }
 
 
