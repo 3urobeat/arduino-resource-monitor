@@ -4,7 +4,7 @@
  * Created Date: 13.11.2023 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 15:14:44
+ * Last Modified: 19.12.2023 12:49:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -111,6 +111,17 @@ public class Communication
 
             SendSerial("", MeasurementTypes.pingID);
         }
+    }
+
+
+    // Resets the ArduinoCache storage. This causes SendMeasurements() to resend every measurement.
+    public static void ResetCache()
+    {
+        ArduinoCache.cpuLoad = "";
+        ArduinoCache.cpuTemp = "";
+        ArduinoCache.ramUsage = "";
+        ArduinoCache.gpuLoad = "";
+        ArduinoCache.gpuTemp = "";
     }
 
 }
