@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 14:57:18
+ * Last Modified: 19.12.2023 14:01:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
@@ -43,7 +43,6 @@ int main()
 {
     cout << "arduino-resource-monitor by 3urobeat" << endl;
     cout << "Server for Linux " << version << " starting...\n" << endl;
-    cout << "Searching for eligible devices..." << endl;
 
 
     // Validate settings
@@ -79,6 +78,8 @@ void connect()
     connectionRetry++;
 
     // Find and establish connection to Arduino
+    cout << "Searching for eligible devices..." << endl;
+
     connection = makeConnection();
 
     if (connection == NULL)
@@ -89,7 +90,7 @@ void connect()
             exit(1);
         }
 
-        int delay = connectionRetryTimeout * connectionRetryMultiplier * (connectionRetry + 1);
+        int delay = (int) (connectionRetryTimeout * connectionRetryMultiplier) * (connectionRetry + 1);
 
         printf("Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, connectionRetryAmount);
 
@@ -99,8 +100,11 @@ void connect()
         return;
     }
 
+    resetCache();
+
 
     // Start getting and sending sensor data
+    cout << "Successfully connected to Arduino on port '" << connection->getPort() << "'!" << endl;
     cout << "\nStarting to send data..." << endl;
 
     // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
@@ -123,8 +127,6 @@ void reconnect()
 {
     cout << "\nAttempting to reconnect in 5 seconds..." << endl;
 
-    this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(5000));
-
     // Close connection if still open
     if (connection->isOpen())
     {
@@ -134,8 +136,9 @@ void reconnect()
     delete connection;
     connection = nullptr;
 
-    // Reset data cache and connection tries
-    resetCache();
+    this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(5000));
+
+    // Reset connection tries
     connectionRetry = 0;
 
     connect();

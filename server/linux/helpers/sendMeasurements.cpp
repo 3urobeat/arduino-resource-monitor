@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 18.12.2023 12:50:37
+ * Last Modified: 19.12.2023 14:02:29
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -66,18 +66,20 @@ void _sendSerial(char *str, measurementTypes id)
     // Send content (team yippee)
     try
     {
+        if (!connection) return;
+
         connection->write(sendTempStr);
+
+        //cout << "Sending (" << strlen(sendTempStr) << "): " << sendTempStr << endl;
+
+        // Refresh lastWriteTime
+        lastWriteTime = chrono::steady_clock::now();
     }
     catch(const std::exception& e) // Handle big & spooky exception, for example when connection is lost
     {
         cerr << "Failed to send data to device: " << e.what() << endl;
         reconnect();
     }
-
-    //cout << "Sending (" << strlen(sendTempStr) << "): " << sendTempStr << endl;
-
-    // Refresh lastWriteTime
-    lastWriteTime = chrono::steady_clock::now();
 }
 
 
