@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 15:33:21
+ * Last Modified: 19.12.2023 16:36:56
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -48,7 +48,7 @@
 
 #define baud 9600
 
-#define version "v0.6.1"
+#define version "v0.6.2"
 
 
 // Extern vars from server.cpp
