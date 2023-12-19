@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 14:02:29
+ * Last Modified: 19.12.2023 14:51:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -70,7 +70,7 @@ void _sendSerial(char *str, measurementTypes id)
 
         connection->write(sendTempStr);
 
-        //cout << "Sending (" << strlen(sendTempStr) << "): " << sendTempStr << endl;
+        logDebug("Sending (%d): %s", strlen(sendTempStr), sendTempStr)
 
         // Refresh lastWriteTime
         lastWriteTime = chrono::steady_clock::now();
@@ -122,7 +122,7 @@ void sendMeasurements()
 
     // Send alive ping if nothing was written in the last 5 secs to prevent Connection Lost screen from showing
     if (chrono::steady_clock::now() - lastWriteTime > chrono::milliseconds(5000)) {
-        //cout << "Sending alive ping!" << endl;
+        logDebug("Sending alive ping!");
 
         _sendSerial("", pingID);
     }
@@ -134,6 +134,8 @@ void sendMeasurements()
  */
 void resetCache()
 {
+    logDebug("Resetting arduinoCache...");
+
     memset(arduinoCache::cpuLoad,   0, dataSize);
     memset(arduinoCache::cpuTemp,   0, dataSize);
     memset(arduinoCache::ramUsage,  0, dataSize);

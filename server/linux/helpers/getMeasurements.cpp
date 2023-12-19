@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 15:19:38
+ * Last Modified: 19.12.2023 14:54:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -69,6 +69,8 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
  */
 void getMeasurements()
 {
+    logDebug("Updating sensor values...");
+
     // Clear old data
     memset(measurements::cpuLoad,   0, dataSize);
     memset(measurements::cpuTemp,   0, dataSize);
