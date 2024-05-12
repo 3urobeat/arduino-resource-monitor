@@ -4,10 +4,10 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  *
- * Last Modified: 18.11.2023 14:20:46
+ * Last Modified: 2024-05-12 22:19:13
  * Modified By: 3urobeat
  *
- * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -33,7 +33,7 @@ void setup() {
     // Initiate display
     Wire.begin();
     lcd.begin();
-    lcd.backlight();
+    setupBacklight();
 
     Serial.begin(baud);
 
@@ -67,6 +67,9 @@ void loop() {
     } else {
         timeSinceLastSignal += 25;
     }
+
+    // Check if backlight should be toggled
+    handleBacklight();
 
     delay(25);
 
