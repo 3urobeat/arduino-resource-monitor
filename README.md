@@ -80,6 +80,10 @@ Connect your display like this:
 `VCC` -> `5V`  
 `GND` -> `GND`  
 
+(Optional) Connect a switch to toggle the display backlight like this:  
+`GND` -> Switch  
+Switch -> `D2`
+
 
 &nbsp;
 
