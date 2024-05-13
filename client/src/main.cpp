@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-12 22:19:13
+ * Last Modified: 2024-05-13 17:45:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -52,6 +52,9 @@ void setup() {
 // Check regularly if no data was received recently and display splash screen again
 void loop() {
 
+    // Check if backlight should be toggled
+    handleBacklight();
+
     // Count checkInterval and display Lost Connection message after 10 seconds
     if (timeSinceLastSignal >= 10000) {
         if (displayingSplashScreen) return;
@@ -67,9 +70,6 @@ void loop() {
     } else {
         timeSinceLastSignal += 25;
     }
-
-    // Check if backlight should be toggled
-    handleBacklight();
 
     delay(25);
 
