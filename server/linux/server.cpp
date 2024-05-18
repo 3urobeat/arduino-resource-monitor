@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-18 12:31:13
+ * Last Modified: 2024-05-18 14:00:43
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -52,6 +52,15 @@ int main()
     if (checkInterval < 1000)
     {
         printf("Error: Setting checkInterval is too low! Please set it to at least 1000!\n");
+        exit(1);
+    }
+
+
+    // Attempt to find sensors. Terminate if sensors are missing and user intervention is required
+    bool sensorsSuccess = getSensors();
+
+    if (!sensorsSuccess) {
+        printf("Error: Failed to automatically find all sensors. Please set them manually in the config!\n");
         exit(1);
     }
 
