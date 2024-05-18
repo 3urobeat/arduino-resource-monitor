@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-18 19:31:29
+ * Last Modified: 2024-05-18 22:38:20
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -42,6 +42,27 @@ bool _strStartsWith(const char *pre, const char *str)
 
 
 /**
+ * Checks if a directory exists. Outputs error to stdout if directory could not be opened
+ */
+bool _fileExists(const char *path)
+{
+    errno = 0;
+    FILE* sensorFile = fopen(path, "r");
+
+    if (sensorFile)
+    {
+        (void) fclose(sensorFile);
+        return true;
+    }
+    else
+    {
+        printf("Error: Failed to open sensor '%s'! Ignoring it. Error: %s\n", path, strerror(errno));
+        return false;
+    }
+}
+
+
+/**
  * Checks for known sensor names and populates sensorPaths
  */
 void _processSensorName(const char *sensorPath, const char *sensorName)
@@ -53,15 +74,21 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
 
+
+
     // CPU Temp: Check if sensor matches a known name
     if (_strStartsWith(sensorName, "k10temp") || _strStartsWith(sensorName, "coretemp")) // AMD || Intel CPU
     {
         if (strlen(sensorPaths::cpuTemp) == 0) // Check if user already configured this sensor
         {
-            printf("Found CPU Temperature sensor '%s'!\n", sensorName);
-
             strcpy(sensorPaths::cpuTemp, sensorPath);
             strcat(sensorPaths::cpuTemp, "/temp1_input");
+
+            // Attempt to open to check if it exists. Log success message or reset sensor path on failure
+            bool sensorPathExists = _fileExists(sensorPaths::cpuTemp);
+
+            if (sensorPathExists) printf("Found CPU Temperature sensor '%s'!\n", sensorPaths::cpuTemp);
+                else strcpy(sensorPaths::cpuTemp, "");
         }
     }
 
@@ -70,15 +97,26 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     {
         if (strlen(sensorPaths::gpuLoad) == 0) // Check if user already configured this sensor
         {
+            strcpy(sensorPaths::gpuLoad, sensorPath);
+            strcat(sensorPaths::gpuLoad, "/device/gpu_busy_percent"); // TODO: Does this exist for NVIDIA cards?
 
+            // Attempt to open to check if it exists. Log success message or reset sensor path on failure
+            bool sensorPathExists = _fileExists(sensorPaths::gpuLoad);
+
+            if (sensorPathExists) printf("Found GPU Load sensor '%s'!\n", sensorPaths::gpuLoad);
+                else strcpy(sensorPaths::gpuLoad, "");
         }
 
         if (strlen(sensorPaths::gpuTemp) == 0) // Check if user already configured this sensor
         {
-            printf("Found GPU Temperature sensor '%s'!\n", sensorName);
-
             strcpy(sensorPaths::gpuTemp, sensorPath);
             strcat(sensorPaths::gpuTemp, "/temp1_input");
+
+            // Attempt to open to check if it exists. Log success message or reset sensor path on failure
+            bool sensorPathExists = _fileExists(sensorPaths::gpuTemp);
+
+            if (sensorPathExists) printf("Found GPU Temperature sensor '%s'!\n", sensorPaths::gpuTemp);
+                else strcpy(sensorPaths::gpuTemp, "");
         }
     }
 }
