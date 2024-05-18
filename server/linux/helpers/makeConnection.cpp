@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-18 12:37:35
+ * Last Modified: 2024-05-18 12:46:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -27,7 +27,7 @@ using namespace std;
  */
 serial::Serial* makeConnection()
 {
-    serial::Serial *_connection;
+    serial::Serial *_connection = nullptr;
 
     // Get all used USB ports by iterating through /sys/class/tty/
     DIR *dp;
