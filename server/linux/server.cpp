@@ -4,10 +4,10 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 16:38:40
+ * Last Modified: 2024-05-18 12:31:13
  * Modified By: 3urobeat
  *
- * Copyright (c) 2022 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -75,6 +75,26 @@ int main()
 }
 
 
+// Handles refreshing measurements and sending them to the Arduino
+void dataLoop()
+{
+    printf("\nStarting to send data...\n");
+
+    // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
+    while (connection)
+    {
+        // Get current measurements
+        getMeasurements();
+
+        // Send current measurements
+        sendMeasurements();
+
+        // Delay for checkInterval ms
+        this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(checkInterval));
+    }
+}
+
+
 // Attempts to find & connect to device and starts to measure & send data
 void connect()
 {
@@ -108,20 +128,8 @@ void connect()
 
     // Start getting and sending sensor data
     printf("Successfully connected to Arduino on port '%s'!\n", connection->getPort().c_str());
-    printf("\nStarting to send data...\n");
 
-    // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
-    while (connection)
-    {
-        // Get current measurements
-        getMeasurements();
-
-        // Send current measurements
-        sendMeasurements();
-
-        // Delay for checkInterval ms
-        this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(checkInterval));
-    }
+    dataLoop();
 }
 
 
