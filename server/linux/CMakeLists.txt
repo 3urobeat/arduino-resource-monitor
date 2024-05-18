@@ -35,6 +35,7 @@ set(SOURCES
     server.cpp
     server.h
     helpers/getMeasurements.cpp
+    helpers/getSensors.cpp
     helpers/makeConnection.cpp
     helpers/sendMeasurements.cpp
     helpers/helpers.h
