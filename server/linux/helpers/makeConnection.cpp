@@ -4,10 +4,10 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 15:49:11
+ * Last Modified: 2024-05-18 12:37:35
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -83,6 +83,8 @@ serial::Serial* makeConnection()
                 continue;
             }
 
+            logDebug("Opened connection to device '%s'! Attempting to handshake...", port);
+
 
             // Attempt to send client our header. A header starts with a +, normal data with a ~
             _connection->flushOutput(); // Clear anything that may be buffered
@@ -92,6 +94,8 @@ serial::Serial* makeConnection()
             strcat(headerStr, "#"); // strcat null terminates here because "#" is a null terminated string
 
             _connection->write(headerStr);
+
+            logDebug("Sent header '%s' to device '%s'! Listening for response...", headerStr, port);
 
 
             // Attempt to listen for a response as long as port is open, buffer has enough space and we haven't run into arduinoReplyTimeout

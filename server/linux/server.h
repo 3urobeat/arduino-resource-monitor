@@ -4,10 +4,10 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 16:36:56
+ * Last Modified: 2024-05-18 12:35:02
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -64,6 +64,7 @@ extern void reconnect();
 // Logs debug messages if enabled
 #if printDebug
     #define logDebug(...) \
+        printf("[DEBUG] "); \
         printf(__VA_ARGS__, NULL); \
         printf("\n");
 #else
