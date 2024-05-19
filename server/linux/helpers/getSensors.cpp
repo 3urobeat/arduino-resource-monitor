@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 17:04:25
+ * Last Modified: 2024-05-19 17:29:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -93,7 +93,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // GPU Temp: Check if sensor matches a known name
-    if (_strStartsWith(sensorName, "amdgpu") || _strStartsWith(sensorName, "nvidia")) // AMD || Nvidia GPU
+    if (_strStartsWith(sensorName, "amdgpu") || _strStartsWith(sensorName, "nvidia")) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths::gpuLoad) == 0) // Check if user already configured this sensor
         {
