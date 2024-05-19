@@ -89,14 +89,21 @@ void dataLoop()
 {
     printf("\nStarting to send data...\n");
 
-    // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
-    while (connection)
+    #if !clientLessMode
+        while (connection) // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
+    #else
+        while(true) // Run forever until process is manually terminated
+    #endif
     {
         // Get current measurements
         getMeasurements();
 
-        // Send current measurements
-        sendMeasurements();
+        // Send measurements to Client under normal operation, log to stdout when operating in clientLessMode
+        #if !clientLessMode
+            sendMeasurements();
+        #else
+            logMeasurements();
+        #endif
 
         // Delay for checkInterval ms
         this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(checkInterval));
@@ -110,33 +117,37 @@ void connect()
     connectionRetry++;
 
     // Find and establish connection to Arduino
-    printf("Searching for Arduino...\n");
+    #if !clientLessMode
+        printf("Searching for Arduino...\n");
 
-    connection = makeConnection();
+        connection = makeConnection();
 
-    if (connection == NULL)
-    {
-        if (connectionRetry > connectionRetryAmount)
+        if (connection == NULL)
         {
-            printf("Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
-            exit(1);
+            if (connectionRetry > connectionRetryAmount)
+            {
+                printf("Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
+                exit(1);
+            }
+
+            int delay = (int) (connectionRetryTimeout * connectionRetryMultiplier) * (connectionRetry + 1);
+
+            printf("Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, connectionRetryAmount);
+
+            this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(delay));
+            connect();
+
+            return;
         }
 
-        int delay = (int) (connectionRetryTimeout * connectionRetryMultiplier) * (connectionRetry + 1);
-
-        printf("Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, connectionRetryAmount);
-
-        this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(delay));
-        connect();
-
-        return;
-    }
-
-    resetCache();
+        printf("Successfully connected to Arduino on port '%s'!\n", connection->getPort().c_str());
+    #else
+        printf("Skipped searching for Arduino because clientLessMode is enabled!\n");
+    #endif
 
 
     // Start getting and sending sensor data
-    printf("Successfully connected to Arduino on port '%s'!\n", connection->getPort().c_str());
+    resetCache();
 
     dataLoop();
 }

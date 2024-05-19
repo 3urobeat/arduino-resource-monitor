@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-18 12:59:41
+ * Last Modified: 2024-05-19 12:59:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -126,6 +126,17 @@ void sendMeasurements()
 
         _sendSerial("", pingID);
     }
+}
+
+
+/**
+ * Logs the current measurements to stdout instead of sending them to the Client
+ */
+void logMeasurements()
+{
+    printf("CPU: %s%% %s°C\n", measurements::cpuLoad, measurements::cpuTemp);
+    printf("RAM: %sGB %sGB\n", measurements::ramUsage, measurements::swapUsage);
+    printf("GPU: %s%% %s°C\n", measurements::gpuLoad, measurements::gpuTemp);
 }
 
 
