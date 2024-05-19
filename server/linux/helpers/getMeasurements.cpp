@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 16:48:05
+ * Last Modified: 2024-05-19 17:20:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -135,6 +135,40 @@ void _getCpuLoad()
     // Clean up
     //free(contentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
     //contentBuffer = NULL;
+
+
+// Persistent data for _getSensorFileContent()
+FILE *hwmonFileP         = nullptr;
+char *hwmonContentBuffer = NULL; // TODO: Change to fixed size
+
+/**
+ * Calculates the current CPU utilization
+ */
+void _getSensorFileContent(char *dest, int size, const char *path)
+{
+    // Read path
+    errno = 0;
+    hwmonFileP = fopen(path, "r");
+
+    if (!hwmonFileP)
+    {
+        printf("Error: Failed to read sensor '%s'! Error: %s", path, strerror(errno));
+        return;
+    }
+
+    size_t contentLen  = 0;
+    ssize_t bytes_read = getdelim(&hwmonContentBuffer, &contentLen, '\0', hwmonFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
+
+    (void) fclose(hwmonFileP);
+
+    // Move null terminator in contentBuffer by 1 byte if the last char is a newline (this was always the case in my testing)
+    if (hwmonContentBuffer[bytes_read - 1] == '\n') hwmonContentBuffer[bytes_read - 1] = '\0';
+
+
+    // Copy data into dest
+    strncpy(dest, hwmonContentBuffer, size);
+
+    logDebug("_getSensorFileContent(): Read '%s' from '%s'", hwmonContentBuffer, path);
 }
 
 
@@ -143,22 +177,16 @@ void _getCpuLoad()
  */
 void getMeasurements()
 {
+    char buffer[16] = "";
+
     logDebug("Updating sensor values...");
 
-    // Clear old data
-    memset(measurements::cpuLoad,   0, dataSize);
-    memset(measurements::cpuTemp,   0, dataSize);
-    memset(measurements::ramUsage,  0, dataSize);
-    memset(measurements::swapUsage, 0, dataSize);
-    memset(measurements::gpuLoad,   0, dataSize);
-    memset(measurements::gpuTemp,   0, dataSize);
 
-
-    // Get CPU stats
+    // Get CPU load & temp
     _getCpuLoad();
 
-    getStdoutFromCommand(measurements::cpuTemp, cpuTempCmd);
-    gcvt(round(atof(measurements::cpuTemp)), 3, measurements::cpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
+    _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::cpuTemp);
+    gcvt(atoi(buffer) / 1000, 3, measurements::cpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
 
 
     // Get RAM and Swap usage
