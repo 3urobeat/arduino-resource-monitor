@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 17:49:33
+ * Last Modified: 2024-05-19 21:28:19
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -162,8 +162,102 @@ void _getCpuLoad()
 }
 
 
+// Persistent data for _getMemSwapUsage()
+char getMemSwapUsageBuffer[2048] = "";
+
 /**
- * Retreives measurements by running commands
+ * Processes output from '/proc/meminfo' to get mem & swap usage
+ */
+void _getMemSwapUsage()
+{
+    // Read '/proc/meminfo'
+    ssize_t bytes_read = _getSensorFileContent(getMemSwapUsageBuffer, sizeof(getMemSwapUsageBuffer), "/proc/meminfo");
+
+
+    // Iterate through rows and find MemTotal, MemAvailable, SwapTotal & SwapFree
+    int memTotal, memAvailable, swapTotal, swapFree;
+    char *lineStartPtr = getMemSwapUsageBuffer;
+    char *bufferPtr    = getMemSwapUsageBuffer;
+
+    while(*bufferPtr)
+    {
+        if (*bufferPtr == '\n' || *bufferPtr == '\0')
+        {
+            *(bufferPtr - 3) = '\0'; // Place nullbyte in front of 'kB', present at the end of this line. This makes the following functions read from the first char of this line up until the end of the number listed in this line.
+
+            strtok(lineStartPtr, " "); // Cut line into pieces, separated by spaces. After this call, lineStartPtr points to the beginning of the first element, aka the line title.
+
+            // See if this line starts with one of the interesting values
+            if (strStartsWith("MemTotal", lineStartPtr)) {
+                lineStartPtr = strtok(NULL, " "); // Gets the second match, which is our number
+                memTotal = atoi(lineStartPtr);
+            }
+            else if (strStartsWith("MemAvailable", lineStartPtr))
+            {
+                lineStartPtr = strtok(NULL, " ");
+                memAvailable = atoi(lineStartPtr);
+            }
+            else if (strStartsWith("SwapTotal", lineStartPtr))
+            {
+                lineStartPtr = strtok(NULL, " ");
+                swapTotal = atoi(lineStartPtr);
+            }
+            else if (strStartsWith("SwapFree", lineStartPtr))
+            {
+                lineStartPtr = strtok(NULL, " ");
+                swapFree = atoi(lineStartPtr);
+            }
+
+            lineStartPtr = bufferPtr + 1; // +1 to get "over" newline and point to the first char of the next line
+        }
+
+        bufferPtr++;
+    }
+
+
+    // Calculate used RAM & Swap, convert to GB, format and write into measurements
+    float mem  = (memTotal - memAvailable) / 1000000.0;
+    float swap = (swapTotal - swapFree)    / 1000000.0;
+
+    memset(measurements::ramUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
+    gcvt(mem, 3, measurements::ramUsage);
+
+    for (int i = 0; i < 4; i++) // Nifty loop for number formatting: Make numbers below 100 show always one decimal.
+    {
+        if (measurements::ramUsage[i] == '.' || measurements::ramUsage[i] == '\0')
+        {
+            measurements::ramUsage[i] = '.';
+            measurements::ramUsage[i + 1] = measurements::ramUsage[i + 1] ? measurements::ramUsage[i + 1] : '0';
+            measurements::ramUsage[i + 2] = '\0';
+            break;
+        }
+    }
+
+    if (swapTotal > 0)
+    {
+        memset(measurements::swapUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
+        gcvt(swap, 3, measurements::swapUsage);
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (measurements::swapUsage[i] == '.' || measurements::swapUsage[i] == '\0')
+            {
+                measurements::swapUsage[i] = '.';
+                measurements::swapUsage[i + 1] = measurements::swapUsage[i + 1] ? measurements::swapUsage[i + 1] : '0';
+                measurements::swapUsage[i + 2] = '\0';
+                break;
+            }
+        }
+    }
+    else
+    {
+        measurements::swapUsage[0] = '/'; // Swap is disabled
+    }
+}
+
+
+/**
+ * Retreives new data and updates measurements
  */
 void getMeasurements()
 {
@@ -180,34 +274,7 @@ void getMeasurements()
 
 
     // Get RAM and Swap usage
-    char ramUsageTemp[dataSize] = "";
-    getStdoutFromCommand(ramUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | head -2 | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
-
-    for (int i = 0; i < 4; i++) { // Use a stupid for loop to avoid doing dtoa() stuff
-        measurements::ramUsage[i] = ramUsageTemp[i];
-
-        // If dot was reached, add one decimal and break loop
-        if (ramUsageTemp[i] == '.') {
-            measurements::ramUsage[i + 1] = ramUsageTemp[i + 1];
-            measurements::ramUsage[i + 2] = '\0';
-            break;
-        }
-    }
-
-
-    char swapUsageTemp[dataSize] = "";
-    getStdoutFromCommand(swapUsageTemp, "free -m | awk -v c=\\'used\\' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i-4)}' | tail -1 | awk '{print $1/1000}'"); // awk converts MB to GB here
-
-    for (int i = 0; i < 4; i++) { // Use a stupid for loop to avoid doing dtoa() stuff
-        measurements::swapUsage[i] = swapUsageTemp[i];
-
-        // If dot was reached, add one decimal and break loop
-        if (swapUsageTemp[i] == '.') {
-            measurements::swapUsage[i + 1] = swapUsageTemp[i + 1];
-            measurements::swapUsage[i + 2] = '\0';
-            break;
-        }
-    }
+    _getMemSwapUsage();
 
 
     // Get GPU load & temp
