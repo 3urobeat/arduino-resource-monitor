@@ -4,10 +4,10 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 14:54:26
+ * Last Modified: 2024-05-19 16:48:05
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -16,6 +16,9 @@
 
 
 #include "helpers.h"
+
+#include <dirent.h>
+#include <errno.h>
 
 
 // Stores all current measurements
@@ -64,6 +67,77 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
 }
 
 
+// Persistent data for _getCpuLoad()
+long lastCpuRawNonIdle = 0;
+long lastCpuRawTotal   = 0;
+
+FILE *procStatFileP = nullptr;
+char *contentBuffer = NULL; // TODO: Change to fixed size
+
+/**
+ * Calculates the current CPU utilization
+ */
+void _getCpuLoad()
+{
+    // Read '/proc/stat'
+    errno = 0;
+    procStatFileP = fopen("/proc/stat", "r");
+
+    if (!procStatFileP)
+    {
+        printf("Error: Failed to read '/proc/stat' to get cpu load! Error: %s", strerror(errno));
+        strcpy(measurements::cpuLoad, "/");
+        return;
+    }
+
+    size_t contentLen  = 0;
+    ssize_t bytes_read = getdelim(&contentBuffer, &contentLen, '\n', procStatFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
+
+    (void) fclose(procStatFileP);
+
+    contentBuffer[bytes_read - 1] = ' '; // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
+
+
+    // Split contentBuffer at spaces at calc values (rowTitle, user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice - see 1.8 @ https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
+    long nonIdle = 0;
+    long total   = 0;
+    int   matches       = 0;                 // Zero-Based counter of matches, starting with 'user'
+    char *valueStartPtr = contentBuffer + 5; // Point to the start of the first element
+
+    for (int i = 5; i < bytes_read; i++) // Start after row title 'cpu  '           // TODO: This would be cooler (and maybe faster) using pointers instead of accessing array index
+    {                                    // Behold: A custom implementation for splitting a char array at spaces. I tried dealing with strtok_r() and decided to do it myself.
+        if (contentBuffer[i] == ' ')
+        {
+            contentBuffer[i] = '\0'; // Replace this space with a null-byte. This makes atoi() read from the first char of the current value up until this space (now null-byte)
+
+            // Add this value to nonIdle (if not column idle or iowait) and always add to total
+            if (matches != 3 && matches != 4) nonIdle += atoi(valueStartPtr);
+            total += atoi(valueStartPtr);
+
+            valueStartPtr = &contentBuffer[i + 1]; // +1 to get "over" space and point to the first char of the next value
+            matches++;
+        }
+    }
+
+
+    // Calculate cpu load using new and previous measurement (if one exists)
+    if (lastCpuRawNonIdle > 0 && lastCpuRawTotal)
+    {
+        float cpuLoad = ((lastCpuRawNonIdle - nonIdle) * 100.0) / (lastCpuRawTotal - total);
+
+        gcvt(round(cpuLoad), 3, measurements::cpuLoad); // Round float, restrict to 3 digits (0-100%) and write into cpuLoad
+    }
+
+    // Update lastCpuRawMeasurement with raw data
+    lastCpuRawNonIdle = nonIdle;
+    lastCpuRawTotal   = total;
+
+    // Clean up
+    //free(contentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
+    //contentBuffer = NULL;
+}
+
+
 /**
  * Retreives measurements by running commands
  */
@@ -81,8 +155,7 @@ void getMeasurements()
 
 
     // Get CPU stats
-    getStdoutFromCommand(measurements::cpuLoad, "mpstat 1 1 | grep -E -v '^Linux|^$' | awk -v c='%idle' 'NR==1 {for (i=1; i<=NF; i++) if ($i==c) break}''{print $(i)}' | head -2 | tail -1 | awk '{print 100-$1}'"); // using this command for cutting the response was easier for now than doing it here - Credit: https://www.linuxquestions.org/questions/linux-newbie-8/need-to-get-average-idle-time-using-mpstat-4175545709/ (I added the subtraction)
-    gcvt(round(atof(measurements::cpuLoad)), 3, measurements::cpuLoad); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
+    _getCpuLoad();
 
     getStdoutFromCommand(measurements::cpuTemp, cpuTempCmd);
     gcvt(round(atof(measurements::cpuTemp)), 3, measurements::cpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
