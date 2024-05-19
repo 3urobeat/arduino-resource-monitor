@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 21:55:33
+ * Last Modified: 2024-05-19 23:54:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -94,8 +94,8 @@ ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char
 
 
     // Clean up
-    //free(procStatContentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
-    //procStatContentBuffer = NULL;
+    free(sensorContentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
+    //sensorContentBuffer = NULL;
 
     return bytes_read;
 }
@@ -248,13 +248,15 @@ void _getMemSwapUsage()
 }
 
 
+// Persistent data for getMeasurements()
+char buffer[16] = "";
+
+
 /**
  * Retreives new data and updates measurements
  */
 void getMeasurements()
 {
-    char buffer[16] = "";
-
     logDebug("Updating sensor values...");
 
 
