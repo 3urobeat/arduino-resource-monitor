@@ -10,18 +10,6 @@ Both Linux and Windows are supported.
 
 &nbsp;
 
-## Installation
-Install the following packages using your package manager:  
-```
-make  
-cmake  
-sysstat  
-lm_sensors  
-radeontop       (If you are using an AMD GPU)  
-nvidia-settings (If you are using an NVIDIA GPU)
-```
-(I hope I didn't miss anything. The package names may deviate if you aren't on Arch)  
-
 &nbsp;
 
 ## Configuration

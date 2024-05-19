@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 18:42:58
+ * Last Modified: 2024-05-19 21:53:04
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -23,10 +23,7 @@
 
 // Stores filesystem paths for all sensors we've found
 namespace sensorPaths {
-    // cpuLoad does not need a sensor, we read from '/proc/stat'
     char cpuTemp[pathSize] = "";
-    char ramUsage[pathSize] = "";
-    char swapUsage[pathSize] = "";
     char gpuLoad[pathSize] = "";
     char gpuTemp[pathSize] = "";
 };
@@ -84,7 +81,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // GPU Temp: Check if sensor matches a known name
-    if (strStartsWith("amdgpu", sensorName) || strStartsWith("nvidia", sensorName)) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
+    if (strStartsWith("amdgpu", sensorName) && gpuType == 0) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths::gpuLoad) == 0) // Check if user already configured this sensor
         {
@@ -195,30 +192,33 @@ void _findCpuGpuSensors()
 
 
 /**
- * Attempts to discover sensor paths and populates variables in sensorPaths. Returns boolean if every sensor was found and execution can continue.
+ * Attempts to discover sensor paths and populates variables in sensorPaths
  */
-bool getSensors()
+void getSensors()
 {
     printf("Attempting to discover hardware sensors...\n");
 
     // Find CPU & GPU sensors
     _findCpuGpuSensors();
 
-
-    // Find RAM & Swap
-
-
-    // Disable GPU if not found, this can happen on older iGPUs and therefore should not prevent application from starting
-    if (strlen(sensorPaths::gpuLoad) == 0) strcpy(sensorPaths::gpuLoad, "/");
-    if (strlen(sensorPaths::gpuTemp) == 0) strcpy(sensorPaths::gpuTemp, "/");
-
-    // Check if a sensor path is empty and return false
-    if (strlen(sensorPaths::cpuTemp)   == 0 ||
-        strlen(sensorPaths::ramUsage)  == 0 ||
-        strlen(sensorPaths::swapUsage) == 0)
+    // Log warnings for missing sensors and write '/' into respective measurements variable
+    if (strlen(sensorPaths::cpuTemp) == 0)
     {
-        return false;
+        printf("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.\n");
+        strcpy(measurements::cpuTemp, "/");
     }
 
-    return true; // Success
+    if (strlen(sensorPaths::gpuLoad) == 0)
+    {
+        printf("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
+        strcpy(measurements::gpuLoad, "/");
+    }
+
+    if (strlen(sensorPaths::gpuTemp) == 0)
+    {
+        printf("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
+        strcpy(measurements::gpuTemp, "/");
+    }
+
+    printf("\n");
 }

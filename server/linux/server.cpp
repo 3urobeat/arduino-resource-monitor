@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-18 14:00:43
+ * Last Modified: 2024-05-19 21:40:47
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -15,25 +15,12 @@
  */
 
 
-// CMake Build Tutorial: https://cmake.org/cmake/help/latest/guide/tutorial/A%20Basic%20Starting%20Point.html#build-and-run
-// Run command from build folder: cmake ..
-// Then compile from build folder with command: cmake --build .
-
-// I was unable to tell CMake to include other directories and wasted over an hour on it - so fuck it, I'm going to put everything in this file, idc about chaos right now.
-
-
 #include "server.h"
 
 using namespace std;
 
 
-// Runtime vars
-char cpuTempCmd[128]; // For constructing the cpuTempCmd once on start
-char gpuUtilCmd[128]; // AMD GPU only
-char gpuTempCmd[128]; // AMD GPU only
-
 int connectionRetry = 0;
-
 
 serial::Serial *connection; // Make a connection
 
@@ -57,27 +44,7 @@ int main()
 
 
     // Attempt to find sensors. Terminate if sensors are missing and user intervention is required
-    bool sensorsSuccess = getSensors();
-
-    if (!sensorsSuccess) {
-        printf("Error: Failed to automatically find all sensors. Please set them manually in the config!\n");
-        exit(1);
-    }
-
-
-    // Construct commands
-    strcpy(cpuTempCmd, "sensors -u ");
-    strcat(cpuTempCmd, cpuTempSensor);
-    strcat(cpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'"); // Get temp1_input line and remove everything except the temp value
-
-    strcpy(gpuUtilCmd, "radeontop -b ");
-    strcat(gpuUtilCmd, gpuBus);
-    strcat(gpuUtilCmd, " -l 1 -d- | cut -d',' -f 2 | sed 's/ gpu //' | tail -1"); // Get readout from radeontop, split at comma, get 2 element (which is the gpu readout), replace " gpu " and get the last line
-
-    strcpy(gpuTempCmd, "sensors -u ");
-    strcat(gpuTempCmd, gpuTempSensor);
-    strcat(gpuTempCmd, " | grep temp1_input | sed 's/  temp1_input: //'");
-
+    getSensors();
 
     // Begin
     connect();
