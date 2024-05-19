@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 18:23:00
+ * Last Modified: 2024-05-19 18:42:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -68,7 +68,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
 
 
     // CPU Temp: Check if sensor matches a known name
-    if (strStartsWith(sensorName, "k10temp") || strStartsWith(sensorName, "coretemp")) // AMD || Intel CPU
+    if (strStartsWith("k10temp", sensorName) || strStartsWith("coretemp", sensorName)) // AMD || Intel CPU
     {
         if (strlen(sensorPaths::cpuTemp) == 0) // Check if user already configured this sensor
         {
@@ -84,7 +84,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // GPU Temp: Check if sensor matches a known name
-    if (strStartsWith(sensorName, "amdgpu") || strStartsWith(sensorName, "nvidia")) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
+    if (strStartsWith("amdgpu", sensorName) || strStartsWith("nvidia", sensorName)) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths::gpuLoad) == 0) // Check if user already configured this sensor
         {
