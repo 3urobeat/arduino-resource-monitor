@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 17:13:28
+ * Last Modified: 2024-05-19 18:23:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -52,6 +52,8 @@ extern void getMeasurements();
 extern bool getSensors();
 
 extern serial::Serial* makeConnection();
+
+extern bool strStartsWith(const char *pre, const char *str);
 
 extern void sendMeasurements();
 extern void logMeasurements();

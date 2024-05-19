@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 17:29:28
+ * Last Modified: 2024-05-19 18:23:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -30,15 +30,6 @@ namespace sensorPaths {
     char gpuLoad[pathSize] = "";
     char gpuTemp[pathSize] = "";
 };
-
-
-/**
- * C string startsWith implementation - https://stackoverflow.com/a/4770992
- */
-bool _strStartsWith(const char *pre, const char *str)
-{
-    return strncmp(pre, str, strlen(pre)) == 0;
-}
 
 
 /**
@@ -77,7 +68,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
 
 
     // CPU Temp: Check if sensor matches a known name
-    if (_strStartsWith(sensorName, "k10temp") || _strStartsWith(sensorName, "coretemp")) // AMD || Intel CPU
+    if (strStartsWith(sensorName, "k10temp") || strStartsWith(sensorName, "coretemp")) // AMD || Intel CPU
     {
         if (strlen(sensorPaths::cpuTemp) == 0) // Check if user already configured this sensor
         {
@@ -93,7 +84,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // GPU Temp: Check if sensor matches a known name
-    if (_strStartsWith(sensorName, "amdgpu") || _strStartsWith(sensorName, "nvidia")) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
+    if (strStartsWith(sensorName, "amdgpu") || strStartsWith(sensorName, "nvidia")) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths::gpuLoad) == 0) // Check if user already configured this sensor
         {
