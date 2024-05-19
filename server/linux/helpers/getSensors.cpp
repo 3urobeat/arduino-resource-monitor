@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-18 22:38:20
+ * Last Modified: 2024-05-19 17:04:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,7 @@
 
 // Stores filesystem paths for all sensors we've found
 namespace sensorPaths {
-    char cpuLoad[pathSize] = "something"; // Temp: Bypass all sensors empty check for now
+    // cpuLoad does not need a sensor, we read from '/proc/stat'
     char cpuTemp[pathSize] = "";
     char ramUsage[pathSize] = "";
     char swapUsage[pathSize] = "";
@@ -47,11 +47,11 @@ bool _strStartsWith(const char *pre, const char *str)
 bool _fileExists(const char *path)
 {
     errno = 0;
-    FILE* sensorFile = fopen(path, "r");
+    FILE* sensorFileP = fopen(path, "r");
 
-    if (sensorFile)
+    if (sensorFileP)
     {
-        (void) fclose(sensorFile);
+        (void) fclose(sensorFileP);
         return true;
     }
     else
@@ -87,7 +87,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
             bool sensorPathExists = _fileExists(sensorPaths::cpuTemp);
 
-            if (sensorPathExists) printf("Found CPU Temperature sensor '%s'!\n", sensorPaths::cpuTemp);
+            if (sensorPathExists) printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths::cpuTemp, sensorName);
                 else strcpy(sensorPaths::cpuTemp, "");
         }
     }
@@ -103,7 +103,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
             bool sensorPathExists = _fileExists(sensorPaths::gpuLoad);
 
-            if (sensorPathExists) printf("Found GPU Load sensor '%s'!\n", sensorPaths::gpuLoad);
+            if (sensorPathExists) printf("Found GPU Load sensor '%s' at '%s'!\n", sensorPaths::gpuLoad, sensorName);
                 else strcpy(sensorPaths::gpuLoad, "");
         }
 
@@ -115,7 +115,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
             bool sensorPathExists = _fileExists(sensorPaths::gpuTemp);
 
-            if (sensorPathExists) printf("Found GPU Temperature sensor '%s'!\n", sensorPaths::gpuTemp);
+            if (sensorPathExists) printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths::gpuTemp, sensorName);
                 else strcpy(sensorPaths::gpuTemp, "");
         }
     }
@@ -222,8 +222,7 @@ bool getSensors()
     if (strlen(sensorPaths::gpuTemp) == 0) strcpy(sensorPaths::gpuTemp, "/");
 
     // Check if a sensor path is empty and return false
-    if (strlen(sensorPaths::cpuLoad)   == 0 ||
-        strlen(sensorPaths::cpuTemp)   == 0 ||
+    if (strlen(sensorPaths::cpuTemp)   == 0 ||
         strlen(sensorPaths::ramUsage)  == 0 ||
         strlen(sensorPaths::swapUsage) == 0)
     {
