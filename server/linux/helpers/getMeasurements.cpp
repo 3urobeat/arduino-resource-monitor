@@ -23,7 +23,7 @@
 
 // Stores all current measurements
 namespace measurements {
-    char cpuLoad[dataSize] = "";
+    char cpuLoad[dataSize] = "/"; // Init with '/' because it takes 2 measurements to display
     char cpuTemp[dataSize] = "";
     char ramUsage[dataSize] = "";
     char swapUsage[dataSize] = "";
@@ -71,8 +71,8 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
 long lastCpuRawNonIdle = 0;
 long lastCpuRawTotal   = 0;
 
-FILE *procStatFileP = nullptr;
-char *contentBuffer = NULL; // TODO: Change to fixed size
+FILE *procStatFileP         = nullptr;
+char *procStatContentBuffer = NULL; // TODO: Change to fixed size
 
 /**
  * Calculates the current CPU utilization
@@ -91,30 +91,30 @@ void _getCpuLoad()
     }
 
     size_t contentLen  = 0;
-    ssize_t bytes_read = getdelim(&contentBuffer, &contentLen, '\n', procStatFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
+    ssize_t bytes_read = getdelim(&procStatContentBuffer, &contentLen, '\n', procStatFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
 
     (void) fclose(procStatFileP);
 
-    contentBuffer[bytes_read - 1] = ' '; // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
+    procStatContentBuffer[bytes_read - 1] = ' '; // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
 
 
-    // Split contentBuffer at spaces at calc values (rowTitle, user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice - see 1.8 @ https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
-    long nonIdle = 0;
-    long total   = 0;
-    int   matches       = 0;                 // Zero-Based counter of matches, starting with 'user'
-    char *valueStartPtr = contentBuffer + 5; // Point to the start of the first element
+    // Split procStatContentBuffer at spaces at calc values (rowTitle, user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice - see 1.8 @ https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
+    long nonIdle  = 0;
+    long total    = 0;
+    int   matches = 0;                         // Zero-Based counter of matches, starting with 'user'
+    char *valueStartPtr = procStatContentBuffer + 5; // Point to the start of the first element
 
     for (int i = 5; i < bytes_read; i++) // Start after row title 'cpu  '           // TODO: This would be cooler (and maybe faster) using pointers instead of accessing array index
     {                                    // Behold: A custom implementation for splitting a char array at spaces. I tried dealing with strtok_r() and decided to do it myself.
-        if (contentBuffer[i] == ' ')
+        if (procStatContentBuffer[i] == ' ')
         {
-            contentBuffer[i] = '\0'; // Replace this space with a null-byte. This makes atoi() read from the first char of the current value up until this space (now null-byte)
+            procStatContentBuffer[i] = '\0'; // Replace this space with a null-byte. This makes atoi() read from the first char of the current value up until this space (now null-byte)
 
             // Add this value to nonIdle (if not column idle or iowait) and always add to total
             if (matches != 3 && matches != 4) nonIdle += atoi(valueStartPtr);
             total += atoi(valueStartPtr);
 
-            valueStartPtr = &contentBuffer[i + 1]; // +1 to get "over" space and point to the first char of the next value
+            valueStartPtr = &procStatContentBuffer[i + 1]; // +1 to get "over" space and point to the first char of the next value
             matches++;
         }
     }
@@ -133,8 +133,9 @@ void _getCpuLoad()
     lastCpuRawTotal   = total;
 
     // Clean up
-    //free(contentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
-    //contentBuffer = NULL;
+    //free(procStatContentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
+    //procStatContentBuffer = NULL;
+}
 
 
 // Persistent data for _getSensorFileContent()
