@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 17:20:03
+ * Last Modified: 2024-05-19 17:28:38
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -221,8 +221,14 @@ void getMeasurements()
     }
 
 
-    // Get nvidia or amd gpu load and temp stats
-    #if gpuType == 0
+    // Get GPU load & temp
+    _getSensorFileContent(measurements::gpuLoad, sizeof(dataSize), sensorPaths::gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
+
+    _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::gpuTemp);
+    gcvt(atoi(buffer) / 1000, 3, measurements::gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
+
+    // Old readout using external binaries. Maybe we need it again in the future? I can't test nvidia & intel or older amd gpus at the moment
+    /* #if gpuType == 0
         getStdoutFromCommand(measurements::gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
 
         getStdoutFromCommand(measurements::gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
@@ -235,5 +241,5 @@ void getMeasurements()
     #else
         strcpy(measurements::gpuLoad, "/");
         strcpy(measurements::gpuTemp, "/");
-    #endif
+    #endif */
 }
