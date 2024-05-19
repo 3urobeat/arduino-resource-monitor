@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 21:53:04
+ * Last Modified: 2024-05-19 23:16:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -184,6 +184,8 @@ void _findCpuGpuSensors()
             {
                 logDebug("Error: Sensor '%s' name has no content!", ep->d_name);
             }
+
+            free(contentBuffer);
         }
     }
 
