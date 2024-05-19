@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 21:28:19
+ * Last Modified: 2024-05-19 21:55:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -32,18 +32,9 @@ namespace measurements {
 };
 
 
-// Command responses sometimes have a trailing line break, this function removes them
-void _removeLineBreak(char *str)
-{
-    if (str[strlen(str) - 1] == '\n') {
-        char buf[16] = "";
-        strncat(buf, str, strlen(str) - 1);
-        strcpy(str, buf);
-    }
-}
-
-
-// Function to run command and get output
+/**
+ * Function to run command and get output
+ */
 void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorgan.com/tutorials/c-programming/how-to-capture-the-output-of-a-linux-command-in-c/  (converted from string to char arrs by me)
 {
     FILE * stream;
@@ -61,7 +52,8 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
         while (!feof(stream))
             if (fgets(buffer, max_buffer, stream) != NULL) strcat(dest, buffer);
 
-        _removeLineBreak(dest);
+        if (dest[strlen(dest) - 1] == '\n') dest[strlen(dest) - 1] = '\0'; // Remove trailing line break
+
         pclose(stream);
     }
 }
@@ -269,8 +261,11 @@ void getMeasurements()
     // Get CPU load & temp
     _getCpuLoad();
 
-    _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::cpuTemp);
-    gcvt(atoi(buffer) / 1000, 3, measurements::cpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
+    if (sensorPaths::cpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
+    {
+        _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::cpuTemp);
+        gcvt(atoi(buffer) / 1000, 3, measurements::cpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
+    }
 
 
     // Get RAM and Swap usage
@@ -278,24 +273,20 @@ void getMeasurements()
 
 
     // Get GPU load & temp
-    _getSensorFileContent(measurements::gpuLoad, sizeof(dataSize), sensorPaths::gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
-
-    _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::gpuTemp);
-    gcvt(atoi(buffer) / 1000, 3, measurements::gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
-
-    // Old readout using external binaries. Maybe we need it again in the future? I can't test nvidia & intel or older amd gpus at the moment
-    /* #if gpuType == 0
+    #if gpuType == 1 // TODO: I do not know yet if Nvidia GPUs can be read through the fs, therefore we're still using the old method here
         getStdoutFromCommand(measurements::gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
 
         getStdoutFromCommand(measurements::gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
-    #elif gpuType == 1
-        getStdoutFromCommand(measurements::gpuLoad, gpuUtilCmd);
-        gcvt(round(atof(measurements::gpuLoad)), 3, measurements::gpuLoad); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
-
-        getStdoutFromCommand(measurements::gpuTemp, gpuTempCmd);
-        gcvt(round(atof(measurements::gpuTemp)), 3, measurements::gpuTemp); // Convert to float, floor, restrict digits to max 3 and convert float back to char arr
     #else
-        strcpy(measurements::gpuLoad, "/");
-        strcpy(measurements::gpuTemp, "/");
-    #endif */
+        if (sensorPaths::gpuLoad[0] != '\0') // Check if a sensor was found before attempting to use it
+        {
+            _getSensorFileContent(measurements::gpuLoad, sizeof(dataSize), sensorPaths::gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
+        }
+
+        if (sensorPaths::gpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
+        {
+            _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::gpuTemp);
+            gcvt(atoi(buffer) / 1000, 3, measurements::gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
+        }
+    #endif
 }

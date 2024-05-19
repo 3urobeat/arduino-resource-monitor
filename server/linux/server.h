@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 13:00:56
+ * Last Modified: 2024-05-19 21:52:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -19,6 +19,7 @@
 
 
 #include "serial/serial.h" // Include library (Tutorial used: https://youtu.be/uHw7QyL4CM8)
+//#include <stdbool.h> // C bools
 #include <iostream>
 #include <chrono>
 #include <math.h>
@@ -34,12 +35,9 @@
 #define connectionRetryMultiplier 0.5    // retry * connectionRetryTimeout * connectionRetryMultiplier
 
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
-#define cpuTempSensor "k10temp-pci-00c3" // sensors entry for your CPU temp
-#define gpuType 1                        // Set to 0 for NVIDIA or to 1 for AMD
-#define gpuBus "3"                       // If you are using an AMD GPU and you have multiple GPUs you need to specify the bus ID of the GPU to display.
-#define gpuTempSensor "amdgpu-pci-0300"  // sensors entry for your AMD GPU temp (ignore if you have an NVIDIA card)
+#define gpuType 0                        // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-smi will be used)
 
-#define printDebug 0
+#define printDebug 0                     // Prints (a lot of) additional information during runtime, useful for debugging.
 #define clientLessMode 0                 // Disables connecting & sending data to the Arduino Client and only logs results to stdout. Useful during development
 
 
