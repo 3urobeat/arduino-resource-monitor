@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 17:28:38
+ * Last Modified: 2024-05-19 17:49:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -67,12 +67,53 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
 }
 
 
+// Persistent data for _getSensorFileContent()
+FILE *sensorFileP         = nullptr;
+char *sensorContentBuffer = NULL; // TODO: Change to fixed size
+
+/**
+ * Reads the content of a file at path until encountering delim, copies it into dest and returns amount of bytes read (includes delim character)
+ */
+ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char delim = '\0')
+{
+    // Read path
+    errno = 0;
+    sensorFileP = fopen(path, "r");
+
+    if (!sensorFileP)
+    {
+        printf("Error: Failed to read sensor '%s'! Error: %s", path, strerror(errno));
+        return 0;
+    }
+
+    size_t contentLen  = 0;
+    ssize_t bytes_read = getdelim(&sensorContentBuffer, &contentLen, delim, sensorFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
+
+    (void) fclose(sensorFileP);
+
+    // Move null terminator in contentBuffer by 1 byte if the last char is a newline (this was always the case in my testing)
+    if (sensorContentBuffer[bytes_read - 1] == '\n') sensorContentBuffer[bytes_read - 1] = '\0';
+
+
+    // Copy data into dest
+    strncpy(dest, sensorContentBuffer, size);
+
+    logDebug("_getSensorFileContent(): Read '%s' from '%s'", sensorContentBuffer, path);
+
+
+    // Clean up
+    //free(procStatContentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
+    //procStatContentBuffer = NULL;
+
+    return bytes_read;
+}
+
+
 // Persistent data for _getCpuLoad()
 long lastCpuRawNonIdle = 0;
 long lastCpuRawTotal   = 0;
 
-FILE *procStatFileP         = nullptr;
-char *procStatContentBuffer = NULL; // TODO: Change to fixed size
+char getCpuLoadBuffer[64] = "";
 
 /**
  * Calculates the current CPU utilization
@@ -80,41 +121,28 @@ char *procStatContentBuffer = NULL; // TODO: Change to fixed size
 void _getCpuLoad()
 {
     // Read '/proc/stat'
-    errno = 0;
-    procStatFileP = fopen("/proc/stat", "r");
+    ssize_t bytes_read = _getSensorFileContent(getCpuLoadBuffer, sizeof(getCpuLoadBuffer), "/proc/stat", '\n');
 
-    if (!procStatFileP)
-    {
-        printf("Error: Failed to read '/proc/stat' to get cpu load! Error: %s", strerror(errno));
-        strcpy(measurements::cpuLoad, "/");
-        return;
-    }
-
-    size_t contentLen  = 0;
-    ssize_t bytes_read = getdelim(&procStatContentBuffer, &contentLen, '\n', procStatFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
-
-    (void) fclose(procStatFileP);
-
-    procStatContentBuffer[bytes_read - 1] = ' '; // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
+    getCpuLoadBuffer[bytes_read - 1] = ' '; // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
 
 
     // Split procStatContentBuffer at spaces at calc values (rowTitle, user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice - see 1.8 @ https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
     long nonIdle  = 0;
     long total    = 0;
     int   matches = 0;                         // Zero-Based counter of matches, starting with 'user'
-    char *valueStartPtr = procStatContentBuffer + 5; // Point to the start of the first element
+    char *valueStartPtr = getCpuLoadBuffer + 5; // Point to the start of the first element
 
     for (int i = 5; i < bytes_read; i++) // Start after row title 'cpu  '           // TODO: This would be cooler (and maybe faster) using pointers instead of accessing array index
     {                                    // Behold: A custom implementation for splitting a char array at spaces. I tried dealing with strtok_r() and decided to do it myself.
-        if (procStatContentBuffer[i] == ' ')
+        if (getCpuLoadBuffer[i] == ' ')
         {
-            procStatContentBuffer[i] = '\0'; // Replace this space with a null-byte. This makes atoi() read from the first char of the current value up until this space (now null-byte)
+            getCpuLoadBuffer[i] = '\0'; // Replace this space with a null-byte. This makes atoi() read from the first char of the current value up until this space (now null-byte)
 
             // Add this value to nonIdle (if not column idle or iowait) and always add to total
             if (matches != 3 && matches != 4) nonIdle += atoi(valueStartPtr);
             total += atoi(valueStartPtr);
 
-            valueStartPtr = &procStatContentBuffer[i + 1]; // +1 to get "over" space and point to the first char of the next value
+            valueStartPtr = &getCpuLoadBuffer[i + 1]; // +1 to get "over" space and point to the first char of the next value
             matches++;
         }
     }
@@ -131,45 +159,6 @@ void _getCpuLoad()
     // Update lastCpuRawMeasurement with raw data
     lastCpuRawNonIdle = nonIdle;
     lastCpuRawTotal   = total;
-
-    // Clean up
-    //free(procStatContentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
-    //procStatContentBuffer = NULL;
-}
-
-
-// Persistent data for _getSensorFileContent()
-FILE *hwmonFileP         = nullptr;
-char *hwmonContentBuffer = NULL; // TODO: Change to fixed size
-
-/**
- * Calculates the current CPU utilization
- */
-void _getSensorFileContent(char *dest, int size, const char *path)
-{
-    // Read path
-    errno = 0;
-    hwmonFileP = fopen(path, "r");
-
-    if (!hwmonFileP)
-    {
-        printf("Error: Failed to read sensor '%s'! Error: %s", path, strerror(errno));
-        return;
-    }
-
-    size_t contentLen  = 0;
-    ssize_t bytes_read = getdelim(&hwmonContentBuffer, &contentLen, '\0', hwmonFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
-
-    (void) fclose(hwmonFileP);
-
-    // Move null terminator in contentBuffer by 1 byte if the last char is a newline (this was always the case in my testing)
-    if (hwmonContentBuffer[bytes_read - 1] == '\n') hwmonContentBuffer[bytes_read - 1] = '\0';
-
-
-    // Copy data into dest
-    strncpy(dest, hwmonContentBuffer, size);
-
-    logDebug("_getSensorFileContent(): Read '%s' from '%s'", hwmonContentBuffer, path);
 }
 
 
