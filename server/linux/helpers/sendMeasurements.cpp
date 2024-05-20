@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:05:36
+ * Last Modified: 2024-05-20 18:24:17
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -55,22 +55,16 @@ void _sendSerial(const char *str, measurementTypes id)
     strcat(sendTempStr, "#");
 
     // Send content (team yippee)
-    try
+    if (!serialWrite(sendTempStr))
     {
-        if (!serialIsOpen()) return;
-
-        serialWrite(sendTempStr);
-
-        logDebug("Sending (%d): %s", strlen(sendTempStr), sendTempStr)
-
-        // Refresh lastWriteTime
-        lastWriteTime = clock();
-    }
-    catch(const std::exception& e) // Handle big & spooky exception, for example when connection is lost
-    {
-        printf("Failed to send data to device: %s\n", e.what());
         reconnect();
+        return;
     }
+
+    logDebug("Sending (%d): %s", strlen(sendTempStr), sendTempStr)
+
+    // Refresh lastWriteTime
+    lastWriteTime = clock();
 }
 
 

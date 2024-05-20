@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:52:06
+ * Last Modified: 2024-05-20 18:29:29
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -64,93 +64,88 @@ void makeConnection()
 
         logDebug("Attempting to connect on port '%s', timeout is set to %dms...", port, arduinoReplyTimeout);
 
-        try
+
+        // Open a new connection with timeout set in config
+        if (!serialNewConnection(port, baud)) continue;
+
+        usleep(2500000); // Wait 2.5 seconds because the Arduino likes to reset for some reason
+
+        if (!serialIsOpen())
         {
-            // Open a new connection with timeout set in config
-            serialNewConnection(port, baud);
-
-            usleep(2500000); // Wait 2.5 seconds because the Arduino likes to reset for some reason
-
-            if (!serialIsOpen())
-            {
-                printf("Failed to connect to device '%s': Port did not open\n", port);
-                continue;
-            }
-
-            logDebug("Opened connection to device '%s'! Attempting to handshake...", port);
-
-
-            // Attempt to send client our header. A header starts with a +, normal data with a ~
-            serialFlushOutput(); // Clear anything that may be buffered
-
-            char headerStr[64] = "+ResourceMonitorLinuxServer-";
-            strcat(headerStr, version);
-            strcat(headerStr, "#"); // strcat null terminates here because "#" is a null terminated string
-
-            serialWrite(headerStr);
-
-            logDebug("Sent header '%s' to device '%s'! Listening for response...", headerStr, port);
-
-
-            // Attempt to listen for a response as long as port is open, we haven't run into arduinoReplyTimeout and buffer has enough space
-            char     buffer[64] = "";
-            uint32_t offset     = 0;
-            clock_t  timestamp  = clock();
-
-            while (serialIsOpen()
-                    && timestamp + arduinoReplyTimeout > clock()
-                    && offset < sizeof(buffer) - 1)
-            {
-                serialRead(&buffer[offset]);
-
-                // Do not increment iteration if nothing was read or pipeline was cleared and let next iteration overwrite char
-                if (buffer[offset] == '\0' || buffer[offset] == '\n') continue;
-
-                // Break loop if end char was received
-                if (buffer[offset] == '#') break;
-
-                offset++;
-            }
-
-
-            // Check the response
-            if (strlen(buffer) == 0)
-            {
-                printf("Received no response from client!\n");
-                serialClose();
-                continue;
-            }
-
-            if (strstr(buffer, "+ResourceMonitorClient") == NULL)
-            {
-                printf("Received invalid response from client: %s\n", buffer);
-                serialClose();
-                continue;
-            }
-
-            // Compare version
-            char versionStr[16] = "";
-
-            strncpy(versionStr, buffer + strlen("+ResourceMonitorClient-"), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
-            versionStr[strlen(versionStr) - 1] = '\0'; // Remove last char which is the end char #
-
-            if (strcmp(versionStr, version) != 0)
-            {
-                printf("Version mismatch! Client runs on %s but we are on %s!\n", versionStr, version);
-                serialClose();
-                continue;
-            }
-
-
-            logDebug("Received valid response from client: %s", buffer);
-            break;
+            printf("Failed to connect to device '%s': Port did not open\n", port);
+            continue;
         }
-        catch(const std::exception& e)
-        {
-            printf("Failed to connect to device '%s': %s\n", port, e.what());
 
-            // Close connection if still open
+        logDebug("Opened connection to device '%s'! Attempting to handshake...", port);
+
+
+        // Attempt to send client our header. A header starts with a +, normal data with a ~
+        serialFlushOutput(); // Clear anything that may be buffered
+
+        char headerStr[64] = "+ResourceMonitorLinuxServer-";
+        strcat(headerStr, version);
+        strcat(headerStr, "#"); // strcat null terminates here because "#" is a null terminated string
+
+        if (!serialWrite(headerStr))
+        {
             serialClose();
+            continue;
         }
+
+        logDebug("Sent header '%s' to device '%s'! Listening for response...", headerStr, port);
+
+
+        // Attempt to listen for a response as long as port is open, we haven't run into arduinoReplyTimeout and buffer has enough space
+        char     buffer[64] = "";
+        uint32_t offset     = 0;
+        clock_t  timestamp  = clock();
+
+        while (serialIsOpen()
+                && timestamp + arduinoReplyTimeout > clock()
+                && offset < sizeof(buffer) - 1)
+        {
+            if (!serialRead(&buffer[offset])) break;
+
+            // Do not increment iteration if nothing was read or pipeline was cleared and let next iteration overwrite char
+            if (buffer[offset] == '\0' || buffer[offset] == '\n') continue;
+
+            // Break loop if end char was received
+            if (buffer[offset] == '#') break;
+
+            offset++;
+        }
+
+
+        // Check the response
+        if (strlen(buffer) == 0)
+        {
+            printf("Received no response from client!\n");
+            serialClose();
+            continue;
+        }
+
+        if (strstr(buffer, "+ResourceMonitorClient") == NULL)
+        {
+            printf("Received invalid response from client: %s\n", buffer);
+            serialClose();
+            continue;
+        }
+
+        // Compare version
+        char versionStr[16] = "";
+
+        strncpy(versionStr, buffer + strlen("+ResourceMonitorClient-"), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
+        versionStr[strlen(versionStr) - 1] = '\0'; // Remove last char which is the end char #
+
+        if (strcmp(versionStr, version) != 0)
+        {
+            printf("Version mismatch! Client runs on %s but we are on %s!\n", versionStr, version);
+            serialClose();
+            continue;
+        }
+
+
+        logDebug("Received valid response from client: %s", buffer);
+        break;
     }
 }

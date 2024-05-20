@@ -4,7 +4,7 @@
  * Created Date: 2024-05-20 17:02:14
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:22:31
+ * Last Modified: 2024-05-20 18:28:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -25,11 +25,21 @@ serial::Serial *_connection = nullptr;
 char _connectionPort[32] = "";
 
 
-void serialNewConnection(const char *port, uint32_t baudRate)
+bool serialNewConnection(const char *port, uint32_t baudRate)
 {
-    _connection = new serial::Serial(port, baudRate, serial::Timeout::simpleTimeout(25));
+    try
+    {
+        _connection = new serial::Serial(port, baudRate, serial::Timeout::simpleTimeout(25));
 
-    strncpy(_connectionPort, _connection->getPort().c_str(), sizeof(_connectionPort));
+        strncpy(_connectionPort, _connection->getPort().c_str(), sizeof(_connectionPort));
+        return true;
+    }
+    catch(const std::exception& e)
+    {
+        printf("Failed to open connection to device '%s'! Error: %s\n", port, e.what());
+        serialClose();
+        return false;
+    }
 }
 
 bool serialIsOpen()
@@ -58,18 +68,36 @@ void serialFlushOutput()
     _connection->flushOutput();
 }
 
-void serialWrite(const char *data)
+bool serialWrite(const char *data)
 {
-    if (!_connection) return;
+    if (!_connection) return false;
 
-    _connection->write(data);
+    try
+    {
+        _connection->write(data);
+        return true;
+    }
+    catch(const std::exception& e)
+    {
+        printf("Failed to write to device! Error: %s\n", e.what());
+        return false;
+    }
 }
 
-void serialRead(char *dest)
+bool serialRead(char *dest)
 {
-    if (!_connection) return;
+    if (!_connection) return false;
 
-    *dest = _connection->read(1).c_str()[0];
+    try
+    {
+        *dest = _connection->read(1).c_str()[0];
+        return true;
+    }
+    catch(const std::exception& e)
+    {
+        printf("Failed to read from device! Error: %s\n", e.what());
+        return false;
+    }
 }
 
 char *serialGetPort()
