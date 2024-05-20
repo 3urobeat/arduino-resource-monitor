@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 11:23:45
+ * Last Modified: 2024-05-20 11:50:12
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -50,6 +50,12 @@ bool _fileExists(const char *path)
 }
 
 
+// Persistent data for _processSensorName()
+bool cpuTempAutoDiscovered = false; // Used for printing warning when multiple CPU/GPUs were auto-discovered
+bool gpuLoadAutoDiscovered = false;
+bool gpuTempAutoDiscovered = false;
+
+
 /**
  * Checks for known sensor names and populates sensorPaths
  */
@@ -75,8 +81,16 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
             bool sensorPathExists = _fileExists(sensorPaths::cpuTemp);
 
-            if (sensorPathExists) printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths::cpuTemp, sensorName);
-                else strcpy(sensorPaths::cpuTemp, "");
+            if (sensorPathExists)
+            {
+                printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths::cpuTemp, sensorName);
+                cpuTempAutoDiscovered = true;
+            }
+            else strcpy(sensorPaths::cpuTemp, "");
+        }
+        else
+        {
+            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If the wrong chip's temperature sensor has been chosen, please configure it manually.");
         }
     }
 
@@ -91,8 +105,15 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
             bool sensorPathExists = _fileExists(sensorPaths::gpuLoad);
 
-            if (sensorPathExists) printf("Found GPU Load sensor '%s' at '%s'!\n", sensorPaths::gpuLoad, sensorName);
-                else strcpy(sensorPaths::gpuLoad, "");
+            if (sensorPathExists)
+            {
+                printf("Found GPU Load sensor '%s' at '%s'!\n", sensorPaths::gpuLoad, sensorName);
+                gpuLoadAutoDiscovered = true;
+            } else strcpy(sensorPaths::gpuLoad, "");
+        }
+        else
+        {
+            if (gpuLoadAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's load sensor has been chosen, please configure it manually.");
         }
 
         if (strlen(sensorPaths::gpuTemp) == 0) // Check if user already configured this sensor
@@ -103,17 +124,24 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
             bool sensorPathExists = _fileExists(sensorPaths::gpuTemp);
 
-            if (sensorPathExists) printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths::gpuTemp, sensorName);
-                else strcpy(sensorPaths::gpuTemp, "");
+            if (sensorPathExists)
+            {
+                printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths::gpuTemp, sensorName);
+                gpuTempAutoDiscovered = true;
+            } else strcpy(sensorPaths::gpuTemp, "");
+        }
+        else
+        {
+            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's temperature sensor has been chosen, please configure it manually.");
         }
     }
 }
 
 
 /**
- * Attempts to find CPU & GPU sensors in '/sys/class/hwmon'
+ * Attempts to find relevant sensors in '/sys/class/hwmon'
  */
-void _findCpuGpuSensors()
+void _findHwmonSensors()
 {
     const char *hwmonDirStr = "/sys/class/hwmon/";
 
@@ -201,7 +229,7 @@ void getSensors()
     printf("Attempting to discover hardware sensors...\n");
 
     // Find CPU & GPU sensors
-    _findCpuGpuSensors();
+    _findHwmonSensors();
 
     // Log warnings for missing sensors and write '/' into respective measurements variable
     if (strlen(sensorPaths::cpuTemp) == 0)
