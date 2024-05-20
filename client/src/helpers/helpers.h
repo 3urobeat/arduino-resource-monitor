@@ -4,7 +4,7 @@
  * Created Date: 17.11.2023 17:18:28
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-12 22:11:38
+ * Last Modified: 2024-05-20 22:20:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -20,24 +20,57 @@
 #include "main.h"
 
 
+// Stores all current measurements
 #define dataSize 16 // Intentionally larger than in the server code because we need to store the units here as well
 
-// Stores all current measurements
-namespace measurementsCache {
-    extern char cpuLoad[dataSize];   // in %
-    extern char cpuTemp[dataSize];   // in °C
-    extern char ramUsage[dataSize];  // in GB
-    extern char swapUsage[dataSize]; // in GB
-    extern char gpuLoad[dataSize];   // in %
-    extern char gpuTemp[dataSize];   // in °C
+struct MeasurementTypes {
+    char cpuLoad[dataSize];   // in %
+    char cpuTemp[dataSize];   // in °C
+    char ramUsage[dataSize];  // in GB
+    char swapUsage[dataSize]; // in GB
+    char gpuLoad[dataSize];   // in %
+    char gpuTemp[dataSize];   // in °C
 };
 
+extern struct MeasurementTypes measurementsCache;
 
+
+// Functions defined in helpers
 void handleBacklight();
 void setupBacklight();
 
 void handleDataInput(char *str);
 
-void printCurrentDataToDisplay();
+char *fillRow(char *str);
 
-void handleConnectionHandshake(char *serverHandshake);
+void updateDisplay();
+
+
+// C++ functions need a prefix when viewed from a C++ compiler in order to allow C files to call them
+#ifdef __cplusplus
+    extern "C" void setupSerial(uint32_t baudRate);
+    extern "C" bool serialIsAvailable();
+    extern "C" void serialPrint(const char *str);
+    extern "C" char serialRead();
+
+    extern "C" void lcdSetupDisplay(int addr, uint8_t cols, uint8_t rows);
+    extern "C" void lcdDisplaySplashScreen(const char *statusMsg);
+    extern "C" void lcdPrint(const char *str);
+    extern "C" void lcdAlignedPrint(const char *align, const char *str, uint8_t width);
+    extern "C" void lcdCenterPrint(const char *str, uint8_t row, bool callClearLine);
+    extern "C" void lcdSetCursor(uint8_t col, uint8_t row);
+    extern "C" void lcdSetBacklight(uint8_t state);
+#else
+    extern void setupSerial(uint32_t baudRate);
+    extern bool serialIsAvailable();
+    extern void serialPrint(const char *str);
+    extern char serialRead();
+
+    extern void lcdSetupDisplay(int addr, uint8_t cols, uint8_t rows);
+    extern void lcdDisplaySplashScreen(const char *statusMsg);
+    extern void lcdPrint(const char *str);
+    extern void lcdAlignedPrint(const char *align, const char *str, uint8_t width);
+    extern void lcdCenterPrint(const char *str, uint8_t row, bool callClearLine);
+    extern void lcdSetCursor(uint8_t col, uint8_t row);
+    extern void lcdSetBacklight(uint8_t state);
+#endif

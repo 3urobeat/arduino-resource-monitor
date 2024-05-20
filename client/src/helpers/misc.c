@@ -1,10 +1,10 @@
 /*
- * File: backlight.cpp
+ * File: misc.c
  * Project: arduino-resource-monitor
- * Created Date: 2024-05-12 22:10:49
+ * Created Date: 2024-05-20 21:19:31
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-12 22:17:49
+ * Last Modified: 2024-05-20 21:20:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -18,33 +18,10 @@
 #include "helpers.h"
 
 
-bool backlightEnabled = false;
-
-const uint8_t switchPin = PD2;
-
-
-/**
- * Checks state of the backlight switch and controls the screen accordingly
- */
-void handleBacklight()
+// Fills a str with spaces to match maxcol to overwite any left over characters on the display. Make sure `str` is at least as large as maxcol! Returns pointer to str.
+char* fillRow(char *str)
 {
-    bool pinState = (digitalRead(switchPin) != LOW);
+    strncat(str, "                    ", maxcol - strlen(str));
 
-    if (pinState != backlightEnabled) {
-        lcd.setBacklight(pinState);
-
-        backlightEnabled = pinState;
-    }
-}
-
-
-/**
- * Inits the backlight switch pin and calls handleBacklight once
- */
-void setupBacklight()
-{
-    // Initialize switch pin as input
-    pinMode(switchPin, INPUT_PULLUP);
-
-    handleBacklight();
+    return str;
 }

@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 21:12:30
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-13 17:45:34
+ * Last Modified: 2024-05-20 22:03:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -17,93 +17,6 @@
 
 #include "main.h"
 
-
-// Create lcd obj
-lcdHelper<LiquidCrystal_PCF8574> lcd(0x27, maxcol, maxrow);
-
-
-// Runtime vars
-uint32_t timeSinceLastSignal = 0;
-bool     displayingSplashScreen = false;
-
-
-// Setup stuff on poweron
-void setup() {
-
-    // Initiate display
-    Wire.begin();
-    lcd.begin();
-    setupBacklight();
-
-    Serial.begin(baud);
-
-    // Print startup screen
-    lcd.centerPrint("Resource Monitor", 0, true);
-    lcd.centerPrint(version, 1, true);
-
-    displayingSplashScreen = true;
-    delay(500);
-
-    lcd.centerPrint("Waiting...", 3, true);
-
-}
-
-
-// Check regularly if no data was received recently and display splash screen again
-void loop() {
-
-    // Check if backlight should be toggled
-    handleBacklight();
-
-    // Count checkInterval and display Lost Connection message after 10 seconds
-    if (timeSinceLastSignal >= 10000) {
-        if (displayingSplashScreen) return;
-
-        lcd.clear();
-        lcd.setCursor(0, 0);
-
-        lcd.centerPrint("Resource Monitor", 0, true);
-        lcd.centerPrint(version, 1, true);
-        lcd.centerPrint("Lost Connection!", 3, true);
-
-        displayingSplashScreen = true;
-    } else {
-        timeSinceLastSignal += 25;
-    }
-
-    delay(25);
-
-}
-
-
-// SerialEvent occurs whenever a new data is being recieved and runs between loop() iterations
-void serialEvent() {
-    char inputString[64] = "";
-
-    // Read bytes from the data stream while it is active and is not about to overflow inputString
-    while (Serial.available() && strlen(inputString) < sizeof(inputString)) {
-        char inChar = (char) Serial.read();
-
-        // Break loop if end delimiter # was received. Don't append it.
-        if (inChar == '#') break;
-
-        // Add received char to the end of inputString
-        strncat(inputString, &inChar, 1);
-
-        delay(25);
-    }
-
-    // If transmission starts with ~ then the server sent us new measurements
-    if (inputString[0] == '~' && strlen(inputString) <= maxcol + 3) {
-        handleDataInput(inputString); // Process input
-        printCurrentDataToDisplay();  // ...and update the screen
-    }
-
-    // If transmission starts with + then the server just initiated a new connection
-    if (inputString[0] == '+') {
-        handleConnectionHandshake(inputString);
-    }
-
-    // Clear data from inputString when it has been printed
-    memset(inputString, 0, sizeof(inputString));
-}
+void setup()       { setup_c(); }
+void loop()        { loop_c(); }
+void serialEvent() { serialEvent_c(); }
