@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:43:23
+ * Last Modified: 2024-05-20 18:03:17
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -51,6 +51,8 @@ int main()
 void dataLoop()
 {
     printf("\nStarting to send data...\n");
+
+    strcpy(measurements.cpuLoad, "/"); // Init with '/' because it takes 2 measurements to display
 
     #if !clientLessMode
         while (serialIsOpen) // Run intervalEvent() every checkInterval ms as long as connection is not nullptr

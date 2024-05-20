@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:53:13
+ * Last Modified: 2024-05-20 18:05:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -30,16 +30,8 @@ enum measurementTypes {
 };
 
 
-// Store what we last sent to the Arduino to avoid unnecessary refreshes
-namespace arduinoCache {
-    char cpuLoad[dataSize] = "";
-    char cpuTemp[dataSize] = "";
-    char ramUsage[dataSize] = "";
-    char swapUsage[dataSize] = "";
-    char gpuLoad[dataSize] = "";
-    char gpuTemp[dataSize] = "";
-};
-
+// Create storage for caching what we last sent to the Arduino to avoid unnecessary refreshes
+struct MeasurementTypes arduinoCache;
 
 // Track time to decide if we have to send an alive ping so the Arduino doesn't display the 'Lost Connection!' screen
 clock_t lastWriteTime = 0;
@@ -88,34 +80,34 @@ void _sendSerial(const char *str, measurementTypes id)
 void sendMeasurements()
 {
     // Send what changed
-    if (strcmp(measurements::cpuLoad, arduinoCache::cpuLoad) != 0) {
-        _sendSerial(measurements::cpuLoad, cpuLoadID);
-        strcpy(arduinoCache::cpuLoad, measurements::cpuLoad);
+    if (strcmp(measurements.cpuLoad, arduinoCache.cpuLoad) != 0) {
+        _sendSerial(measurements.cpuLoad, cpuLoadID);
+        strcpy(arduinoCache.cpuLoad, measurements.cpuLoad);
     }
 
-    if (strcmp(measurements::cpuTemp, arduinoCache::cpuTemp) != 0) {
-        _sendSerial(measurements::cpuTemp, cpuTempID);
-        strcpy(arduinoCache::cpuTemp, measurements::cpuTemp);
+    if (strcmp(measurements.cpuTemp, arduinoCache.cpuTemp) != 0) {
+        _sendSerial(measurements.cpuTemp, cpuTempID);
+        strcpy(arduinoCache.cpuTemp, measurements.cpuTemp);
     }
 
-    if (strcmp(measurements::ramUsage, arduinoCache::ramUsage) != 0) {
-        _sendSerial(measurements::ramUsage, ramUsageID);
-        strcpy(arduinoCache::ramUsage, measurements::ramUsage);
+    if (strcmp(measurements.ramUsage, arduinoCache.ramUsage) != 0) {
+        _sendSerial(measurements.ramUsage, ramUsageID);
+        strcpy(arduinoCache.ramUsage, measurements.ramUsage);
     }
 
-    if (strcmp(measurements::swapUsage, arduinoCache::swapUsage) != 0) {
-        _sendSerial(measurements::swapUsage, swapUsageID);
-        strcpy(arduinoCache::swapUsage, measurements::swapUsage);
+    if (strcmp(measurements.swapUsage, arduinoCache.swapUsage) != 0) {
+        _sendSerial(measurements.swapUsage, swapUsageID);
+        strcpy(arduinoCache.swapUsage, measurements.swapUsage);
     }
 
-    if (strcmp(measurements::gpuLoad, arduinoCache::gpuLoad) != 0) {
-        _sendSerial(measurements::gpuLoad, gpuLoadID);
-        strcpy(arduinoCache::gpuLoad, measurements::gpuLoad);
+    if (strcmp(measurements.gpuLoad, arduinoCache.gpuLoad) != 0) {
+        _sendSerial(measurements.gpuLoad, gpuLoadID);
+        strcpy(arduinoCache.gpuLoad, measurements.gpuLoad);
     }
 
-    if (strcmp(measurements::gpuTemp, arduinoCache::gpuTemp) != 0) {
-        _sendSerial(measurements::gpuTemp, gpuTempID);
-        strcpy(arduinoCache::gpuTemp, measurements::gpuTemp);
+    if (strcmp(measurements.gpuTemp, arduinoCache.gpuTemp) != 0) {
+        _sendSerial(measurements.gpuTemp, gpuTempID);
+        strcpy(arduinoCache.gpuTemp, measurements.gpuTemp);
     }
 
 
@@ -133,23 +125,23 @@ void sendMeasurements()
  */
 void logMeasurements()
 {
-    printf("CPU: %s%% %s°C\n", measurements::cpuLoad, measurements::cpuTemp);
-    printf("RAM: %sGB %sGB\n", measurements::ramUsage, measurements::swapUsage);
-    printf("GPU: %s%% %s°C\n", measurements::gpuLoad, measurements::gpuTemp);
+    printf("CPU: %s%% %s°C\n", measurements.cpuLoad, measurements.cpuTemp);
+    printf("RAM: %sGB %sGB\n", measurements.ramUsage, measurements.swapUsage);
+    printf("GPU: %s%% %s°C\n", measurements.gpuLoad, measurements.gpuTemp);
 }
 
 
 /**
- * Resets the arduinoCache namespace. This causes sendMeasurements() to resend every measurement.
+ * Resets the arduinoCache struct. This causes sendMeasurements() to resend every measurement.
  */
 void resetCache()
 {
     logDebug("Resetting arduinoCache...");
 
-    memset(arduinoCache::cpuLoad,   0, dataSize);
-    memset(arduinoCache::cpuTemp,   0, dataSize);
-    memset(arduinoCache::ramUsage,  0, dataSize);
-    memset(arduinoCache::swapUsage, 0, dataSize);
-    memset(arduinoCache::gpuLoad,   0, dataSize);
-    memset(arduinoCache::gpuTemp,   0, dataSize);
+    memset(arduinoCache.cpuLoad,   0, dataSize);
+    memset(arduinoCache.cpuTemp,   0, dataSize);
+    memset(arduinoCache.ramUsage,  0, dataSize);
+    memset(arduinoCache.swapUsage, 0, dataSize);
+    memset(arduinoCache.gpuLoad,   0, dataSize);
+    memset(arduinoCache.gpuTemp,   0, dataSize);
 }

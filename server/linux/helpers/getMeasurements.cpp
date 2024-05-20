@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 15:34:34
+ * Last Modified: 2024-05-20 18:05:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -22,14 +22,7 @@
 
 
 // Stores all current measurements
-namespace measurements {
-    char cpuLoad[dataSize] = "/"; // Init with '/' because it takes 2 measurements to display
-    char cpuTemp[dataSize] = "";
-    char ramUsage[dataSize] = "";
-    char swapUsage[dataSize] = "";
-    char gpuLoad[dataSize] = "";
-    char gpuTemp[dataSize] = "";
-};
+struct MeasurementTypes measurements;
 
 
 /**
@@ -154,7 +147,7 @@ void _getCpuLoad()
     {
         float cpuLoad = ((lastCpuRawNonIdle - nonIdle) * 100.0) / (lastCpuRawTotal - total);
 
-        gcvt(round(cpuLoad), 3, measurements::cpuLoad); // Round float, restrict to 3 digits (0-100%) and write into cpuLoad
+        gcvt(round(cpuLoad), 3, measurements.cpuLoad); // Round float, restrict to 3 digits (0-100%) and write into cpuLoad
     }
 
     // Update lastCpuRawMeasurement with raw data
@@ -220,39 +213,39 @@ void _getMemSwapUsage()
     float mem  = (memTotal - memAvailable) / 1000000.0;
     float swap = (swapTotal - swapFree)    / 1000000.0;
 
-    memset(measurements::ramUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
-    gcvt(mem, 3, measurements::ramUsage);
+    memset(measurements.ramUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
+    gcvt(mem, 3, measurements.ramUsage);
 
     for (int i = 0; i < 4; i++) // Nifty loop for number formatting: Make numbers below 100 show always one decimal.
     {
-        if (measurements::ramUsage[i] == '.' || measurements::ramUsage[i] == '\0')
+        if (measurements.ramUsage[i] == '.' || measurements.ramUsage[i] == '\0')
         {
-            measurements::ramUsage[i] = '.';
-            measurements::ramUsage[i + 1] = measurements::ramUsage[i + 1] ? measurements::ramUsage[i + 1] : '0';
-            measurements::ramUsage[i + 2] = '\0';
+            measurements.ramUsage[i] = '.';
+            measurements.ramUsage[i + 1] = measurements.ramUsage[i + 1] ? measurements.ramUsage[i + 1] : '0';
+            measurements.ramUsage[i + 2] = '\0';
             break;
         }
     }
 
     if (swapTotal > 0)
     {
-        memset(measurements::swapUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
-        gcvt(swap, 3, measurements::swapUsage);
+        memset(measurements.swapUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
+        gcvt(swap, 3, measurements.swapUsage);
 
         for (int i = 0; i < 4; i++)
         {
-            if (measurements::swapUsage[i] == '.' || measurements::swapUsage[i] == '\0')
+            if (measurements.swapUsage[i] == '.' || measurements.swapUsage[i] == '\0')
             {
-                measurements::swapUsage[i] = '.';
-                measurements::swapUsage[i + 1] = measurements::swapUsage[i + 1] ? measurements::swapUsage[i + 1] : '0';
-                measurements::swapUsage[i + 2] = '\0';
+                measurements.swapUsage[i] = '.';
+                measurements.swapUsage[i + 1] = measurements.swapUsage[i + 1] ? measurements.swapUsage[i + 1] : '0';
+                measurements.swapUsage[i + 2] = '\0';
                 break;
             }
         }
     }
     else
     {
-        measurements::swapUsage[0] = '/'; // Swap is disabled
+        measurements.swapUsage[0] = '/'; // Swap is disabled
     }
 }
 
@@ -272,10 +265,10 @@ void getMeasurements()
     // Get CPU load & temp
     _getCpuLoad();
 
-    if (sensorPaths::cpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
+    if (sensorPaths.cpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
     {
-        _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::cpuTemp);
-        gcvt(atoi(buffer) / 1000, 3, measurements::cpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
+        _getSensorFileContent(buffer, sizeof(buffer), sensorPaths.cpuTemp);
+        gcvt(atoi(buffer) / 1000, 3, measurements.cpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
     }
 
 
@@ -285,19 +278,19 @@ void getMeasurements()
 
     // Get GPU load & temp
     #if gpuType == 1 // TODO: I do not know yet if Nvidia GPUs can be read through the fs, therefore we're still using the old method here
-        getStdoutFromCommand(measurements::gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
+        getStdoutFromCommand(measurements.gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
 
-        getStdoutFromCommand(measurements::gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
+        getStdoutFromCommand(measurements.gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
     #else
-        if (sensorPaths::gpuLoad[0] != '\0') // Check if a sensor was found before attempting to use it
+        if (sensorPaths.gpuLoad[0] != '\0') // Check if a sensor was found before attempting to use it
         {
-            _getSensorFileContent(measurements::gpuLoad, sizeof(dataSize), sensorPaths::gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
+            _getSensorFileContent(measurements.gpuLoad, sizeof(dataSize), sensorPaths.gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
         }
 
-        if (sensorPaths::gpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
+        if (sensorPaths.gpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
         {
-            _getSensorFileContent(buffer, sizeof(buffer), sensorPaths::gpuTemp);
-            gcvt(atoi(buffer) / 1000, 3, measurements::gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
+            _getSensorFileContent(buffer, sizeof(buffer), sensorPaths.gpuTemp);
+            gcvt(atoi(buffer) / 1000, 3, measurements.gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
         }
     #endif
 }
