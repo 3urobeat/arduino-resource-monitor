@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 15:04:58
+ * Last Modified: 2024-05-20 15:34:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -60,15 +60,14 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
 
 
 // Persistent data for _getSensorFileContent()
-FILE *sensorFileP         = nullptr;
-char *sensorContentBuffer = NULL; // TODO: Change to fixed size
+FILE *sensorFileP = nullptr;
 
 /**
- * Reads the content of a file at path until encountering delim, copies it into dest and returns amount of bytes read (includes delim character)
+ * Reads the content of a file until encountering delim or EOF, writes into dest and returns amount of bytes read (includes delim character)
  */
 ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char delim = '\0')
 {
-    // Read path
+    // Open stream to file
     errno = 0;
     sensorFileP = fopen(path, "r");
 
@@ -78,26 +77,36 @@ ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char
         return 0;
     }
 
-    size_t contentLen  = 0;
-    ssize_t bytes_read = getdelim(&sensorContentBuffer, &contentLen, delim, sensorFileP); // Read only the first line as it contains the aggregate of all threads - https://stackoverflow.com/a/174743
+    // Read stream byte-per-byte
+    int   charCode;
+    char *destCurrentPtr = dest;
+    char *destEndPtr     = dest + size - 1;
+
+    while ((charCode = getc(sensorFileP)) != EOF && destCurrentPtr < destEndPtr) // Read until reaching end-of-file or running out of space
+    {
+        *destCurrentPtr = (char) charCode;
+        destCurrentPtr++;
+
+        if (charCode == delim) break; // Stop reading if we reached the desired delimiter
+    }
+
+    // Append a null-byte to properly terminate the string and close stream
+    *destCurrentPtr = '\0';
 
     (void) fclose(sensorFileP);
+    sensorFileP = nullptr;
+
 
     // Move null terminator in contentBuffer by 1 byte if the last char is a newline (this was always the case in my testing)
-    if (sensorContentBuffer[bytes_read - 1] == '\n') sensorContentBuffer[bytes_read - 1] = '\0';
+    int bytesRead = strlen(dest);
+
+    if (dest[bytesRead - 1] == '\n') dest[bytesRead - 1] = '\0';
 
 
-    // Copy data into dest
-    strncpy(dest, sensorContentBuffer, size);
+    // Debug log result and return size
+    logDebug("_getSensorFileContent(): Read '%s' from '%s'", dest, path);
 
-    logDebug("_getSensorFileContent(): Read '%s' from '%s'", sensorContentBuffer, path);
-
-
-    // Clean up
-    free(sensorContentBuffer);  // This should *theoretically* not be needed here, as we always read content of roughly the same length and getdelim() should reuse the allocated memory
-    //sensorContentBuffer = NULL;
-
-    return bytes_read;
+    return bytesRead;
 }
 
 
