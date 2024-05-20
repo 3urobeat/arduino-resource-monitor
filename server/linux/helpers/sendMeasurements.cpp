@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 15:06:08
+ * Last Modified: 2024-05-20 17:17:32
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -66,9 +66,9 @@ void _sendSerial(const char *str, measurementTypes id)
     // Send content (team yippee)
     try
     {
-        if (!connection) return;
+        if (!serialIsOpen()) return;
 
-        connection->write(sendTempStr);
+        serialWrite(sendTempStr);
 
         logDebug("Sending (%d): %s", strlen(sendTempStr), sendTempStr)
 

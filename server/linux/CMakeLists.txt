@@ -40,6 +40,7 @@ set(SOURCES
     helpers/makeConnection.cpp
     helpers/misc.cpp
     helpers/sendMeasurements.cpp
+    helpers/serialWrapper.cpp
 )
 
 

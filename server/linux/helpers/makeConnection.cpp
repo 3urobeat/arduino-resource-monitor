@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 15:05:59
+ * Last Modified: 2024-05-20 17:36:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -25,10 +25,8 @@ using namespace std;
 /**
  * Attempts to find and connect to Arduino over Serial
  */
-serial::Serial* makeConnection()
+void makeConnection()
 {
-    serial::Serial *_connection = nullptr;
-
     // Get all used USB ports by iterating through /sys/class/tty/
     DIR *dp;
     struct dirent *ep;
@@ -71,15 +69,13 @@ serial::Serial* makeConnection()
         try
         {
             // Open a new connection with timeout set in config
-            _connection = new serial::Serial(port, baud, serial::Timeout::simpleTimeout(25));
+            serialNewConnection(port, baud);
 
             this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(2500)); // Necessary atm because Arduino resets for some reason
 
-            if (!_connection->isOpen())
+            if (!serialIsOpen())
             {
                 printf("Failed to connect to device '%s': Port did not open\n", port);
-
-                _connection = nullptr;
                 continue;
             }
 
@@ -87,13 +83,13 @@ serial::Serial* makeConnection()
 
 
             // Attempt to send client our header. A header starts with a +, normal data with a ~
-            _connection->flushOutput(); // Clear anything that may be buffered
+            serialFlushOutput(); // Clear anything that may be buffered
 
             char headerStr[64] = "+ResourceMonitorLinuxServer-";
             strcat(headerStr, version);
             strcat(headerStr, "#"); // strcat null terminates here because "#" is a null terminated string
 
-            _connection->write(headerStr);
+            serialWrite(headerStr);
 
             logDebug("Sent header '%s' to device '%s'! Listening for response...", headerStr, port);
 
@@ -103,9 +99,9 @@ serial::Serial* makeConnection()
             unsigned int offset = 0;
             auto timestamp = chrono::steady_clock::now();
 
-            while (_connection->isOpen() && timestamp + chrono::milliseconds(arduinoReplyTimeout) > chrono::steady_clock::now() && offset < sizeof(buffer) - 1)
+            while (serialIsOpen() && timestamp + std::chrono::milliseconds(arduinoReplyTimeout) > std::chrono::steady_clock::now() && offset < sizeof(buffer) - 1)
             {
-                buffer[offset] = *_connection->read(1).c_str();
+                serialRead(&buffer[offset]);
 
                 // Do not increment iteration if nothing was read or pipeline was cleared and let next iteration overwrite char
                 if (buffer[offset] == '\0' || buffer[offset] == '\n') continue;
@@ -121,16 +117,14 @@ serial::Serial* makeConnection()
             if (strlen(buffer) == 0)
             {
                 printf("Received no response from client!\n");
-                _connection->close();
-                _connection = nullptr;
+                serialClose();
                 continue;
             }
 
             if (strstr(buffer, "+ResourceMonitorClient") == NULL)
             {
                 printf("Received invalid response from client: %s\n", buffer);
-                _connection->close();
-                _connection = nullptr;
+                serialClose();
                 continue;
             }
 
@@ -143,8 +137,7 @@ serial::Serial* makeConnection()
             if (strcmp(versionStr, version) != 0)
             {
                 printf("Version mismatch! Client runs on %s but we are on %s!\n", versionStr, version);
-                _connection->close();
-                _connection = nullptr;
+                serialClose();
                 continue;
             }
 
@@ -157,15 +150,7 @@ serial::Serial* makeConnection()
             printf("Failed to connect to device '%s': %s\n", port, e.what());
 
             // Close connection if still open
-            if (_connection && _connection->isOpen())
-            {
-                _connection->close();
-            }
-
-            delete _connection;
-            _connection = nullptr;
+            serialClose();
         }
     }
-
-    return _connection;
 }

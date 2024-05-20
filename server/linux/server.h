@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 21:52:44
+ * Last Modified: 2024-05-20 17:18:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -18,7 +18,6 @@
 #pragma once
 
 
-#include "serial/serial.h" // Include library (Tutorial used: https://youtu.be/uHw7QyL4CM8)
 //#include <stdbool.h> // C bools
 #include <iostream>
 #include <chrono>
@@ -54,8 +53,6 @@
 extern char cpuTempCmd[128];
 extern char gpuUtilCmd[128];
 extern char gpuTempCmd[128];
-
-extern serial::Serial *connection;
 
 extern void connect();
 extern void reconnect();
