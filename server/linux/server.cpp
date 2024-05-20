@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 21:40:47
+ * Last Modified: 2024-05-20 17:29:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -21,8 +21,6 @@ using namespace std;
 
 
 int connectionRetry = 0;
-
-serial::Serial *connection; // Make a connection
 
 
 // Entry point
@@ -57,7 +55,7 @@ void dataLoop()
     printf("\nStarting to send data...\n");
 
     #if !clientLessMode
-        while (connection) // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
+        while (serialIsOpen) // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
     #else
         while(true) // Run forever until process is manually terminated
     #endif
@@ -87,9 +85,9 @@ void connect()
     #if !clientLessMode
         printf("Searching for Arduino...\n");
 
-        connection = makeConnection();
+        makeConnection();
 
-        if (connection == NULL)
+        if (!serialIsOpen())
         {
             if (connectionRetry > connectionRetryAmount)
             {
@@ -107,7 +105,7 @@ void connect()
             return;
         }
 
-        printf("Successfully connected to Arduino on port '%s'!\n", connection->getPort().c_str());
+        printf("Successfully connected to Arduino on port '%s'!\n", serialGetPort());
     #else
         printf("Skipped searching for Arduino because clientLessMode is enabled!\n");
     #endif
@@ -126,13 +124,7 @@ void reconnect()
     printf("\nAttempting to reconnect in 5 seconds...\n");
 
     // Close connection if still open
-    if (connection->isOpen())
-    {
-        connection->close();
-    }
-
-    delete connection;
-    connection = nullptr;
+    serialClose();
 
     this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(5000));
 

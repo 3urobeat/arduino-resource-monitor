@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 21:40:16
+ * Last Modified: 2024-05-20 17:15:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -48,10 +48,20 @@ extern void getMeasurements();
 
 extern void getSensors();
 
-extern serial::Serial* makeConnection();
+extern void makeConnection();
 
 extern bool strStartsWith(const char *searchFor, const char *searchInStr);
 
 extern void sendMeasurements();
 extern void logMeasurements();
 extern void resetCache();
+
+
+// Functions defined in C++ wrapper for Serial library
+extern "C" void serialNewConnection(const char *port, uint32_t baudRate);
+extern "C" bool serialIsOpen();
+extern "C" void serialClose();
+extern "C" void serialFlushOutput();
+extern "C" void serialWrite(const char *data);
+extern "C" void serialRead(char *dest);
+extern "C" char *serialGetPort();
