@@ -3,8 +3,6 @@
  * Additional Contributors: Christopher Baker @bakercp
  */
 
-#if !defined(_WIN32)
-
 #include <stdio.h>
 #include <string.h>
 #include <sstream>
@@ -19,18 +17,11 @@
 #include <sys/param.h>
 #include <pthread.h>
 
-#if defined(__linux__)
-# include <linux/serial.h>
-#endif
+#include <linux/serial.h>
 
 #include <sys/select.h>
 #include <sys/time.h>
 #include <time.h>
-#ifdef __MACH__
-#include <AvailabilityMacros.h>
-#include <mach/clock.h>
-#include <mach/mach.h>
-#endif
 
 #include "serial/impl/unix.h"
 
@@ -42,9 +33,6 @@
 #endif
 #endif
 
-#if defined(MAC_OS_X_VERSION_10_3) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_3)
-#include <IOKit/serial/ioss.h>
-#endif
 
 using std::string;
 using std::stringstream;
@@ -82,17 +70,9 @@ timespec
 MillisecondTimer::timespec_now ()
 {
   timespec time;
-# ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
-  clock_serv_t cclock;
-  mach_timespec_t mts;
-  host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock);
-  clock_get_time(cclock, &mts);
-  mach_port_deallocate(mach_task_self(), cclock);
-  time.tv_sec = mts.tv_sec;
-  time.tv_nsec = mts.tv_nsec;
-# else
+
   clock_gettime(CLOCK_MONOTONIC, &time);
-# endif
+
   return time;
 }
 
@@ -415,19 +395,7 @@ Serial::SerialImpl::reconfigurePort ()
 
   // apply custom baud rate, if any
   if (custom_baud == true) {
-    // OS X support
-#if defined(MAC_OS_X_VERSION_10_4) && (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_4)
-    // Starting with Tiger, the IOSSIOSPEED ioctl can be used to set arbitrary baud rates
-    // other than those specified by POSIX. The driver for the underlying serial hardware
-    // ultimately determines which baud rates can be used. This ioctl sets both the input
-    // and output speed.
-    speed_t new_baud = static_cast<speed_t> (baudrate_);
-    // PySerial uses IOSSIOSPEED=0x80045402
-    if (-1 == ioctl (fd_, IOSSIOSPEED, &new_baud, 1)) {
-      THROW (IOException, errno);
-    }
-    // Linux Support
-#elif defined(__linux__) && defined (TIOCSSERIAL)
+
     struct serial_struct ser;
 
     if (-1 == ioctl (fd_, TIOCGSERIAL, &ser)) {
@@ -443,9 +411,7 @@ Serial::SerialImpl::reconfigurePort ()
     if (-1 == ioctl (fd_, TIOCSSERIAL, &ser)) {
       THROW (IOException, errno);
     }
-#else
-    throw invalid_argument ("OS does not currently support custom bauds");
-#endif
+
   }
 
   // Update byte_time_ based on the new settings.
@@ -666,7 +632,7 @@ Serial::SerialImpl::write (const uint8_t *data, size_t length)
         ssize_t bytes_written_now =
           ::write (fd_, data + bytes_written, length - bytes_written);
 
-        // even though pselect returned readiness the call might still be 
+        // even though pselect returned readiness the call might still be
         // interrupted. In that case simply retry.
         if (bytes_written_now == -1 && errno == EINTR) {
           continue;
@@ -772,40 +738,6 @@ Serial::SerialImpl::setParity (serial::parity_t parity)
     reconfigurePort ();
 }
 
-serial::parity_t
-Serial::SerialImpl::getParity () const
-{
-  return parity_;
-}
-
-void
-Serial::SerialImpl::setStopbits (serial::stopbits_t stopbits)
-{
-  stopbits_ = stopbits;
-  if (is_open_)
-    reconfigurePort ();
-}
-
-serial::stopbits_t
-Serial::SerialImpl::getStopbits () const
-{
-  return stopbits_;
-}
-
-void
-Serial::SerialImpl::setFlowcontrol (serial::flowcontrol_t flowcontrol)
-{
-  flowcontrol_ = flowcontrol;
-  if (is_open_)
-    reconfigurePort ();
-}
-
-serial::flowcontrol_t
-Serial::SerialImpl::getFlowcontrol () const
-{
-  return flowcontrol_;
-}
-
 void
 Serial::SerialImpl::flush ()
 {
@@ -867,185 +799,6 @@ Serial::SerialImpl::setBreak (bool level)
 }
 
 void
-Serial::SerialImpl::setRTS (bool level)
-{
-  if (is_open_ == false) {
-    throw PortNotOpenedException ("Serial::setRTS");
-  }
-
-  int command = TIOCM_RTS;
-
-  if (level) {
-    if (-1 == ioctl (fd_, TIOCMBIS, &command))
-    {
-      stringstream ss;
-      ss << "setRTS failed on a call to ioctl(TIOCMBIS): " << errno << " " << strerror(errno);
-      throw(SerialException(ss.str().c_str()));
-    }
-  } else {
-    if (-1 == ioctl (fd_, TIOCMBIC, &command))
-    {
-      stringstream ss;
-      ss << "setRTS failed on a call to ioctl(TIOCMBIC): " << errno << " " << strerror(errno);
-      throw(SerialException(ss.str().c_str()));
-    }
-  }
-}
-
-void
-Serial::SerialImpl::setDTR (bool level)
-{
-  if (is_open_ == false) {
-    throw PortNotOpenedException ("Serial::setDTR");
-  }
-
-  int command = TIOCM_DTR;
-
-  if (level) {
-    if (-1 == ioctl (fd_, TIOCMBIS, &command))
-    {
-      stringstream ss;
-      ss << "setDTR failed on a call to ioctl(TIOCMBIS): " << errno << " " << strerror(errno);
-      throw(SerialException(ss.str().c_str()));
-    }
-  } else {
-    if (-1 == ioctl (fd_, TIOCMBIC, &command))
-    {
-      stringstream ss;
-      ss << "setDTR failed on a call to ioctl(TIOCMBIC): " << errno << " " << strerror(errno);
-      throw(SerialException(ss.str().c_str()));
-    }
-  }
-}
-
-bool
-Serial::SerialImpl::waitForChange ()
-{
-#ifndef TIOCMIWAIT
-
-while (is_open_ == true) {
-
-    int status;
-
-    if (-1 == ioctl (fd_, TIOCMGET, &status))
-    {
-        stringstream ss;
-        ss << "waitForChange failed on a call to ioctl(TIOCMGET): " << errno << " " << strerror(errno);
-        throw(SerialException(ss.str().c_str()));
-    }
-    else
-    {
-        if (0 != (status & TIOCM_CTS)
-         || 0 != (status & TIOCM_DSR)
-         || 0 != (status & TIOCM_RI)
-         || 0 != (status & TIOCM_CD))
-        {
-          return true;
-        }
-    }
-
-    usleep(1000);
-  }
-
-  return false;
-#else
-  int command = (TIOCM_CD|TIOCM_DSR|TIOCM_RI|TIOCM_CTS);
-
-  if (-1 == ioctl (fd_, TIOCMIWAIT, &command)) {
-    stringstream ss;
-    ss << "waitForDSR failed on a call to ioctl(TIOCMIWAIT): "
-       << errno << " " << strerror(errno);
-    throw(SerialException(ss.str().c_str()));
-  }
-  return true;
-#endif
-}
-
-bool
-Serial::SerialImpl::getCTS ()
-{
-  if (is_open_ == false) {
-    throw PortNotOpenedException ("Serial::getCTS");
-  }
-
-  int status;
-
-  if (-1 == ioctl (fd_, TIOCMGET, &status))
-  {
-    stringstream ss;
-    ss << "getCTS failed on a call to ioctl(TIOCMGET): " << errno << " " << strerror(errno);
-    throw(SerialException(ss.str().c_str()));
-  }
-  else
-  {
-    return 0 != (status & TIOCM_CTS);
-  }
-}
-
-bool
-Serial::SerialImpl::getDSR ()
-{
-  if (is_open_ == false) {
-    throw PortNotOpenedException ("Serial::getDSR");
-  }
-
-  int status;
-
-  if (-1 == ioctl (fd_, TIOCMGET, &status))
-  {
-      stringstream ss;
-      ss << "getDSR failed on a call to ioctl(TIOCMGET): " << errno << " " << strerror(errno);
-      throw(SerialException(ss.str().c_str()));
-  }
-  else
-  {
-      return 0 != (status & TIOCM_DSR);
-  }
-}
-
-bool
-Serial::SerialImpl::getRI ()
-{
-  if (is_open_ == false) {
-    throw PortNotOpenedException ("Serial::getRI");
-  }
-
-  int status;
-
-  if (-1 == ioctl (fd_, TIOCMGET, &status))
-  {
-    stringstream ss;
-    ss << "getRI failed on a call to ioctl(TIOCMGET): " << errno << " " << strerror(errno);
-    throw(SerialException(ss.str().c_str()));
-  }
-  else
-  {
-    return 0 != (status & TIOCM_RI);
-  }
-}
-
-bool
-Serial::SerialImpl::getCD ()
-{
-  if (is_open_ == false) {
-    throw PortNotOpenedException ("Serial::getCD");
-  }
-
-  int status;
-
-  if (-1 == ioctl (fd_, TIOCMGET, &status))
-  {
-    stringstream ss;
-    ss << "getCD failed on a call to ioctl(TIOCMGET): " << errno << " " << strerror(errno);
-    throw(SerialException(ss.str().c_str()));
-  }
-  else
-  {
-    return 0 != (status & TIOCM_CD);
-  }
-}
-
-void
 Serial::SerialImpl::readLock ()
 {
   int result = pthread_mutex_lock(&this->read_mutex);
@@ -1080,5 +833,3 @@ Serial::SerialImpl::writeUnlock ()
     THROW (IOException, result);
   }
 }
-
-#endif // !defined(_WIN32)
