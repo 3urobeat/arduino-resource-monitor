@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:17:32
+ * Last Modified: 2024-05-20 17:53:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -16,8 +16,6 @@
 
 
 #include "helpers.h"
-
-using namespace std;
 
 
 // Specifies the IDs which data messages are prefixed with to indicate their type
@@ -43,7 +41,8 @@ namespace arduinoCache {
 };
 
 
-chrono::time_point<chrono::steady_clock> lastWriteTime; // Track time to decide if we have to send an alive ping so the Arduino doesn't display the Lost Connection screen
+// Track time to decide if we have to send an alive ping so the Arduino doesn't display the 'Lost Connection!' screen
+clock_t lastWriteTime = 0;
 
 
 char sendTempStr[32];
@@ -73,7 +72,7 @@ void _sendSerial(const char *str, measurementTypes id)
         logDebug("Sending (%d): %s", strlen(sendTempStr), sendTempStr)
 
         // Refresh lastWriteTime
-        lastWriteTime = chrono::steady_clock::now();
+        lastWriteTime = clock();
     }
     catch(const std::exception& e) // Handle big & spooky exception, for example when connection is lost
     {
@@ -121,7 +120,7 @@ void sendMeasurements()
 
 
     // Send alive ping if nothing was written in the last 5 secs to prevent Connection Lost screen from showing
-    if (chrono::steady_clock::now() - lastWriteTime > chrono::milliseconds(5000)) {
+    if (clock() - lastWriteTime > 5000) {
         logDebug("Sending alive ping!");
 
         _sendSerial("", pingID);

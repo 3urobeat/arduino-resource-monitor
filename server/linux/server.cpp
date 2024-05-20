@@ -4,7 +4,7 @@
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:29:06
+ * Last Modified: 2024-05-20 17:43:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -16,8 +16,6 @@
 
 
 #include "server.h"
-
-using namespace std;
 
 
 int connectionRetry = 0;
@@ -71,7 +69,7 @@ void dataLoop()
         #endif
 
         // Delay for checkInterval ms
-        this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(checkInterval));
+        usleep(checkInterval * 1000);
     }
 }
 
@@ -95,11 +93,11 @@ void connect()
                 exit(1);
             }
 
-            int delay = (int) (connectionRetryTimeout * connectionRetryMultiplier) * (connectionRetry + 1);
+            int delay = (int) (connectionRetryTimeout * connectionRetryMultiplier) * (connectionRetry + 1); // Milliseconds
 
             printf("Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, connectionRetryAmount);
 
-            this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(delay));
+            usleep(delay * 1000);
             connect();
 
             return;
@@ -126,7 +124,7 @@ void reconnect()
     // Close connection if still open
     serialClose();
 
-    this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(5000));
+    sleep(5);
 
     // Reset connection tries
     connectionRetry = 0;
