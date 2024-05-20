@@ -20,11 +20,11 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 
 # Include Serial lib
-include_directories(lib/include)
+include_directories(lib/serial/include)
 
-set(serial_SRCS lib/src/serial.cc lib/include/serial/serial.h
-    lib/include/serial/v8stdint.h lib/src/impl/list_ports/list_ports_linux.cc)
-list(APPEND serial_SRCS lib/src/impl/unix.cc)
+set(serial_SRCS lib/serial/src/serial.cc lib/serial/include/serial/serial.h
+    lib/serial/include/serial/v8stdint.h lib/serial/src/impl/list_ports/list_ports_linux.cc)
+list(APPEND serial_SRCS lib/serial/src/impl/unix.cc)
 
 add_library(serial STATIC ${serial_SRCS})
 target_link_libraries(serial rt)
