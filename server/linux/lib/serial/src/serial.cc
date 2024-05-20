@@ -1,21 +1,12 @@
 /* Copyright 2012 William Woodall and John Harrison */
 #include <algorithm>
 
-#if !defined(_WIN32) && !defined(__OpenBSD__) && !defined(__FreeBSD__)
-# include <alloca.h>
-#endif
-
-#if defined (__MINGW32__)
-# define alloca __builtin_alloca
-#endif
+#include <alloca.h>
 
 #include "serial/serial.h"
 
-#ifdef _WIN32
-#include "serial/impl/win.h"
-#else
 #include "serial/impl/unix.h"
-#endif
+
 
 using std::invalid_argument;
 using std::min;
@@ -337,36 +328,6 @@ Serial::setParity (parity_t parity)
   pimpl_->setParity (parity);
 }
 
-parity_t
-Serial::getParity () const
-{
-  return pimpl_->getParity ();
-}
-
-void
-Serial::setStopbits (stopbits_t stopbits)
-{
-  pimpl_->setStopbits (stopbits);
-}
-
-stopbits_t
-Serial::getStopbits () const
-{
-  return pimpl_->getStopbits ();
-}
-
-void
-Serial::setFlowcontrol (flowcontrol_t flowcontrol)
-{
-  pimpl_->setFlowcontrol (flowcontrol);
-}
-
-flowcontrol_t
-Serial::getFlowcontrol () const
-{
-  return pimpl_->getFlowcontrol ();
-}
-
 void Serial::flush ()
 {
   ScopedReadLock rlock(this->pimpl_);
@@ -394,39 +355,4 @@ void Serial::sendBreak (int duration)
 void Serial::setBreak (bool level)
 {
   pimpl_->setBreak (level);
-}
-
-void Serial::setRTS (bool level)
-{
-  pimpl_->setRTS (level);
-}
-
-void Serial::setDTR (bool level)
-{
-  pimpl_->setDTR (level);
-}
-
-bool Serial::waitForChange()
-{
-  return pimpl_->waitForChange();
-}
-
-bool Serial::getCTS ()
-{
-  return pimpl_->getCTS ();
-}
-
-bool Serial::getDSR ()
-{
-  return pimpl_->getDSR ();
-}
-
-bool Serial::getRI ()
-{
-  return pimpl_->getRI ();
-}
-
-bool Serial::getCD ()
-{
-  return pimpl_->getCD ();
 }

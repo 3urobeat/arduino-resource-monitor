@@ -35,7 +35,6 @@
  *
  */
 
-#if !defined(_WIN32)
 
 #ifndef SERIAL_IMPL_UNIX_H
 #define SERIAL_IMPL_UNIX_H
@@ -55,7 +54,7 @@ using serial::IOException;
 
 class MillisecondTimer {
 public:
-  MillisecondTimer(const uint32_t millis);         
+  MillisecondTimer(const uint32_t millis);
   int64_t remaining();
 
 private:
@@ -114,27 +113,6 @@ public:
   setBreak (bool level);
 
   void
-  setRTS (bool level);
-
-  void
-  setDTR (bool level);
-
-  bool
-  waitForChange ();
-
-  bool
-  getCTS ();
-
-  bool
-  getDSR ();
-
-  bool
-  getRI ();
-
-  bool
-  getCD ();
-
-  void
   setPort (const string &port);
 
   string
@@ -160,21 +138,6 @@ public:
 
   void
   setParity (parity_t parity);
-
-  parity_t
-  getParity () const;
-
-  void
-  setStopbits (stopbits_t stopbits);
-
-  stopbits_t
-  getStopbits () const;
-
-  void
-  setFlowcontrol (flowcontrol_t flowcontrol);
-
-  flowcontrol_t
-  getFlowcontrol () const;
 
   void
   readLock ();
@@ -217,5 +180,3 @@ private:
 }
 
 #endif // SERIAL_IMPL_UNIX_H
-
-#endif // !defined(_WIN32)

@@ -538,54 +538,6 @@ public:
   void
   setParity (parity_t parity);
 
-  /*! Gets the parity for the serial port.
-   *
-   * \see Serial::setParity
-   *
-   * \throw std::invalid_argument
-   */
-  parity_t
-  getParity () const;
-
-  /*! Sets the stopbits for the serial port.
-   *
-   * \param stopbits Number of stop bits used, default is stopbits_one,
-   * possible values are: stopbits_one, stopbits_one_point_five, stopbits_two
-   *
-   * \throw std::invalid_argument
-   */
-  void
-  setStopbits (stopbits_t stopbits);
-
-  /*! Gets the stopbits for the serial port.
-   *
-   * \see Serial::setStopbits
-   *
-   * \throw std::invalid_argument
-   */
-  stopbits_t
-  getStopbits () const;
-
-  /*! Sets the flow control for the serial port.
-   *
-   * \param flowcontrol Type of flowcontrol used, default is flowcontrol_none,
-   * possible values are: flowcontrol_none, flowcontrol_software,
-   * flowcontrol_hardware
-   *
-   * \throw std::invalid_argument
-   */
-  void
-  setFlowcontrol (flowcontrol_t flowcontrol);
-
-  /*! Gets the flow control for the serial port.
-   *
-   * \see Serial::setFlowcontrol
-   *
-   * \throw std::invalid_argument
-   */
-  flowcontrol_t
-  getFlowcontrol () const;
-
   /*! Flush the input and output buffers */
   void
   flush ();
@@ -605,47 +557,6 @@ public:
   /*! Set the break condition to a given level.  Defaults to true. */
   void
   setBreak (bool level = true);
-
-  /*! Set the RTS handshaking line to the given level.  Defaults to true. */
-  void
-  setRTS (bool level = true);
-
-  /*! Set the DTR handshaking line to the given level.  Defaults to true. */
-  void
-  setDTR (bool level = true);
-
-  /*!
-   * Blocks until CTS, DSR, RI, CD changes or something interrupts it.
-   *
-   * Can throw an exception if an error occurs while waiting.
-   * You can check the status of CTS, DSR, RI, and CD once this returns.
-   * Uses TIOCMIWAIT via ioctl if available (mostly only on Linux) with a
-   * resolution of less than +-1ms and as good as +-0.2ms.  Otherwise a
-   * polling method is used which can give +-2ms.
-   *
-   * \return Returns true if one of the lines changed, false if something else
-   * occurred.
-   *
-   * \throw SerialException
-   */
-  bool
-  waitForChange ();
-
-  /*! Returns the current status of the CTS line. */
-  bool
-  getCTS ();
-
-  /*! Returns the current status of the DSR line. */
-  bool
-  getDSR ();
-
-  /*! Returns the current status of the RI line. */
-  bool
-  getRI ();
-
-  /*! Returns the current status of the CD line. */
-  bool
-  getCD ();
 
 private:
   // Disable copy constructors
