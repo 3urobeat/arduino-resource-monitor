@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 23:54:58
+ * Last Modified: 2024-05-20 15:04:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -74,7 +74,7 @@ ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char
 
     if (!sensorFileP)
     {
-        printf("Error: Failed to read sensor '%s'! Error: %s", path, strerror(errno));
+        printf("Error: Failed to read sensor '%s'! Error: %s\n", path, strerror(errno));
         return 0;
     }
 

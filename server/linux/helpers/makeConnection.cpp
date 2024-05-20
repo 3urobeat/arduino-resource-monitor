@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-18 12:46:10
+ * Last Modified: 2024-05-20 15:05:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -36,7 +36,7 @@ serial::Serial* makeConnection()
 
     if (dp == NULL)
     {
-        printf("Error: Failed to open '/sys/class/tty/' to find all used USB ports!");
+        printf("Error: Failed to open '/sys/class/tty/' to find all used USB ports!\n");
     }
 
 
@@ -128,7 +128,7 @@ serial::Serial* makeConnection()
 
             if (strstr(buffer, "+ResourceMonitorClient") == NULL)
             {
-                printf("Received invalid response from client: %s", buffer);
+                printf("Received invalid response from client: %s\n", buffer);
                 _connection->close();
                 _connection = nullptr;
                 continue;
@@ -142,7 +142,7 @@ serial::Serial* makeConnection()
 
             if (strcmp(versionStr, version) != 0)
             {
-                printf("Version mismatch! Client runs on %s but we are on %s!", versionStr, version);
+                printf("Version mismatch! Client runs on %s but we are on %s!\n", versionStr, version);
                 _connection->close();
                 _connection = nullptr;
                 continue;
@@ -154,7 +154,7 @@ serial::Serial* makeConnection()
         }
         catch(const std::exception& e)
         {
-            printf("Failed to connect to device '%s': %s", port, e.what());
+            printf("Failed to connect to device '%s': %s\n", port, e.what());
 
             // Close connection if still open
             if (_connection && _connection->isOpen())

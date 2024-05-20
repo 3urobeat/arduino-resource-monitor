@@ -17,7 +17,7 @@ Related CMake E-Mail: https://cmake.org/pipermail/cmake/2017-February/064959.htm
 docker pull dockcross/manylinux-x64
 
 # Create 'build' folder in this directory (if not already done)
-mkdir build && cd build
+mkdir build
 
 # Get container 
 docker run --rm dockcross/manylinux-x64 > dockcross-manylinux-x64
