@@ -1,10 +1,10 @@
 /*
- * File: printMeasurements.cpp
+ * File: printMeasurements.c
  * Project: arduino-resource-monitor
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:24:17
+ * Last Modified: 2024-05-20 19:36:43
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -18,8 +18,8 @@
 #include "helpers.h"
 
 
-// Specifies the IDs which data messages are prefixed with to indicate their type
-enum measurementTypes {
+// Specifies the IDs (min 0, max 9) which data messages are prefixed with to indicate their type
+typedef enum {
     pingID      = 0, // Empty data message only used by server for preventing connection loss screen
     cpuLoadID   = 1,
     cpuTempID   = 2,
@@ -27,7 +27,7 @@ enum measurementTypes {
     swapUsageID = 4,
     gpuLoadID   = 5,
     gpuTempID   = 6
-};
+} MeasurementPrefixIDsType;
 
 
 // Create storage for caching what we last sent to the Arduino to avoid unnecessary refreshes
@@ -42,7 +42,7 @@ char sendTempStr[32];
 /**
  * Sends the actual serial message
  */
-void _sendSerial(const char *str, measurementTypes id)
+void _sendSerial(const char *str, MeasurementPrefixIDsType id)
 {
     memset(sendTempStr, '\0', sizeof(sendTempStr));
 

@@ -1,10 +1,10 @@
 /*
- * File: getSensors.cpp
+ * File: getSensors.c
  * Project: arduino-resource-monitor
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:05:53
+ * Last Modified: 2024-05-20 19:36:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -151,7 +151,7 @@ void _findHwmonSensors()
 
 
     // Collect all valid 'hwmon*' directories and check their 'name' files
-    FILE *hwmonNameFileP = nullptr;
+    FILE *hwmonNameFileP = NULL;
     char pathBuffer[128] = "";
 
     while ((ep = readdir(hwmonDirP)) != NULL)
