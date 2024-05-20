@@ -1,10 +1,10 @@
 /*
- * File: getMeasurements.cpp
+ * File: getMeasurements.c
  * Project: arduino-resource-monitor
  * Created Date: 24.01.2023 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:05:53
+ * Last Modified: 2024-05-20 19:37:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -53,12 +53,12 @@ void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorg
 
 
 // Persistent data for _getSensorFileContent()
-FILE *sensorFileP = nullptr;
+FILE *sensorFileP = NULL;
 
 /**
  * Reads the content of a file until encountering delim or EOF, writes into dest and returns amount of bytes read (includes delim character)
  */
-ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char delim = '\0')
+ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char delim)
 {
     // Open stream to file
     errno = 0;
@@ -87,7 +87,7 @@ ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char
     *destCurrentPtr = '\0';
 
     (void) fclose(sensorFileP);
-    sensorFileP = nullptr;
+    sensorFileP = NULL;
 
 
     // Move null terminator in contentBuffer by 1 byte if the last char is a newline (this was always the case in my testing)
@@ -101,6 +101,9 @@ ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char
 
     return bytesRead;
 }
+
+// Overload to omit delimiter and read till null byte
+#define _getSensorFileContentFull(dest, size, path) _getSensorFileContent(dest, size, path, '\0')
 
 
 // Persistent data for _getCpuLoad()
@@ -165,7 +168,7 @@ char getMemSwapUsageBuffer[2048] = "";
 void _getMemSwapUsage()
 {
     // Read '/proc/meminfo'
-    ssize_t bytes_read = _getSensorFileContent(getMemSwapUsageBuffer, sizeof(getMemSwapUsageBuffer), "/proc/meminfo");
+    ssize_t bytes_read = _getSensorFileContentFull(getMemSwapUsageBuffer, sizeof(getMemSwapUsageBuffer), "/proc/meminfo");
 
 
     // Iterate through rows and find MemTotal, MemAvailable, SwapTotal & SwapFree
@@ -267,7 +270,7 @@ void getMeasurements()
 
     if (sensorPaths.cpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
     {
-        _getSensorFileContent(buffer, sizeof(buffer), sensorPaths.cpuTemp);
+        _getSensorFileContentFull(buffer, sizeof(buffer), sensorPaths.cpuTemp);
         gcvt(atoi(buffer) / 1000, 3, measurements.cpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
     }
 
@@ -284,12 +287,12 @@ void getMeasurements()
     #else
         if (sensorPaths.gpuLoad[0] != '\0') // Check if a sensor was found before attempting to use it
         {
-            _getSensorFileContent(measurements.gpuLoad, sizeof(dataSize), sensorPaths.gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
+            _getSensorFileContentFull(measurements.gpuLoad, sizeof(dataSize), sensorPaths.gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
         }
 
         if (sensorPaths.gpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
         {
-            _getSensorFileContent(buffer, sizeof(buffer), sensorPaths.gpuTemp);
+            _getSensorFileContentFull(buffer, sizeof(buffer), sensorPaths.gpuTemp);
             gcvt(atoi(buffer) / 1000, 3, measurements.gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
         }
     #endif

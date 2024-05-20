@@ -1,10 +1,10 @@
 /*
- * File: misc.cpp
+ * File: misc.c
  * Project: arduino-resource-monitor
  * Created Date: 2024-05-19 18:19:26
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 18:42:33
+ * Last Modified: 2024-05-20 19:36:47
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>

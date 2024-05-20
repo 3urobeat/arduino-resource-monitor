@@ -1,10 +1,10 @@
 /*
- * File: server.cpp
+ * File: server.c
  * Project: arduino-resource-monitor
  * Created Date: 04.02.2022 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:03:17
+ * Last Modified: 2024-05-20 19:13:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -55,7 +55,7 @@ void dataLoop()
     strcpy(measurements.cpuLoad, "/"); // Init with '/' because it takes 2 measurements to display
 
     #if !clientLessMode
-        while (serialIsOpen) // Run intervalEvent() every checkInterval ms as long as connection is not nullptr
+        while (serialIsOpen) // Run intervalEvent() every checkInterval ms as long as connection is not NULL
     #else
         while(true) // Run forever until process is manually terminated
     #endif

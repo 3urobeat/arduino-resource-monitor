@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:52:13
+ * Last Modified: 2024-05-20 19:36:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -18,13 +18,14 @@
 #pragma once
 
 
-#include <stdbool.h> // C bools
-#include <unistd.h>  // sleep
-#include "string.h"  // strcat, strcpy, ...
+#include <stdio.h>   // printf, fopen, gcvt, getdelim...
+#include <stdint.h>  // uint32_t, ...
+#include <stdlib.h>  // exit, atoi, ...
+#include <stdbool.h> // Datatype bool in C
+#include <string.h>  // strcat, strcpy, ...
+#include <unistd.h>  // sleep, usleep
 #include <time.h>    // clock
-#include <iostream>
-#include <math.h>
-#include <thread>
+#include <math.h>    // round
 
 #include "helpers/helpers.h"
 
@@ -36,7 +37,7 @@
 #define connectionRetryMultiplier 0.5    // retry * connectionRetryTimeout * connectionRetryMultiplier
 
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
-#define gpuType 0                        // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-smi will be used)
+#define gpuType 0                        // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-settings will be used)
 
 #define printDebug 0                     // Prints (a lot of) additional information during runtime, useful for debugging.
 #define clientLessMode 0                 // Disables connecting & sending data to the Arduino Client and only logs results to stdout. Useful during development
@@ -51,11 +52,7 @@
 #define version "v0.6.2"
 
 
-// Extern vars from server.cpp
-extern char cpuTempCmd[128];
-extern char gpuUtilCmd[128];
-extern char gpuTempCmd[128];
-
+// Functions implemented in server.c that should be accessible
 extern void connect();
 extern void reconnect();
 
@@ -67,5 +64,5 @@ extern void reconnect();
         printf(__VA_ARGS__, NULL); \
         printf("\n");
 #else
-    #define logDebug(...) ;
+    #define logDebug(...);
 #endif

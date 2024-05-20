@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:29:05
+ * Last Modified: 2024-05-20 19:27:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -61,11 +61,21 @@ extern void logMeasurements();
 extern void resetCache();
 
 
-// Functions defined in C++ wrapper for Serial library
-extern "C" bool serialNewConnection(const char *port, uint32_t baudRate);
-extern "C" bool serialIsOpen();
-extern "C" void serialClose();
-extern "C" void serialFlushOutput();
-extern "C" bool serialWrite(const char *data); // Returns bool if write succeeded/failed
-extern "C" bool serialRead(char *dest);        // Returns bool if read succeeded/failed
-extern "C" char *serialGetPort();
+// Functions from serialWrapper need a prefix when viewed from a C++ compiler in order to allow C files to call them
+#ifdef __cplusplus
+    extern "C" bool serialNewConnection(const char *port, uint32_t baudRate);
+    extern "C" bool serialIsOpen();
+    extern "C" void serialClose();
+    extern "C" void serialFlushOutput();
+    extern "C" bool serialWrite(const char *data); // Returns bool if write succeeded/failed
+    extern "C" bool serialRead(char *dest);        // Returns bool if read succeeded/failed
+    extern "C" char *serialGetPort();
+#else
+    extern bool serialNewConnection(const char *port, uint32_t baudRate);
+    extern bool serialIsOpen();
+    extern void serialClose();
+    extern void serialFlushOutput();
+    extern bool serialWrite(const char *data); // Returns bool if write succeeded/failed
+    extern bool serialRead(char *dest);        // Returns bool if read succeeded/failed
+    extern char *serialGetPort();
+#endif
