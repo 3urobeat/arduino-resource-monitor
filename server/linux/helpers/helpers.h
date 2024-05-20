@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:06:39
+ * Last Modified: 2024-05-20 18:29:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -62,10 +62,10 @@ extern void resetCache();
 
 
 // Functions defined in C++ wrapper for Serial library
-extern "C" void serialNewConnection(const char *port, uint32_t baudRate);
+extern "C" bool serialNewConnection(const char *port, uint32_t baudRate);
 extern "C" bool serialIsOpen();
 extern "C" void serialClose();
 extern "C" void serialFlushOutput();
-extern "C" void serialWrite(const char *data);
-extern "C" void serialRead(char *dest);
+extern "C" bool serialWrite(const char *data); // Returns bool if write succeeded/failed
+extern "C" bool serialRead(char *dest);        // Returns bool if read succeeded/failed
 extern "C" char *serialGetPort();
