@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-19 23:16:42
+ * Last Modified: 2024-05-20 11:23:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -62,10 +62,10 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
 
-
-
     // CPU Temp: Check if sensor matches a known name
-    if (strStartsWith("k10temp", sensorName) || strStartsWith("coretemp", sensorName)) // AMD || Intel CPU
+    if (strStartsWith("k10temp", sensorName)         // AMD
+        || strStartsWith("coretemp", sensorName)     // Intel
+        || strStartsWith("cpu_thermal", sensorName)) // Raspberry Pi
     {
         if (strlen(sensorPaths::cpuTemp) == 0) // Check if user already configured this sensor
         {
