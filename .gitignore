@@ -8,3 +8,4 @@ server/linux/build
 server/windows/.vs
 server/windows/bin
 server/windows/obj
+server/linux/dockcross-manylinux-x64
