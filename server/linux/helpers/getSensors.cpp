@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 11:50:12
+ * Last Modified: 2024-05-20 15:05:19
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -90,7 +90,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If the wrong chip's temperature sensor has been chosen, please configure it manually.");
+            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
         }
     }
 
@@ -113,7 +113,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (gpuLoadAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's load sensor has been chosen, please configure it manually.");
+            if (gpuLoadAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
 
         if (strlen(sensorPaths::gpuTemp) == 0) // Check if user already configured this sensor
@@ -132,7 +132,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's temperature sensor has been chosen, please configure it manually.");
+            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's temperature sensor has been chosen, please configure it manually.\n");
         }
     }
 }
@@ -151,7 +151,7 @@ void _findHwmonSensors()
     struct dirent *ep;
     hwmonDirP = opendir(hwmonDirStr);
 
-    if (hwmonDirP == NULL) printf("Error: Failed to open '/sys/class/hwmon/' to probe all sensors!");
+    if (hwmonDirP == NULL) printf("Error: Failed to open '/sys/class/hwmon/' to probe all sensors!\n");
 
 
     // Collect all valid 'hwmon*' directories and check their 'name' files
