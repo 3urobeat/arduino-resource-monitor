@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 15:05:19
+ * Last Modified: 2024-05-20 18:05:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -22,11 +22,7 @@
 
 
 // Stores filesystem paths for all sensors we've found
-namespace sensorPaths {
-    char cpuTemp[pathSize] = "";
-    char gpuLoad[pathSize] = "";
-    char gpuTemp[pathSize] = "";
-};
+struct SensorTypes sensorPaths;
 
 
 /**
@@ -73,20 +69,20 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         || strStartsWith("coretemp", sensorName)     // Intel
         || strStartsWith("cpu_thermal", sensorName)) // Raspberry Pi
     {
-        if (strlen(sensorPaths::cpuTemp) == 0) // Check if user already configured this sensor
+        if (strlen(sensorPaths.cpuTemp) == 0) // Check if user already configured this sensor
         {
-            strcpy(sensorPaths::cpuTemp, sensorPath);
-            strcat(sensorPaths::cpuTemp, "/temp1_input");
+            strcpy(sensorPaths.cpuTemp, sensorPath);
+            strcat(sensorPaths.cpuTemp, "/temp1_input");
 
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
-            bool sensorPathExists = _fileExists(sensorPaths::cpuTemp);
+            bool sensorPathExists = _fileExists(sensorPaths.cpuTemp);
 
             if (sensorPathExists)
             {
-                printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths::cpuTemp, sensorName);
+                printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths.cpuTemp, sensorName);
                 cpuTempAutoDiscovered = true;
             }
-            else strcpy(sensorPaths::cpuTemp, "");
+            else strcpy(sensorPaths.cpuTemp, "");
         }
         else
         {
@@ -97,38 +93,38 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     // GPU Temp: Check if sensor matches a known name
     if (strStartsWith("amdgpu", sensorName) && gpuType == 0) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
     {
-        if (strlen(sensorPaths::gpuLoad) == 0) // Check if user already configured this sensor
+        if (strlen(sensorPaths.gpuLoad) == 0) // Check if user already configured this sensor
         {
-            strcpy(sensorPaths::gpuLoad, sensorPath);
-            strcat(sensorPaths::gpuLoad, "/device/gpu_busy_percent"); // TODO: Does this exist for NVIDIA cards?
+            strcpy(sensorPaths.gpuLoad, sensorPath);
+            strcat(sensorPaths.gpuLoad, "/device/gpu_busy_percent"); // TODO: Does this exist for NVIDIA cards?
 
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
-            bool sensorPathExists = _fileExists(sensorPaths::gpuLoad);
+            bool sensorPathExists = _fileExists(sensorPaths.gpuLoad);
 
             if (sensorPathExists)
             {
-                printf("Found GPU Load sensor '%s' at '%s'!\n", sensorPaths::gpuLoad, sensorName);
+                printf("Found GPU Load sensor '%s' at '%s'!\n", sensorPaths.gpuLoad, sensorName);
                 gpuLoadAutoDiscovered = true;
-            } else strcpy(sensorPaths::gpuLoad, "");
+            } else strcpy(sensorPaths.gpuLoad, "");
         }
         else
         {
             if (gpuLoadAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
 
-        if (strlen(sensorPaths::gpuTemp) == 0) // Check if user already configured this sensor
+        if (strlen(sensorPaths.gpuTemp) == 0) // Check if user already configured this sensor
         {
-            strcpy(sensorPaths::gpuTemp, sensorPath);
-            strcat(sensorPaths::gpuTemp, "/temp1_input");
+            strcpy(sensorPaths.gpuTemp, sensorPath);
+            strcat(sensorPaths.gpuTemp, "/temp1_input");
 
             // Attempt to open to check if it exists. Log success message or reset sensor path on failure
-            bool sensorPathExists = _fileExists(sensorPaths::gpuTemp);
+            bool sensorPathExists = _fileExists(sensorPaths.gpuTemp);
 
             if (sensorPathExists)
             {
-                printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths::gpuTemp, sensorName);
+                printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths.gpuTemp, sensorName);
                 gpuTempAutoDiscovered = true;
-            } else strcpy(sensorPaths::gpuTemp, "");
+            } else strcpy(sensorPaths.gpuTemp, "");
         }
         else
         {
@@ -232,22 +228,22 @@ void getSensors()
     _findHwmonSensors();
 
     // Log warnings for missing sensors and write '/' into respective measurements variable
-    if (strlen(sensorPaths::cpuTemp) == 0)
+    if (strlen(sensorPaths.cpuTemp) == 0)
     {
         printf("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.\n");
-        strcpy(measurements::cpuTemp, "/");
+        strcpy(measurements.cpuTemp, "/");
     }
 
-    if (strlen(sensorPaths::gpuLoad) == 0)
+    if (strlen(sensorPaths.gpuLoad) == 0)
     {
         printf("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
-        strcpy(measurements::gpuLoad, "/");
+        strcpy(measurements.gpuLoad, "/");
     }
 
-    if (strlen(sensorPaths::gpuTemp) == 0)
+    if (strlen(sensorPaths.gpuTemp) == 0)
     {
         printf("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
-        strcpy(measurements::gpuTemp, "/");
+        strcpy(measurements.gpuTemp, "/");
     }
 
     printf("\n");

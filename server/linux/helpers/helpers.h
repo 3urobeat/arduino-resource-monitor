@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:15:33
+ * Last Modified: 2024-05-20 18:06:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -23,24 +23,28 @@
 // Stores filesystem paths for all sensors we've found
 #define pathSize 128
 
-namespace sensorPaths {
-    extern char cpuTemp[pathSize];
-    extern char gpuLoad[pathSize];
-    extern char gpuTemp[pathSize];
+struct SensorTypes {
+    char cpuTemp[pathSize];
+    char gpuLoad[pathSize];
+    char gpuTemp[pathSize];
 };
+
+extern struct SensorTypes sensorPaths;
 
 
 // Stores all current measurements
 #define dataSize 8
 
-namespace measurements {
-    extern char cpuLoad[dataSize];
-    extern char cpuTemp[dataSize];
-    extern char ramUsage[dataSize];
-    extern char swapUsage[dataSize];
-    extern char gpuLoad[dataSize];
-    extern char gpuTemp[dataSize];
+struct MeasurementTypes {
+    char cpuLoad[dataSize];
+    char cpuTemp[dataSize];
+    char ramUsage[dataSize];
+    char swapUsage[dataSize];
+    char gpuLoad[dataSize];
+    char gpuTemp[dataSize];
 };
+
+extern struct MeasurementTypes measurements;
 
 
 // Functions defined in helpers
