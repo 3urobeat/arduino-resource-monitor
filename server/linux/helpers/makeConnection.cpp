@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:36:24
+ * Last Modified: 2024-05-20 17:52:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -18,8 +18,6 @@
 #include "helpers.h"
 
 #include <dirent.h>
-
-using namespace std;
 
 
 /**
@@ -71,7 +69,7 @@ void makeConnection()
             // Open a new connection with timeout set in config
             serialNewConnection(port, baud);
 
-            this_thread::sleep_until(chrono::steady_clock::now() + chrono::milliseconds(2500)); // Necessary atm because Arduino resets for some reason
+            usleep(2500000); // Wait 2.5 seconds because the Arduino likes to reset for some reason
 
             if (!serialIsOpen())
             {
@@ -94,12 +92,14 @@ void makeConnection()
             logDebug("Sent header '%s' to device '%s'! Listening for response...", headerStr, port);
 
 
-            // Attempt to listen for a response as long as port is open, buffer has enough space and we haven't run into arduinoReplyTimeout
-            char buffer[64] = "";
-            unsigned int offset = 0;
-            auto timestamp = chrono::steady_clock::now();
+            // Attempt to listen for a response as long as port is open, we haven't run into arduinoReplyTimeout and buffer has enough space
+            char     buffer[64] = "";
+            uint32_t offset     = 0;
+            clock_t  timestamp  = clock();
 
-            while (serialIsOpen() && timestamp + std::chrono::milliseconds(arduinoReplyTimeout) > std::chrono::steady_clock::now() && offset < sizeof(buffer) - 1)
+            while (serialIsOpen()
+                    && timestamp + arduinoReplyTimeout > clock()
+                    && offset < sizeof(buffer) - 1)
             {
                 serialRead(&buffer[offset]);
 

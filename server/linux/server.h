@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 17:18:06
+ * Last Modified: 2024-05-20 17:52:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -18,9 +18,11 @@
 #pragma once
 
 
-//#include <stdbool.h> // C bools
+#include <stdbool.h> // C bools
+#include <unistd.h>  // sleep
+#include "string.h"  // strcat, strcpy, ...
+#include <time.h>    // clock
 #include <iostream>
-#include <chrono>
 #include <math.h>
 #include <thread>
 
