@@ -17,21 +17,17 @@
 
 public class Settings
 {
-    public const string version = "0.6.2";
-
-
     // Configuration variables
-    public const int baud = 9600;
     public const int arduinoReplyTimeout = 5000;         // How long to wait for an answer from the USB port in ms before giving up
     public const int connectionRetryTimeout = 5000;      // How long to wait between attempts to connect again in ms after all USB ports have failed
     public const int connectionRetryAmount = 10;         // How often to retry finding a connection
     public const double connectionRetryMultiplier = 0.5; // retry * connectionRetryTimeout * connectionRetryMultiplier
 
     public const int checkInterval = 1000; // How often new measurements should be made, min 1000ms (1 second)
-    public const int gpuID = 1;            // Set an index here if you've got multiple GPUs. Check the Task Manager Performance tab for reference
+    public const int gpuID = 0;            // Set an index here if you've got multiple GPUs. Check the Task Manager Performance tab for reference
 
     public const bool printDebug = false;
-    public const bool clientLessMode = true;
+    public const bool clientLessMode = false;
 
 
     // Sensor names: These might change depending on your hardware
@@ -49,4 +45,10 @@ public class Settings
 
     public const string gpuTempSensor = "GPU Core";
     public const int gpuTempSensorIndex = 0;
+
+
+    // Do not modify
+    public const string version = "0.6.2";
+
+    public const int baud = 9600;
 }
