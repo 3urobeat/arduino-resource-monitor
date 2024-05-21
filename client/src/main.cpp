@@ -1,10 +1,10 @@
 /*
  * File: main.cpp
  * Project: arduino-resource-monitor
- * Created Date: 04.02.2022 21:12:30
+ * Created Date: 2022-02-04 21:12:30
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 22:03:03
+ * Last Modified: 2024-05-21 20:45:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>

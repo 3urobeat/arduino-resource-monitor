@@ -1,10 +1,10 @@
 /*
  * File: getMeasurements.c
  * Project: arduino-resource-monitor
- * Created Date: 24.01.2023 17:40:48
+ * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 19:37:00
+ * Last Modified: 2024-05-21 20:42:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>

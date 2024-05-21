@@ -1,13 +1,13 @@
 /*
  * File: Communication.cs
  * Project: arduino-resource-monitor
- * Created Date: 13.11.2023 22:21:38
+ * Created Date: 2023-11-13 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 19.12.2023 13:10:29
+ * Last Modified: 2024-05-21 20:43:59
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
