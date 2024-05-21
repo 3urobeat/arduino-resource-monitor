@@ -4,7 +4,7 @@
  * Created Date: 15.11.2023 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 19:36:50
+ * Last Modified: 2024-05-21 20:09:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -86,7 +86,7 @@ void makeConnection()
         strcat(headerStr, version);
         strcat(headerStr, "#"); // strcat null terminates here because "#" is a null terminated string
 
-        if (!serialWrite(headerStr))
+        if (!serialWrite(headerStr, strlen(headerStr)))
         {
             serialClose();
             continue;

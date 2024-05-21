@@ -1,10 +1,10 @@
 /*
- * File: serialWrapper.cpp
+ * File: serialWrapper.c
  * Project: arduino-resource-monitor
  * Created Date: 2024-05-20 17:02:14
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 18:28:58
+ * Last Modified: 2024-05-21 20:22:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -17,87 +17,86 @@
 
 #include "helpers.h"
 
-#include "serial/serial.h"
+#include <serial.h>
 
 
-serial::Serial *_connection = nullptr;
+serial_t *_connection;
 
 char _connectionPort[32] = "";
 
 
 bool serialNewConnection(const char *port, uint32_t baudRate)
 {
-    try
-    {
-        _connection = new serial::Serial(port, baudRate, serial::Timeout::simpleTimeout(25));
+    // Allocate new serial handle if none exists
+    if (_connection != NULL) return false;
 
-        strncpy(_connectionPort, _connection->getPort().c_str(), sizeof(_connectionPort));
-        return true;
-    }
-    catch(const std::exception& e)
+    _connection = serial_new();
+
+    // Attempt to open port, check if succeeded
+    int openSuccess = serial_open(_connection, port, baudRate);
+
+    if (openSuccess < 0)
     {
-        printf("Failed to open connection to device '%s'! Error: %s\n", port, e.what());
+        printf("Failed to open connection to device '%s'! Error: %s\n", port, serial_errmsg(_connection));
         serialClose();
         return false;
     }
+
+    return true;
 }
 
 bool serialIsOpen()
 {
     if (!_connection) return false;
 
-    return _connection->isOpen();
+    return (serial_fd(_connection) >= 0);
 }
 
 void serialClose()
 {
     if (_connection) {
-        _connection->close();
-
-        delete _connection;
-        _connection = nullptr;
+        serial_close(_connection);
+        serial_free(_connection);
     }
 
-    _connectionPort[0] = '\0';
+    _connection = NULL;
 }
 
 void serialFlushOutput()
 {
     if (!_connection) return;
 
-    _connection->flushOutput();
+    serial_flush(_connection);
 }
 
-bool serialWrite(const char *data)
+bool serialWrite(const char *data, size_t size)
 {
     if (!_connection) return false;
 
-    try
+    int writeSuccess = serial_write(_connection, data, size);
+
+    if (writeSuccess < 0)
     {
-        _connection->write(data);
-        return true;
-    }
-    catch(const std::exception& e)
-    {
-        printf("Failed to write to device! Error: %s\n", e.what());
+        printf("Failed to write to device! Error: %s\n", serial_errmsg(_connection));
         return false;
     }
+
+    return true;
 }
 
 bool serialRead(char *dest)
 {
     if (!_connection) return false;
 
-    try
+    int readSuccess = serial_read(_connection, dest, 1, 2000); // Timeout after 2sec
+
+    if (readSuccess < 0)
     {
-        *dest = _connection->read(1).c_str()[0];
-        return true;
-    }
-    catch(const std::exception& e)
-    {
-        printf("Failed to read from device! Error: %s\n", e.what());
+        printf("Failed to read from device! Error: %s\n", serial_errmsg(_connection));
         return false;
     }
+
+    return true;
 }
 
 char *serialGetPort()

@@ -5,10 +5,9 @@ project(arduino-resource-monitor-server-linux)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_C_FLAGS "-std=gnu99") # I'd like to use inits in for loops, thanks
+#set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_FLAGS "-std=gnu99 -lm") # I'd like to use inits in for loops as well as the math library, thanks
 
 
 # Relic from when C++ was used:
@@ -22,14 +21,11 @@ set(CMAKE_C_FLAGS "-std=gnu99") # I'd like to use inits in for loops, thanks
 
 
 # Include Serial lib
-include_directories(lib/serial/include)
+include_directories(lib/c-periphery/src)
 
-set(serial_SRCS lib/serial/src/serial.cc lib/serial/include/serial/serial.h
-    lib/serial/include/serial/v8stdint.h lib/serial/src/impl/list_ports/list_ports_linux.cc)
-list(APPEND serial_SRCS lib/serial/src/impl/unix.cc)
+set(serial_SRCS lib/c-periphery/src/serial.h lib/c-periphery/src/serial.c)
 
 add_library(serial STATIC ${serial_SRCS})
-target_link_libraries(serial rt)
 
 
 # Add all source files to compile
@@ -42,7 +38,7 @@ set(SOURCES
     helpers/makeConnection.c
     helpers/misc.c
     helpers/sendMeasurements.c
-    helpers/serialWrapper.cpp
+    helpers/serialWrapper.c
 )
 
 

@@ -1,3 +1,3 @@
 # Libraries
-Serial: https://github.com/wjwwood/serial  
-The library was slimmed down by me.
+c-periphery: https://github.com/vsergeev/c-periphery  
+The library was slimmed down by me to only include serial support.
