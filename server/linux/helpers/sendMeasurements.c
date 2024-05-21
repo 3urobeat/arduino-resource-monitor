@@ -4,7 +4,7 @@
  * Created Date: 24.01.2023 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 19:36:43
+ * Last Modified: 2024-05-21 20:21:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -55,7 +55,7 @@ void _sendSerial(const char *str, MeasurementPrefixIDsType id)
     strcat(sendTempStr, "#");
 
     // Send content (team yippee)
-    if (!serialWrite(sendTempStr))
+    if (!serialWrite(sendTempStr, strlen(sendTempStr)))
     {
         reconnect();
         return;
