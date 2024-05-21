@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:43:11
+ * Last Modified: 2024-05-21 22:29:02
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -53,6 +53,12 @@ void makeConnection()
     }
 
     (void) closedir(dp);
+
+    if (usbPortsFound == 0)
+    {
+        printf("Found no devices! Exiting...\n");
+        exit(1);
+    }
 
     printf("Found %d eligible device(s)...\n", usbPortsFound);
 
