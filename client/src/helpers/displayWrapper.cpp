@@ -1,10 +1,10 @@
 /*
  * File: handleDisplay.cpp
  * Project: arduino-resource-monitor
- * Created Date: 17.11.2023 19:04:54
+ * Created Date: 2023-11-17 19:04:54
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 22:18:17
+ * Last Modified: 2024-05-21 20:45:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>

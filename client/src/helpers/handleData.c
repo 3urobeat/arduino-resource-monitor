@@ -1,10 +1,10 @@
 /*
  * File: handleData.c
  * Project: arduino-resource-monitor
- * Created Date: 17.11.2023 17:48:54
+ * Created Date: 2023-11-17 17:48:54
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 21:54:33
+ * Last Modified: 2024-05-21 20:45:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
