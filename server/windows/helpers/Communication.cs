@@ -4,7 +4,7 @@
  * Created Date: 2023-11-13 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:43:59
+ * Last Modified: 2024-05-21 21:55:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -111,6 +111,15 @@ public class Communication
 
             SendSerial("", MeasurementTypes.pingID);
         }
+    }
+
+
+    // Logs the current measurements to stdout instead of sending them to the Client
+    public static void LogMeasurements()
+    {
+        Console.WriteLine($"CPU: {MeasurementsCache.cpuLoad}% {MeasurementsCache.cpuTemp}°C");
+        Console.WriteLine($"RAM: {MeasurementsCache.ramUsage}GB {MeasurementsCache.swapUsage}GB");
+        Console.WriteLine($"GPU: {MeasurementsCache.gpuLoad}% {MeasurementsCache.gpuTemp}°C");
     }
 
 

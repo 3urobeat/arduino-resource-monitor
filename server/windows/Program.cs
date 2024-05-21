@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:44:18
+ * Last Modified: 2024-05-21 22:02:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -67,53 +67,85 @@ public class MainClass
     }
 
 
+    public static async void DataLoop()
+    {
+        Console.WriteLine("\nStarting to send data...");
+
+        if (!Settings.clientLessMode)
+        {
+            while (serialConnection != null) // Get new measurements every checkInterval ms and send them to the Arduino as long as a connection exists
+            {
+                // Get new measurements
+                Measurements.GetMeasurements();
+
+                // Send measurements
+                Communication.SendMeasurements();
+
+                // Delay next iteration for checkInterval ms
+                await Task.Delay(Settings.checkInterval);
+            }
+        }
+        else
+        {
+            while (true) // Run forever until process is manually terminated
+            {
+                // Get new measurements
+                Measurements.GetMeasurements();
+
+                // Log measurements
+                Communication.LogMeasurements();
+
+                // Delay next iteration for checkInterval ms
+                await Task.Delay(Settings.checkInterval);
+            }
+        }
+    }
+
+
     // Attempts to find & connect to device and starts to measure & send data
     public static async Task Connect()
     {
         connectionRetry++;
 
         // Find port our arduino is connected to
-        Console.WriteLine("Searching for Arduino...");
-
-        serialConnection = await Connection.ConnectToArduino();
-
-        if (serialConnection == null)
+        if (!Settings.clientLessMode)
         {
-            if (connectionRetry > Settings.connectionRetryAmount)
+            Console.WriteLine("Searching for Arduino...");
+
+            serialConnection = await Connection.ConnectToArduino();
+
+            if (serialConnection == null)
             {
-                Console.WriteLine($"Couldn't connect after {connectionRetry} attempts! Exiting in 5 seconds...");
-                System.Threading.Thread.Sleep(5000);
-                System.Environment.Exit(1);
+                if (connectionRetry > Settings.connectionRetryAmount)
+                {
+                    Console.WriteLine($"Couldn't connect after {connectionRetry} attempts! Exiting in 5 seconds...");
+                    System.Threading.Thread.Sleep(5000);
+                    System.Environment.Exit(1);
+                    return;
+                }
+
+                int delay = (int)(Settings.connectionRetryMultiplier * Settings.connectionRetryTimeout) * (connectionRetry + 1);
+
+                Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{Settings.connectionRetryAmount})...");
+
+                System.Threading.Thread.Sleep(delay);
+                Connect();
+
                 return;
             }
 
-            int delay = (int) (Settings.connectionRetryMultiplier * Settings.connectionRetryTimeout) * (connectionRetry + 1);
-
-            Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{Settings.connectionRetryAmount})...");
-
-            System.Threading.Thread.Sleep(delay);
-            Connect();
-
-            return;
+            Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
+        } 
+        else
+        {
+            Console.WriteLine("Skipped searching for Arduino because clientLessMode is enabled!");
         }
 
+
+        // Start getting and sending sensor data
         Communication.ResetCache();
 
-        Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
-        Console.WriteLine("\nStarting to send data...");
-
-        // Get new measurements every checkInterval ms and send them to the Arduino as long as a connection exists
-        while (serialConnection != null)
-        {
-            // Get new measurements
-            Measurements.GetMeasurements();
-
-            // Send measurements
-            Communication.SendMeasurements();
-
-            // Delay next iteration for checkInterval ms
-            await Task.Delay(Settings.checkInterval);
-        }
+        DataLoop();
     }
 
 
