@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:58:51
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:44:41
+ * Last Modified: 2024-05-21 22:24:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -62,7 +62,15 @@ public class Connection
         int i = 0;
         var ports = EnumerateArduinos().ToList();
 
+        if (ports.Count == 0)
+        {
+            Console.WriteLine($"Found no devices! Exiting...");
+            System.Threading.Thread.Sleep(5000);
+            System.Environment.Exit(1);
+        }
+
         Console.WriteLine($"Found {ports.Count} eligible device(s)...");
+
 
         // Try to connect to each arduino
         foreach (var (name, port) in ports)
