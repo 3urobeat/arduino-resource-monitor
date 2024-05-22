@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-22 18:14:00
+ * Last Modified: 2024-05-22 18:42:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -134,35 +134,11 @@ void _getMemSwapUsage()
     float mem  = (memTotal - memAvailable) / 1000000.0;
     float swap = (swapTotal - swapFree)    / 1000000.0;
 
-    memset(measurements.ramUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
-    gcvt(mem, 3, measurements.ramUsage);
-
-    for (int i = 0; i < 4; i++) // Nifty loop for number formatting: Make numbers below 100 show always one decimal.
-    {
-        if (measurements.ramUsage[i] == '.' || measurements.ramUsage[i] == '\0')
-        {
-            measurements.ramUsage[i] = '.';
-            measurements.ramUsage[i + 1] = measurements.ramUsage[i + 1] ? measurements.ramUsage[i + 1] : '0';
-            measurements.ramUsage[i + 2] = '\0';
-            break;
-        }
-    }
+    floatToFixedLengthStr(measurements.ramUsage, mem);
 
     if (swapTotal > 0)
     {
-        memset(measurements.swapUsage, 0, dataSize); // Important so that the loop below cannot grab into "undefined" data
-        gcvt(swap, 3, measurements.swapUsage);
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (measurements.swapUsage[i] == '.' || measurements.swapUsage[i] == '\0')
-            {
-                measurements.swapUsage[i] = '.';
-                measurements.swapUsage[i + 1] = measurements.swapUsage[i + 1] ? measurements.swapUsage[i + 1] : '0';
-                measurements.swapUsage[i + 2] = '\0';
-                break;
-            }
-        }
+        floatToFixedLengthStr(measurements.swapUsage, swap);
     }
     else
     {

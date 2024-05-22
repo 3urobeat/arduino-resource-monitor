@@ -4,7 +4,7 @@
  * Created Date: 2024-05-19 18:19:26
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 19:36:47
+ * Last Modified: 2024-05-22 18:42:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -24,4 +24,27 @@
 bool strStartsWith(const char *searchFor, const char *searchInStr)
 {
     return strncmp(searchFor, searchInStr, strlen(searchFor)) == 0;
+}
+
+
+/**
+ * Formats float below 100 to always show one and 100-999 to show no decimal. Writes result into dest.
+ */
+void floatToFixedLengthStr(char *dest, float num)
+{
+    if (num > 999.9) return;
+
+    memset(dest, '\0', 4); // Clear the memory we need
+    gcvt(num, 3, dest);
+
+    for (int i = 0; i < 3; i++) // Nifty loop for number formatting: Make numbers below 100 show always one decimal.
+    {
+        if (*(dest + i) == '.' || dest[i] == '\0')
+        {
+            *(dest + i) = '.';
+            *(dest + i + 1) = *(dest + i + 1) ? *(dest + i + 1) : '0';
+            *(dest + i + 2) = '\0';
+            break;
+        }
+    }
 }
