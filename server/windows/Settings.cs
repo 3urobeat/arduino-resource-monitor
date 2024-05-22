@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 22:04:13
+ * Last Modified: 2024-05-22 18:45:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -48,7 +48,7 @@ public class Settings
 
 
     // Do not modify
-    public const string version = "0.6.2";
+    public const string version = "0.7.0";
 
     public const int baud = 9600;
 }
