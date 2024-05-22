@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:42:28
+ * Last Modified: 2024-05-22 18:45:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -49,7 +49,7 @@
 
 #define baud 9600
 
-#define version "v0.6.2"
+#define version "v0.7.0"
 
 
 // Functions implemented in server.c that should be accessible
