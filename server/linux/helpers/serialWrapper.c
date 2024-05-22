@@ -4,7 +4,7 @@
  * Created Date: 2024-05-20 17:02:14
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:22:57
+ * Last Modified: 2024-05-22 19:23:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -42,6 +42,8 @@ bool serialNewConnection(const char *port, uint32_t baudRate)
         return false;
     }
 
+    strncpy(_connectionPort, port, sizeof(_connectionPort));
+
     return true;
 }
 
@@ -59,6 +61,7 @@ void serialClose()
         serial_free(_connection);
     }
 
+    _connectionPort[0] = '\0';
     _connection = NULL;
 }
 
