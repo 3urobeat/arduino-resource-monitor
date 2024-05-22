@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:42:13
+ * Last Modified: 2024-05-22 18:14:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -17,93 +17,9 @@
 
 #include "helpers.h"
 
-#include <dirent.h>
-#include <errno.h>
-
 
 // Stores all current measurements
 struct MeasurementTypes measurements;
-
-
-/**
- * Function to run command and get output
- */
-void getStdoutFromCommand(char *dest, const char *cmd) // https://www.jeremymorgan.com/tutorials/c-programming/how-to-capture-the-output-of-a-linux-command-in-c/  (converted from string to char arrs by me)
-{
-    FILE * stream;
-
-    const int max_buffer = 256;
-    char buffer[max_buffer];
-
-    char tempCmd[256];
-    strncpy(tempCmd, cmd, 250);
-    strcat(tempCmd, " 2>&1");
-
-    stream = popen(cmd, "r");
-
-    if (stream) {
-        while (!feof(stream))
-            if (fgets(buffer, max_buffer, stream) != NULL) strcat(dest, buffer);
-
-        if (dest[strlen(dest) - 1] == '\n') dest[strlen(dest) - 1] = '\0'; // Remove trailing line break
-
-        pclose(stream);
-    }
-}
-
-
-// Persistent data for _getSensorFileContent()
-FILE *sensorFileP = NULL;
-
-/**
- * Reads the content of a file until encountering delim or EOF, writes into dest and returns amount of bytes read (includes delim character)
- */
-ssize_t _getSensorFileContent(char *dest, int size, const char *path, const char delim)
-{
-    // Open stream to file
-    errno = 0;
-    sensorFileP = fopen(path, "r");
-
-    if (!sensorFileP)
-    {
-        printf("Error: Failed to read sensor '%s'! Error: %s\n", path, strerror(errno));
-        return 0;
-    }
-
-    // Read stream byte-per-byte
-    int   charCode;
-    char *destCurrentPtr = dest;
-    char *destEndPtr     = dest + size - 1;
-
-    while ((charCode = getc(sensorFileP)) != EOF && destCurrentPtr < destEndPtr) // Read until reaching end-of-file or running out of space
-    {
-        *destCurrentPtr = (char) charCode;
-        destCurrentPtr++;
-
-        if (charCode == delim) break; // Stop reading if we reached the desired delimiter
-    }
-
-    // Append a null-byte to properly terminate the string and close stream
-    *destCurrentPtr = '\0';
-
-    (void) fclose(sensorFileP);
-    sensorFileP = NULL;
-
-
-    // Move null terminator in contentBuffer by 1 byte if the last char is a newline (this was always the case in my testing)
-    int bytesRead = strlen(dest);
-
-    if (dest[bytesRead - 1] == '\n') dest[bytesRead - 1] = '\0';
-
-
-    // Debug log result and return size
-    logDebug("_getSensorFileContent(): Read '%s' from '%s'", dest, path);
-
-    return bytesRead;
-}
-
-// Overload to omit delimiter and read till null byte
-#define _getSensorFileContentFull(dest, size, path) _getSensorFileContent(dest, size, path, '\0')
 
 
 // Persistent data for _getCpuLoad()
@@ -118,7 +34,9 @@ char getCpuLoadBuffer[64] = "";
 void _getCpuLoad()
 {
     // Read '/proc/stat'
-    ssize_t bytes_read = _getSensorFileContent(getCpuLoadBuffer, sizeof(getCpuLoadBuffer), "/proc/stat", '\n');
+    getFileContent(getCpuLoadBuffer, sizeof(getCpuLoadBuffer), "/proc/stat", '\n');
+
+    size_t bytes_read = strlen(getCpuLoadBuffer);
 
     getCpuLoadBuffer[bytes_read - 1] = ' '; // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
 
@@ -168,7 +86,7 @@ char getMemSwapUsageBuffer[2048] = "";
 void _getMemSwapUsage()
 {
     // Read '/proc/meminfo'
-    ssize_t bytes_read = _getSensorFileContentFull(getMemSwapUsageBuffer, sizeof(getMemSwapUsageBuffer), "/proc/meminfo");
+    getFileContentFull(getMemSwapUsageBuffer, sizeof(getMemSwapUsageBuffer), "/proc/meminfo");
 
 
     // Iterate through rows and find MemTotal, MemAvailable, SwapTotal & SwapFree
@@ -256,7 +174,6 @@ void _getMemSwapUsage()
 // Persistent data for getMeasurements()
 char buffer[16] = "";
 
-
 /**
  * Retreives new data and updates measurements
  */
@@ -270,7 +187,7 @@ void getMeasurements()
 
     if (sensorPaths.cpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
     {
-        _getSensorFileContentFull(buffer, sizeof(buffer), sensorPaths.cpuTemp);
+        getFileContentFull(buffer, sizeof(buffer), sensorPaths.cpuTemp);
         gcvt(atoi(buffer) / 1000, 3, measurements.cpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
     }
 
@@ -281,18 +198,18 @@ void getMeasurements()
 
     // Get GPU load & temp
     #if gpuType == 1 // TODO: I do not know yet if Nvidia GPUs can be read through the fs, therefore we're still using the old method here
-        getStdoutFromCommand(measurements.gpuLoad, "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
+        getCmdStdout(measurements.gpuLoad, sizeof(measurements.gpuLoad), "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
 
-        getStdoutFromCommand(measurements.gpuTemp, "nvidia-settings -q GPUCoreTemp -t");
+        getCmdStdout(measurements.gpuTemp, sizeof(measurements.gpuTemp), "nvidia-settings -q GPUCoreTemp -t");
     #else
         if (sensorPaths.gpuLoad[0] != '\0') // Check if a sensor was found before attempting to use it
         {
-            _getSensorFileContentFull(measurements.gpuLoad, sizeof(dataSize), sensorPaths.gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
+            getFileContentFull(measurements.gpuLoad, sizeof(dataSize), sensorPaths.gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
         }
 
         if (sensorPaths.gpuTemp[0] != '\0') // Check if a sensor was found before attempting to use it
         {
-            _getSensorFileContentFull(buffer, sizeof(buffer), sensorPaths.gpuTemp);
+            getFileContentFull(buffer, sizeof(buffer), sensorPaths.gpuTemp);
             gcvt(atoi(buffer) / 1000, 3, measurements.gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
         }
     #endif
