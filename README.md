@@ -1,30 +1,80 @@
-# arduino-resource-monitor
-Display the resource usage of your PC on an 4x20 LCD display!  
-This project retrieves CPU, RAM & GPU usage and sends it to an Arduino Nano which is connected via USB.  
-Both Linux and Windows are supported.
-
-<div>
-  <img width=45% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/display.jpg">  
-  <img align="right" width=45% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/server.jpg">  
+<div align="center">
+    <h1>arduino-resource-monitor</h1>
+    <h4>📊 Display your computer's CPU, RAM & GPU usage on a LCD display!</h4>
+    <div>
+        <a href="#introduction">Introduction</a> •
+        <a href="#hardware">Hardware</a> •
+        <a href="#support">Support</a> •
+        <a href="#setup">Setup</a>
+    </div>
+    <br>
+    <div>
+      <img width=45% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/display.jpg">  
+      <img align="right" width=45% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/server.jpg">  
+    </div>
 </div>
 
 &nbsp;
 
+<a id="introduction"></a>
+
+## ✨ Introduction
+This project consists out of two parts, the **client** (Arduino) and the **server** (Application).
+
+The server application, which runs on your PC, takes measurements of your CPU, RAM & GPU utilization every second.  
+It then sends the collected data to the Arduino, which is connected to your PC via USB.  
+The Arduino receives the data and updates the screen.
+
+Using this project, you always have your PC stats at a quick glance, even when gaming.  
+Monitor your PC without needing to tab out, open another application or using another screen altogether!
+
+Both **Linux**, and **Windows** are supported.  
+Only x86 is supported at the moment, ARM support may follow.
+
 &nbsp;
 
-## Configuration
-Both servers have automatic USB port and sensor discovery.  
-Should the application not find a sensor automatically, you can configure them manually.
+&nbsp;
 
-**Linux:**  
-TODO
+<a id="hardware"></a>
 
-**Windows:**  
-TODO
+## 🎛️ Client Hardware
+- Arduino Nano ([Amazon](https://www.amazon.com/s?k=arduino+nano))  
+  I recommend buying one with already soldered pins. This allows you to connect it easily.
+- LCD Display 4 rows x 20 columns ([Amazon](https://www.amazon.com/s?k=lcd+display+2004))  
+  They are available in Green & Blue. You need one with the 'Serial Adapter', preferably pre-soldered if you can find one.
+- Breadboard Jumper Cables ([Amazon](https://www.amazon.com/s?k=breadboard+jumper+wires+female+to+female))  
+  You need 4 cables to connect the display to the Arduino.
+- Optional: Backlight Switch ([Amazon](https://www.amazon.com/s?k=breadboard+mini+toggle+slide+switch))  
+  This allows you to toggle on/off the display backlight. You need 2 more jumper cables!
+- Optional: Mini USB cable, if not delivered with the Arduino Nano
+- Optional: Some sort of case to house the Arduino & Display in
+
+Combined this should cost $20-$30.
 
 &nbsp;
 
-## Compiling the server
+<a id="support"></a>
+
+## 💻️ PC Hardware & OS Support
+I have successfully tested the project with:
+- **Linux x86_64:**
+  - **Arch 6.8.9-arch1-2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
+  - **Arch 6.8.9-arch1-2:** Thinkpad Z13 - AMD Ryzen 5 PRO 6650U, Radeon 660M (iGPU)
+  - **Arch 6.8.5-arch1-1:** Thinkpad T430 - Intel i5 3320M (GPU readout not supported)
+  - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 (GPU readout not supported)
+  - **Debian 5.15.74-1-pve:** Desktop/Server - AMD Ryzen 5 2600
+
+- **Windows 64-bit:** 
+  - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
+
+&nbsp;
+
+<a id="setup"></a>
+
+## 🚀 Server Setup Instructions
+The setup instructions are well documented in the respective directory for your platform.  
+Choose below:
+
 **Linux:**  
 See [server/linux/README.md](server/linux/README.md)
 
@@ -33,43 +83,9 @@ See [server/windows/README.md](server/windows/README.md)
 
 &nbsp;
 
-## Compiling the client
-Compile & Upload the `client` directory using `platformio`.  
+## 🚀 Client Setup Instructions
+Visit the client README to learn how to setup your Arduino.  
+Click below:
 
-Instructions TBA
-
-&nbsp;
-
-## Connecting the Display to your Arduino
-Connect your display like this:  
-`SDA` -> `A4`  
-`SDC` -> `A5`  
-`VCC` -> `5V`  
-`GND` -> `GND`  
-
-(Optional) Connect a switch to toggle the display backlight like this:  
-`GND` -> Switch  
-Switch -> `D2`
-
-
-&nbsp;
-
-## Running
-**Linux:**  
-Before running, make sure you are in the group uucp (this group name can deviate between distros), otherwise you won't be able to execute the binary without root permissions:  
-`sudo usermod -aG uucp $USER`  
-You probably need to relog for this change to be applied. You can work around this until you relog by running `su $USER` in the terminal that you'll use to execute the binary in a few moments.  
-
-Go into the directory containing the compiled binary.
-
-Make sure your binary is executable by running:  
-`chmod +x ./arduino-resource-monitor-server-linux`  
-
-Connect the Arduino Nano to your PC and wait for it to start.  
-Now execute the binary by running `./arduino-resource-monitor-server-linux`. Your LCD display should start displaying values!  
-
-You can send the process into the background to be able to the close the terminal by pressing <kbd>CTRL</kbd>+<kbd>Z</kbd>, running `bg` and then `disown`.
-
-**Windows:**
-Open the exe.  
-You can also create a small batch script to open the application in the background, maybe even on autostart.
+**Arduino:**  
+See [client/README.md](client/README.md)

@@ -1,11 +1,30 @@
 # Server for Windows  
-Reads resource usage data and sends it to the arduino.  
+Reads the CPU, RAM & GPU usage of your Windows PC and sends it to the Arduino.  
 
-This server uses the [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) library to get resource usage information which is licensed under the [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/) license.
+This server uses the [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) library. It is licensed under the [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/) license.
 
 &nbsp;
 
-## Compiling
+## Download
+Download the Windows Server from the latest [release](https://github.com/3urobeat/arduino-resource-monitor/releases/latest).  
+It is located at the bottom in the 'Assets' section.  
+
+> [!NOTE]
+> The version of the server (your PC) and client (the Arduino) must match.  
+> Should your Arduino run on an older version, then either update it or download an older version of the server.  
+> You can find every version on the [releases](https://github.com/3urobeat/arduino-resource-monitor/releases) page.
+
+You can copy the executable on your system to anywhere you like.
+
+&nbsp;
+
+### Optional: Compiling yourself
+If you'd like to compile the server yourself instead of downloading it from the releases section, do this:
+
+<details>
+<summary>(Click to expand)</summary>
+&nbsp;
+
 Open the solution file `src/server/windows/windows.sln` in Visual Studio.  
 Right click on the solution "windows" in your solution explorer and click on Publish.  
 There should be a pre-configured configuration shown to you now. Hit Publish at the top and wait until finished.  
@@ -13,3 +32,27 @@ Your `.exe` is now located under `src/server/windows/bin/Release/net6.0/publish/
 
 You can probably also compile this project without the full Visual Studio editor installed, but I don't know exactly how.
 (I usually develop on Linux)
+
+</details>
+
+&nbsp;
+
+## Running
+Double click the `.exe`, accept the privilege escalation window and a CMD prompt should appear.
+
+> [!NOTE]
+> The server needs to run with Admin privileges in order to use your USB ports to communicate with the Arduino.
+
+The server will now start scanning your USB ports for the Arduino and attempt to connect to it.  
+Once connected, it starts taking measurements and sends them to the Arduino.
+
+When the CMD prompt is closed, the server will exit and the Arduino will display a "Lost Connection!" message after 5 seconds.
+
+&nbsp;
+
+## Troubleshooting
+**Server does not find the Arduino**  
+TODO
+
+**Sensor data is missing/wrong**  
+TODO
