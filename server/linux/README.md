@@ -1,12 +1,30 @@
 # Server for Linux
-Reads resource usage data and sends it to the arduino.
+Reads the CPU, RAM & GPU usage of your Linux PC and sends it to the Arduino.  
 
-This server uses the [serial](https://github.com/wjwwood/serial) library by wjwwood to communicate with the Arduino over serial. I removed a few Windows & OSX files.  
-This youtube tutorial explains using it quite well: https://youtu.be/uHw7QyL4CM8
+This server uses the [C-Periphery](https://github.com/vsergeev/c-periphery) library. It is licensed under the [MIT](https://opensource.org/license/MIT) license.
 
 &nbsp;
 
-## Compiling
+## Download
+Download the Linux Server from the latest [release](https://github.com/3urobeat/arduino-resource-monitor/releases/latest).  
+It is located at the bottom in the 'Assets' section.  
+
+> [!NOTE]
+> The version of the server (your PC) and client (the Arduino) must match.  
+> Should your Arduino run on an older version, then either update it or download an older version of the server.  
+> You can find every version on the [releases](https://github.com/3urobeat/arduino-resource-monitor/releases) page.
+
+You can copy the binary on your system to anywhere you like.
+
+&nbsp;
+
+### Optional: Compiling yourself
+If you'd like to compile the server yourself instead of downloading it from the releases section, do this:
+
+<details>
+<summary>(Click to expand)</summary>
+&nbsp;
+
 **Prerequisites:**  
 We are using docker to link against an older version of glibc, which is required to support older Linux installations.  
 Project used: https://github.com/dockcross/dockcross  
@@ -49,3 +67,63 @@ chmod +x ./build/arduino-resource-monitor-server-linux
 ```bash
 ./dockcross-manylinux-x64 bash -c "cd build && cmake .. && make -j4" && ./build/arduino-resource-monitor-server-linux
 ```
+
+> [!NOTE] 
+> It does make sense to compile locally during development and to only use dockcross before publishing.  
+> Compile Errors will have broken links when compiling using dockcross, making it harder to jump to them quickly.
+
+
+</details>
+
+&nbsp;
+
+## Running
+**Permissions:**  
+Before running, make sure you can access your USB ports without requiring admin privileges.  
+To check, connect the Arduino and run the terminal command: `cat /dev/ttyUSB0`  
+
+If the command exits without any message, you can skip this and go directly to the 'Execute' chapter below.  
+If the command returns a "Permission denied" error, you need to add yourself to a group.  
+
+&nbsp;
+
+Run `ls -al /dev/ttyUSB0` to see which group your distribution uses.  
+On Arch based distros you should see **uucp**: `... root uucp ... /dev/ttyUSB0` (shortened)  
+On Debian based distros it is probably **dialout**: `... root dialout ... /dev/ttyUSB0` (shortened)
+
+Add yourself to the respective group. The variable `$USER` will be automatically replaced with your username.
+- e.g. on Arch: `sudo usermod -aG uucp $USER`
+- e.g. on Debian: `sudo usermod -aG dialout $USER`
+
+&nbsp;
+
+This change requires a relog to be applied.  
+You can work around this until you relog by running the command `su $USER`.  
+You need to execute the binary in the next step from the same terminal for this workaround to work!
+
+&nbsp;
+
+**Execute:**  
+Open a terminal at the location of where you put the downloaded/compiled binary.
+
+Make sure your binary is executable by running:  
+`chmod +x ./arduino-resource-monitor-server-linux`  
+
+Make sure the Arduino is connected to your computer and displays "Waiting...".  
+Execute the binary by running:  
+`./arduino-resource-monitor-server-linux &` 
+
+The server will now start scanning your USB ports for the Arduino and attempt to connect to it.  
+Once connected, it starts taking measurements and sends them to the Arduino.  
+
+You can send the process into the background to be able to the close the terminal by running `disown`.  
+(This requires the binary to have been started with `&` at the end, just like shown above)
+
+&nbsp;
+
+## Troubleshooting
+**Server does not find the Arduino**  
+TODO
+
+**Sensor data is missing/wrong**  
+TODO
