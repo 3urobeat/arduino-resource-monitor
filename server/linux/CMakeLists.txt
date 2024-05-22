@@ -34,6 +34,7 @@ set(SOURCES
     server.h
     helpers/getMeasurements.c
     helpers/getSensors.c
+    helpers/handleStreams.c
     helpers/helpers.h
     helpers/makeConnection.c
     helpers/misc.c
