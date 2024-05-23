@@ -26,20 +26,25 @@ If you'd like to compile the server yourself instead of downloading it from the 
 &nbsp;
 
 **Prerequisites:**  
-We are using docker to link against an older version of glibc, which is required to support older Linux installations.  
+We are using docker to build for multiple architectures and to link against an older version of glibc, which is required to support older Linux installations.  
 Project used: https://github.com/dockcross/dockcross  
 Related CMake E-Mail: https://cmake.org/pipermail/cmake/2017-February/064959.html  
 
 ```bash
-# Pull image once
+# Pull x86_64 & armv7l images once
 docker pull dockcross/manylinux-x64
+docker pull dockcross/linux-armv6:20200324-880bfd0
 
 # Create 'build' folder in this directory (if not already done)
 mkdir build
+mkdir build-armv7l
 
 # Get container 
 docker run --rm dockcross/manylinux-x64 > dockcross-manylinux-x64
+docker run --rm dockcross/linux-armv6:20200324-880bfd0 > dockcross-linux-armv6
+
 chmod +x ./dockcross-manylinux-x64
+chmod +x ./dockcross-linux-armv6
 ```
 
 **Compile:**  
@@ -47,9 +52,11 @@ chmod +x ./dockcross-manylinux-x64
 # Do the thing (run from this directory, *not* from build).
 # You can increase '-j4' to how many threads your CPU has. More = Faster
 ./dockcross-manylinux-x64 bash -c "cd build && cmake .. && make -j4"
+./dockcross-linux-armv6 bash -c "cd build-armv7l && cmake .. && make -j4"
 
 # Optional - See against which glibc version the binary has been compiled:
 objdump -p ./build/arduino-resource-monitor-server-linux
+objdump -p ./build-armv7l/arduino-resource-monitor-server-linux
 ```
 
 **Run:**  
@@ -63,15 +70,16 @@ chmod +x ./build/arduino-resource-monitor-server-linux
 ./build/arduino-resource-monitor-server-linux
 ```
 
-**One-liner for development:**  
+Append `-x86_64` to the filename of the x86 binary and `-armv7l` to the armv7l binary.
+
+**One-liner for x86 development:**  
 ```bash
 ./dockcross-manylinux-x64 bash -c "cd build && cmake .. && make -j4" && ./build/arduino-resource-monitor-server-linux
 ```
 
-> [!NOTE] 
+> [!NOTE]
 > It does make sense to compile locally during development and to only use dockcross before publishing.  
 > Compile Errors will have broken links when compiling using dockcross, making it harder to jump to them quickly.
-
 
 </details>
 
