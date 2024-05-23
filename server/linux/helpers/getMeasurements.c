@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-22 18:42:34
+ * Last Modified: 2024-05-23 09:08:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -38,33 +38,39 @@ void _getCpuLoad()
 
     size_t bytes_read = strlen(getCpuLoadBuffer);
 
-    getCpuLoadBuffer[bytes_read - 1] = ' '; // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
+    getCpuLoadBuffer[bytes_read]     = ' ';  // Replace delimiter (included in result from getdelim()) with a space, so that the last value will be processed in the loop below
+    getCpuLoadBuffer[bytes_read + 1] = '\0'; // Make sure a null byte exists. This should already be the case but maybe I'm stupid
 
 
     // Split procStatContentBuffer at spaces at calc values (rowTitle, user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice - see 1.8 @ https://www.kernel.org/doc/Documentation/filesystems/proc.txt)
     long nonIdle  = 0;
     long total    = 0;
-    int   matches = 0;                         // Zero-Based counter of matches, starting with 'user'
-    char *valueStartPtr = getCpuLoadBuffer + 5; // Point to the start of the first element
 
-    for (int i = 5; i < bytes_read; i++) // Start after row title 'cpu  '           // TODO: This would be cooler (and maybe faster) using pointers instead of accessing array index
-    {                                    // Behold: A custom implementation for splitting a char array at spaces. I tried dealing with strtok_r() and decided to do it myself.
-        if (getCpuLoadBuffer[i] == ' ')
+    int  matches  = 0; // Zero-Based counter of matches, starting with 'user'
+
+    char *valuePtr      = getCpuLoadBuffer + 5; // Point to the start of the first element, skip title column
+    char *valueStartPtr = valuePtr;
+
+    while (*valuePtr) // Behold: A custom implementation for splitting a char array at spaces. I tried dealing with strtok_r() and decided to do it myself.
+    {
+        if (*valuePtr == ' ')
         {
-            getCpuLoadBuffer[i] = '\0'; // Replace this space with a null-byte. This makes atoi() read from the first char of the current value up until this space (now null-byte)
+            *valuePtr = '\0'; // Replace this space with a null-byte. This makes atoi() read from the first char of the current value up until this space (now null-byte)
 
             // Add this value to nonIdle (if not column idle or iowait) and always add to total
             if (matches != 3 && matches != 4) nonIdle += atoi(valueStartPtr);
             total += atoi(valueStartPtr);
 
-            valueStartPtr = &getCpuLoadBuffer[i + 1]; // +1 to get "over" space and point to the first char of the next value
+            valueStartPtr = valuePtr + 1; // +1 to get "over" space and point to the first char of the next value
             matches++;
         }
+
+        valuePtr++;
     }
 
 
     // Calculate cpu load using new and previous measurement (if one exists)
-    if (lastCpuRawNonIdle > 0 && lastCpuRawTotal)
+    if (lastCpuRawNonIdle > 0 && lastCpuRawTotal > 0)
     {
         float cpuLoad = ((lastCpuRawNonIdle - nonIdle) * 100.0) / (lastCpuRawTotal - total);
 
