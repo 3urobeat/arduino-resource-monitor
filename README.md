@@ -28,8 +28,7 @@ The Arduino receives the data and updates the screen.
 Using this project, you always have your PC stats at a quick glance, even when gaming.  
 Monitor your PC without needing to tab out, open another application or using another screen altogether!
 
-Both **Linux**, and **Windows** are supported.  
-Only x86 is supported at the moment, ARM support may follow.
+**Linux x86_64**, **Linux armv7l** and **Windows x86 64-bit** are supported.  
 
 &nbsp;
 
@@ -59,10 +58,13 @@ Combined this should cost $20-$30.
 I have successfully tested the project with:
 - **Linux x86_64:**
   - **Arch 6.8.9-arch1-2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
-  - **Arch 6.8.9-arch1-2:** Thinkpad Z13 - AMD Ryzen 5 PRO 6650U, Radeon 660M (iGPU)
+  - **Arch 6.8.9-arch1-2:** Thinkpad Z13 - AMD Ryzen 5 PRO 6650U with Radeon 660M
   - **Arch 6.8.5-arch1-1:** Thinkpad T430 - Intel i5 3320M (GPU readout not supported)
   - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 (GPU readout not supported)
   - **Debian 5.15.74-1-pve:** Desktop/Server - AMD Ryzen 5 2600
+
+- **Linux armv7l:**
+  - **Debian 6.1.21-v7+:** Raspberry Pi 3B+ - ARMv7 Processor rev 4 (v7l) 
 
 - **Windows 64-bit:** 
   - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
