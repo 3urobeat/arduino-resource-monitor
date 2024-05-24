@@ -10,6 +10,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_C_FLAGS "-std=gnu99 -lm") # I'd like to use inits in for loops as well as the math library, thanks
 
 
+# Flags
+option(BUILD_RELEASE "Build release" OFF)
+if (BUILD_RELEASE)
+    add_definitions(-DBUILD_RELEASE)
+endif()
+
+option(BUILD_RELEASE_CLIENT_LESS "Build release + clientLessMode" OFF)
+if (BUILD_RELEASE_CLIENT_LESS)
+    add_definitions(-DBUILD_RELEASE_CLIENT_LESS)
+endif()
+
+
 # Relic from when C++ was used:
 # Stuff so that threads work https://stackoverflow.com/a/61439452
 #set(CMAKE_THREAD_LIBS_INIT "-lpthread")

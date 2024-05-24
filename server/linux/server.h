@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-22 18:45:35
+ * Last Modified: 2024-05-24 13:03:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -39,8 +39,18 @@
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
 #define gpuType 0                        // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-settings will be used)
 
-#define printDebug 0                     // Prints (a lot of) additional information during runtime, useful for debugging.
-#define clientLessMode 0                 // Disables connecting & sending data to the Arduino Client and only logs results to stdout. Useful during development
+
+// Debug Settings: Force debug and clientLessMode if flag is set, otherwise use your setting
+#ifdef BUILD_RELEASE            // Do not modify
+    #define printDebug 0
+    #define clientLessMode 0
+#elif BUILD_RELEASE_CLIENT_LESS // Do not modify
+    #define printDebug 0
+    #define clientLessMode 1
+#else                           // You can modify this
+    #define printDebug 0                  // Prints (a lot of) additional information during runtime, useful for debugging.
+    #define clientLessMode 0              // Disables connecting & sending data to the Arduino Client and only logs results to stdout. Useful during development
+#endif
 
 
 // Do not modify

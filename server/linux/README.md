@@ -18,7 +18,7 @@ You can copy the binary on your system to anywhere you like.
 
 &nbsp;
 
-### Optional: Compiling yourself
+### Optional: Compiling yourself (x86)
 If you'd like to compile the server yourself instead of downloading it from the releases section, do this:
 
 <details>
@@ -30,56 +30,54 @@ We are using docker to build for multiple architectures and to link against an o
 Project used: https://github.com/dockcross/dockcross  
 Related CMake E-Mail: https://cmake.org/pipermail/cmake/2017-February/064959.html  
 
-```bash
-# Pull x86_64 & armv7l images once
-docker pull dockcross/manylinux-x64
-docker pull dockcross/linux-armv6:20200324-880bfd0
+This explanation is to compile during development for x86, which your system probably is.  
+See/Run the [build-releases.sh](./build-releases.sh) script to clean-build all platforms!
 
-# Create 'build' folder in this directory (if not already done)
-mkdir build
-mkdir build-armv7l
+```bash
+# Pull x86_64 image once
+docker pull dockcross/manylinux-x64
+
+# Create 'build' & 'dockcross' folders (if not already done)
+mkdir -p build/build-x86_64
+mkdir -p build/dockcross
 
 # Get container 
-docker run --rm dockcross/manylinux-x64 > dockcross-manylinux-x64
-docker run --rm dockcross/linux-armv6:20200324-880bfd0 > dockcross-linux-armv6
+docker run --rm dockcross/manylinux-x64 > ./build/dockcross/dockcross-manylinux-x64
 
-chmod +x ./dockcross-manylinux-x64
-chmod +x ./dockcross-linux-armv6
+chmod +x ./build/dockcross/dockcross-manylinux-x64
 ```
 
 **Compile:**  
 ```bash
 # Do the thing (run from this directory, *not* from build).
 # You can increase '-j4' to how many threads your CPU has. More = Faster
-./dockcross-manylinux-x64 bash -c "cd build && cmake .. && make -j4"
-./dockcross-linux-armv6 bash -c "cd build-armv7l && cmake .. && make -j4"
+./build/dockcross/dockcross-manylinux-x64 bash -c "cd build/build-x86_64 && cmake ../.. && make -j4"
 
 # Optional - See against which glibc version the binary has been compiled:
-objdump -p ./build/arduino-resource-monitor-server-linux
-objdump -p ./build-armv7l/arduino-resource-monitor-server-linux
+objdump -p ./build/build-x86_64/arduino-resource-monitor-server-linux
 ```
 
 **Run:**  
-If the build succeeded, a binary called 'arduino-resource-monitor-server-linux' should have appeared in the 'build' directory.  
+If the build succeeded, a binary called 'arduino-resource-monitor-server-linux' should have appeared in the 'build-x86_64' directory.  
 
 ```bash
 # It should already be executable. If it however isn't, run:
-chmod +x ./build/arduino-resource-monitor-server-linux
+chmod +x ./build/build-x86_64/arduino-resource-monitor-server-linux
 
 # Execute it:
-./build/arduino-resource-monitor-server-linux
+./build/build-x86_64/arduino-resource-monitor-server-linux
 ```
-
-Append `-x86_64` to the filename of the x86 binary and `-armv7l` to the armv7l binary.
 
 **One-liner for x86 development:**  
 ```bash
-./dockcross-manylinux-x64 bash -c "cd build && cmake .. && make -j4" && ./build/arduino-resource-monitor-server-linux
+./build/dockcross/dockcross-manylinux-x64 bash -c "cd ./build/build-x86_64 && cmake ../.. && make -j4" && ./build/build-x86_64/arduino-resource-monitor-server-linux
 ```
 
 > [!NOTE]
 > It does make sense to compile locally during development and to only use dockcross before publishing.  
 > Compile Errors will have broken links when compiling using dockcross, making it harder to jump to them quickly.
+
+Use the build.sh script for compiling binaries meant for releasing instead!
 
 </details>
 
