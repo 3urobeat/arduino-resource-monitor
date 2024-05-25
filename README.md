@@ -68,6 +68,9 @@ I have successfully tested the project with:
   - **Debian 6.1.21-v7+:** Raspberry Pi 3 Model B Plus Rev 1.3 - ARMv7 Processor rev 4 (v7l) 
   - **Debian 6.1.21+:** Raspberry Pi Zero W Rev 1.1 - ARMv6-compatible processor rev 7 (v6l)
 
+- **Linux aarch64:**
+  - **Debian 4.9.253-tegra:** NVIDIA Jetson Nano Developer Kit - ARMv8 Processor rev 1 (v8l) (GPU Load readout not yet supported)
+
 - **Windows 64-bit:** 
   - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
 
