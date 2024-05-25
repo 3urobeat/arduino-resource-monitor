@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-23 09:08:55
+ * Last Modified: 2024-05-25 11:23:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -73,8 +73,9 @@ void _getCpuLoad()
     if (lastCpuRawNonIdle > 0 && lastCpuRawTotal > 0)
     {
         float cpuLoad = ((lastCpuRawNonIdle - nonIdle) * 100.0) / (lastCpuRawTotal - total);
+        cpuLoad = abs(round(cpuLoad));          // Round and absolute to remove minus if result is 0.000
 
-        gcvt(round(cpuLoad), 3, measurements.cpuLoad); // Round float, restrict to 3 digits (0-100%) and write into cpuLoad
+        gcvt(cpuLoad, 3, measurements.cpuLoad); // Restrict to 3 digits (0-100%) and write into cpuLoad
     }
 
     // Update lastCpuRawMeasurement with raw data
