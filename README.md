@@ -28,7 +28,7 @@ The Arduino receives the data and updates the screen.
 Using this project, you always have your PC stats at a quick glance, even when gaming.  
 Monitor your PC without needing to tab out, open another application or using another screen altogether!
 
-**Linux x86_64**, **Linux armv7l** and **Windows x86 64-bit** are supported.  
+**Linux x86_64**, **Linux armv6** and **Windows x86 64-bit** are supported.  
 
 &nbsp;
 
@@ -63,8 +63,9 @@ I have successfully tested the project with:
   - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 (GPU readout not supported)
   - **Debian 5.15.74-1-pve:** Desktop/Server - AMD Ryzen 5 2600
 
-- **Linux armv7l:**
-  - **Debian 6.1.21-v7+:** Raspberry Pi 3B+ - ARMv7 Processor rev 4 (v7l) 
+- **Linux armv6:**
+  - **Debian 6.1.21-v7+:** Raspberry Pi 3 Model B Plus Rev 1.3 - ARMv7 Processor rev 4 (v7l) 
+  - **Debian 6.1.21+:** Raspberry Pi Zero W Rev 1.1 - ARMv6-compatible processor rev 7 (v6l)
 
 - **Windows 64-bit:** 
   - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
