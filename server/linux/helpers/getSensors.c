@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 19:36:57
+ * Last Modified: 2024-05-25 15:33:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -64,7 +64,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
 
-    // CPU Temp: Check if sensor matches a known name
+    // HwMon CPU Temp: Check if sensor matches a known name
     if (strStartsWith("k10temp", sensorName)         // AMD
         || strStartsWith("coretemp", sensorName)     // Intel
         || strStartsWith("cpu_thermal", sensorName)) // Raspberry Pi
@@ -86,11 +86,35 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
+            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
         }
     }
 
-    // GPU Temp: Check if sensor matches a known name
+    // ThermalZone CPU Temp: Check if sensor matches a known name
+    if (strStartsWith("CPU-therm", sensorName)) // Nvidia Jetson Nano
+    {
+        if (strlen(sensorPaths.cpuTemp) == 0) // Check if user already configured this sensor
+        {
+            strcpy(sensorPaths.cpuTemp, sensorPath);
+            strcat(sensorPaths.cpuTemp, "/temp");
+
+            // Attempt to open to check if it exists. Log success message or reset sensor path on failure
+            bool sensorPathExists = _fileExists(sensorPaths.cpuTemp);
+
+            if (sensorPathExists)
+            {
+                printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths.cpuTemp, sensorName);
+                cpuTempAutoDiscovered = true;
+            }
+            else strcpy(sensorPaths.cpuTemp, "");
+        }
+        else
+        {
+            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
+        }
+    }
+
+    // HwMon GPU Temp: Check if sensor matches a known name
     if (strStartsWith("amdgpu", sensorName) && gpuType == 0) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths.gpuLoad) == 0) // Check if user already configured this sensor
@@ -109,7 +133,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (gpuLoadAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's load sensor has been chosen, please configure it manually.\n");
+            if (gpuLoadAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
 
         if (strlen(sensorPaths.gpuTemp) == 0) // Check if user already configured this sensor
@@ -128,7 +152,30 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If the wrong card's temperature sensor has been chosen, please configure it manually.\n");
+            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
+        }
+    }
+
+    // ThermalZone GPU Temp: Check if sensor matches a known name
+    if (strStartsWith("GPU-therm", sensorName)) //
+    {
+        if (strlen(sensorPaths.gpuTemp) == 0) // Check if user already configured this sensor
+        {
+            strcpy(sensorPaths.gpuTemp, sensorPath);
+            strcat(sensorPaths.gpuTemp, "/temp");
+
+            // Attempt to open to check if it exists. Log success message or reset sensor path on failure
+            bool sensorPathExists = _fileExists(sensorPaths.gpuTemp);
+
+            if (sensorPathExists)
+            {
+                printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths.gpuTemp, sensorName);
+                gpuTempAutoDiscovered = true;
+            } else strcpy(sensorPaths.gpuTemp, "");
+        }
+        else
+        {
+            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
     }
 }
@@ -218,6 +265,89 @@ void _findHwmonSensors()
 
 
 /**
+ * Attempts to find relevant sensors in '/sys/devices/virtual/thermal/'
+ */
+void _findThermalZoneSensors()
+{
+    const char *thermalDirStr = "/sys/devices/virtual/thermal/";
+
+
+    // Get all dirs in '/sys/devices/virtual/thermal/'
+    DIR *thermalDirP;
+    struct dirent *ep;
+    thermalDirP = opendir(thermalDirStr);
+
+    if (thermalDirP == NULL) printf("Error: Failed to open '/sys/devices/virtual/thermal/' to probe all sensors!\n");
+
+
+    // Collect all valid 'thermal_zone*' directories and check their 'name' files
+    FILE *thermalNameFileP = NULL;
+    char pathBuffer[128] = "";
+
+    while ((ep = readdir(thermalDirP)) != NULL)
+    {
+        if (strncmp(ep->d_name, "thermal_zone", 12) == 0)
+        {
+            // Construct path
+            strcpy(pathBuffer, thermalDirStr);   // Reset content to base string
+            strncat(pathBuffer, ep->d_name, 16); // Append directory name, limit to 16 chars
+            strcat(pathBuffer, "/type\0");       // Append '/type', the file we are interested in
+
+            logDebug("Constructed thermal_zone type path '%s'. Attempting to open...", pathBuffer);
+
+
+            // Attempt to open path and read its content
+            errno = 0;
+            thermalNameFileP = fopen(pathBuffer, "r");
+
+            char *contentBuffer = NULL; // TODO: Is this cool? I'd rather use reusable buffer with a fixed size (I think)
+            size_t contentLen   = 0;
+            ssize_t bytes_read  = -1;
+
+            if (thermalNameFileP)
+            {
+                logDebug("File opened, attempting to read...");
+
+                // Read content into contentBuffer, close file again when done
+                bytes_read = getdelim(&contentBuffer, &contentLen, '\0', thermalNameFileP); // https://stackoverflow.com/a/174743
+
+                fclose(thermalNameFileP);
+            }
+            else
+            {
+                logDebug("Failed to open/read file! Error: %s", strerror(errno));
+            }
+
+
+            // If something was read, check if sensor has an interesting name
+            if (bytes_read != -1)
+            {
+                // Move null terminator in contentBuffer by 1 byte if the last char is a newline (this was always the case in my testing)
+                if (contentBuffer[bytes_read - 1] == '\n') contentBuffer[bytes_read - 1] = '\0';
+
+                // Move null terminator in pathBuffer to before '/name' to cut it off and pass _processSensorName() the "raw" path
+                pathBuffer[strlen(pathBuffer) - 5] = '\0';
+
+
+                // Let _processSensorName() take a look at it
+                logDebug("Found sensor at '%s' with name '%s'! Checking if we care about it...", pathBuffer, contentBuffer);
+
+                _processSensorName(pathBuffer, contentBuffer);
+            }
+            else
+            {
+                logDebug("Error: Sensor '%s' name has no content!", ep->d_name);
+            }
+
+            free(contentBuffer);
+        }
+    }
+
+    (void) closedir(thermalDirP);
+}
+
+
+/**
  * Attempts to discover sensor paths and populates variables in sensorPaths
  */
 void getSensors()
@@ -226,6 +356,14 @@ void getSensors()
 
     // Find CPU & GPU sensors
     _findHwmonSensors();
+
+    // Couldn't find all sensors in hwmon? Check thermal_zone next, some ARM devices (like the Nvidia Jetson Nano) use that instead
+    if (strlen(sensorPaths.cpuTemp) == 0 || strlen(sensorPaths.gpuLoad) == 0 || strlen(sensorPaths.gpuTemp) == 0)
+    {
+        logDebug("Didn't find all sensors in hwmon directory, searching thermal_zones next...");
+        _findThermalZoneSensors();
+    }
+
 
     // Log warnings for missing sensors and write '/' into respective measurements variable
     if (strlen(sensorPaths.cpuTemp) == 0)
