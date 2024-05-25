@@ -3,8 +3,9 @@
     <h4>📊 Display your computer's CPU, RAM & GPU usage on a LCD display!</h4>
     <div>
         <a href="#introduction">Introduction</a> •
-        <a href="#hardware">Hardware</a> •
         <a href="#support">Support</a> •
+        <a href="#try">Try it out!</a> •
+        <a href="#hardware">Hardware</a> •
         <a href="#setup">Setup</a>
     </div>
     <br>
@@ -34,6 +35,44 @@ Monitor your PC without needing to tab out, open another application or using an
 
 &nbsp;
 
+<a id="support"></a>
+
+## 💻️ PC Hardware & OS Support
+I have successfully tested the project with:
+- **Linux x86_64:**
+  - **Arch 6.8.9-arch1-2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
+  - **Arch 6.8.9-arch1-2:** Thinkpad Z13 - AMD Ryzen 5 PRO 6650U with Radeon 660M
+  - **Arch 6.8.5-arch1-1:** Thinkpad T430 - Intel i5 3320M *(iGPU readout not supported)*
+  - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 *(iGPU readout not supported)*
+  - **Debian 5.15.74-1-pve:** Desktop/Server - AMD Ryzen 5 2600
+  - **Kali 6.5.0-kali3-amd64:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature & GPU readout not supported)*
+
+- **Linux armv6:**
+  - **Debian 6.1.21-v7+:** Raspberry Pi 3 Model B Plus Rev 1.3 - ARMv7 Processor rev 4 (v7l) 
+  - **Debian 6.1.21+:** Raspberry Pi Zero W Rev 1.1 - ARMv6-compatible processor rev 7 (v6l)
+
+- **Linux aarch64:**
+  - **Debian 4.9.253-tegra:** NVIDIA Jetson Nano Developer Kit - ARMv8 Processor rev 1 (v8l) *(Configure GPU Load manually: `/sys/devices/57000000.gpu/load`)*
+
+- **Windows 64-bit:** 
+  - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
+
+&nbsp;
+
+<a id="try"></a>
+
+### ⚠️ Wanna try it now on your machine before proceeding any further?
+Download the latest `-clientLessMode` executable for your OS from the [release section](https://github.com/3urobeat/arduino-resource-monitor/releases/latest) and run it!  
+It will display the measured data directly on your screen, allowing you to see if it works on your machine before buying an Arduino!
+
+Please read the 'Running' section for your OS first:
+- [Linux](server/linux#running)
+- [Windows](server/windows#running)
+
+It explains relevant information about required permissions for reading sensor data.
+
+&nbsp;
+
 <a id="hardware"></a>
 
 ## 🎛️ Client Hardware
@@ -49,30 +88,6 @@ Monitor your PC without needing to tab out, open another application or using an
 - Optional: Some sort of case to house the Arduino & Display in
 
 Combined this should cost $20-$30.
-
-&nbsp;
-
-<a id="support"></a>
-
-## 💻️ PC Hardware & OS Support
-I have successfully tested the project with:
-- **Linux x86_64:**
-  - **Arch 6.8.9-arch1-2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
-  - **Arch 6.8.9-arch1-2:** Thinkpad Z13 - AMD Ryzen 5 PRO 6650U with Radeon 660M
-  - **Arch 6.8.5-arch1-1:** Thinkpad T430 - Intel i5 3320M (GPU readout not supported)
-  - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 (GPU readout not supported)
-  - **Debian 5.15.74-1-pve:** Desktop/Server - AMD Ryzen 5 2600
-  - **Kali 6.5.0-kali3-amd64:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X (CPU Temperature & GPU readout not supported)
-
-- **Linux armv6:**
-  - **Debian 6.1.21-v7+:** Raspberry Pi 3 Model B Plus Rev 1.3 - ARMv7 Processor rev 4 (v7l) 
-  - **Debian 6.1.21+:** Raspberry Pi Zero W Rev 1.1 - ARMv6-compatible processor rev 7 (v6l)
-
-- **Linux aarch64:**
-  - **Debian 4.9.253-tegra:** NVIDIA Jetson Nano Developer Kit - ARMv8 Processor rev 1 (v8l) (GPU Load readout not yet supported)
-
-- **Windows 64-bit:** 
-  - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
 
 &nbsp;
 

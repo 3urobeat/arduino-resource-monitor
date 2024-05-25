@@ -1,9 +1,22 @@
 # Server for Windows  
+[⬅️ Go back to the main page](../..#readme)
+
 Reads the CPU, RAM & GPU usage of your Windows PC and sends it to the Arduino.  
 
 This server uses the [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) library. It is licensed under the [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/) license.
 
 &nbsp;
+
+## Table of Contents
+- [Download](#download)
+- [Optional: Compiling yourself](#compiling)
+- [Running](#running)
+- [Configuration](#config)
+- [Troubleshooting](#troubleshooting)
+
+&nbsp;
+
+<a id="download"></a>
 
 ## Download
 Download the Windows Server from the latest [release](https://github.com/3urobeat/arduino-resource-monitor/releases/latest).  
@@ -17,6 +30,8 @@ It is located at the bottom in the 'Assets' section.
 You can copy the executable on your system to anywhere you like.
 
 &nbsp;
+
+<a id="compiling"></a>
 
 ### Optional: Compiling yourself
 If you'd like to compile the server yourself instead of downloading it from the releases section, do this:
@@ -37,6 +52,8 @@ You can probably also compile this project without the full Visual Studio editor
 
 &nbsp;
 
+<a id="running"></a>
+
 ## Running
 Double click the `.exe`, accept the privilege escalation window and a CMD prompt should appear.
 
@@ -49,6 +66,15 @@ Once connected, it starts taking measurements and sends them to the Arduino.
 When the CMD prompt is closed, the server will exit and the Arduino will display a "Lost Connection!" message after 5 seconds.
 
 &nbsp;
+
+<a id="config"></a>
+
+## Manual Configuration
+TODO
+
+&nbsp;
+
+<a id="troubleshooting"></a>
 
 ## Troubleshooting
 **Server does not find the Arduino**  

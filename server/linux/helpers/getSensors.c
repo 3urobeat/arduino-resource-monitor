@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-25 15:33:31
+ * Last Modified: 2024-05-25 17:57:41
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -157,7 +157,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // ThermalZone GPU Temp: Check if sensor matches a known name
-    if (strStartsWith("GPU-therm", sensorName)) //
+    if (strStartsWith("GPU-therm", sensorName)) // Nvidia Jetson Nano
     {
         if (strlen(sensorPaths.gpuTemp) == 0) // Check if user already configured this sensor
         {
