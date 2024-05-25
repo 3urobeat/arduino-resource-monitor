@@ -3,6 +3,16 @@ Receives CPU, RAM & GPU usage via USB (Serial) from the server and displays it o
 
 &nbsp;
 
+## Table of Contents
+- [Download](#download)
+- [Optional: Compiling yourself](#compiling)
+- [Flashing Firmware](#flashing)
+- [Connecting Display](#connecting)
+
+&nbsp;
+
+<a id="download"></a>
+
 ## Download
 Download the Arduino Firmware from the latest [release](https://github.com/3urobeat/arduino-resource-monitor/releases/latest).  
 It is located at the bottom in the 'Assets' section.  
@@ -13,6 +23,8 @@ It is located at the bottom in the 'Assets' section.
 > You can find every version on the [releases](https://github.com/3urobeat/arduino-resource-monitor/releases) page.
 
 &nbsp;
+
+<a id="compiling"></a>
 
 ### Optional: Compiling yourself
 If you'd like to compile the client yourself instead of downloading it from the releases section, do this:
@@ -29,10 +41,14 @@ TODO
 
 &nbsp;
 
+<a id="flashing"></a>
+
 ## Flashing the Firmware
 TODO
 
 &nbsp;
+
+<a id="connecting"></a>
 
 ## Connect the display to your Arduino
 Connect your display like this:  

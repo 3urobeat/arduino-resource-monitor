@@ -1,9 +1,22 @@
 # Server for Linux
+[⬅️ Go back to the main page](../..#readme)
+
 Reads the CPU, RAM & GPU usage of your Linux PC and sends it to the Arduino.  
 
 This server uses the [C-Periphery](https://github.com/vsergeev/c-periphery) library. It is licensed under the [MIT](https://opensource.org/license/MIT) license.
 
 &nbsp;
+
+## Table of Contents
+- [Download](#download)
+- [Optional: Compiling yourself](#compiling)
+- [Running](#running)
+- [Configuration](#config)
+- [Troubleshooting](#troubleshooting)
+
+&nbsp;
+
+<a id="download"></a>
 
 ## Download
 Download the Linux Server from the latest [release](https://github.com/3urobeat/arduino-resource-monitor/releases/latest).  
@@ -17,6 +30,8 @@ It is located at the bottom in the 'Assets' section.
 You can copy the binary on your system to anywhere you like.
 
 &nbsp;
+
+<a id="compiling"></a>
 
 ### Optional: Compiling yourself (x86)
 If you'd like to compile the server yourself instead of downloading it from the releases section, do this:
@@ -83,6 +98,8 @@ Use the build.sh script for compiling binaries meant for releasing instead!
 
 &nbsp;
 
+<a id="running"></a>
+
 ## Running
 **Permissions:**  
 Before running, make sure you can access your USB ports without requiring admin privileges.  
@@ -126,6 +143,15 @@ You can send the process into the background to be able to the close the termina
 (This requires the binary to have been started with `&` at the end, just like shown above)
 
 &nbsp;
+
+<a id="config"></a>
+
+## Manual Configuration
+TODO
+
+&nbsp;
+
+<a id="troubleshooting"></a>
 
 ## Troubleshooting
 **Server does not find the Arduino**  
