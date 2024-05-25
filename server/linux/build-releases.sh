@@ -83,21 +83,21 @@ echo "-> x86_64: Done!"
 
 
 
-# ------- armv7l -------
-echo "-> armv7l: Processing..."
+# ------- armv6 -------
+echo "-> armv6: Processing..."
 
-rm -rf ./build/build-armv7l
-mkdir ./build/build-armv7l
+rm -rf ./build/build-armv6
+mkdir ./build/build-armv6
 
 
 # Get dockcross binary if it does not exist yet
 if [ ! -f ./build/dockcross/dockcross-linux-armv6 ]; then
-    echo "-> armv7l: Docker image 'dockcross-linux-armv6' does not exist yet. Pulling..."
+    echo "-> armv6: Docker image 'dockcross-linux-armv6' does not exist yet. Pulling..."
 
-    docker pull dockcross/linux-armv6:20200324-880bfd0 || { echo "-> armv7l: Pull failed! Exiting..."; exit 1; }
+    docker pull dockcross/linux-armv6:20200324-880bfd0 || { echo "-> armv6: Pull failed! Exiting..."; exit 1; }
 
 
-    echo "-> armv7l: Creating binary 'dockcross-linux-armv6'..."
+    echo "-> armv6: Creating binary 'dockcross-linux-armv6'..."
 
     docker run --rm dockcross/linux-armv6:20200324-880bfd0 > ./build/dockcross/dockcross-linux-armv6
     chmod +x ./build/dockcross/dockcross-linux-armv6
@@ -105,24 +105,24 @@ fi
 
 
 # Compile and rename release mode
-echo "-> armv7l: Compiling release..."
+echo "-> armv6: Compiling release..."
 
-./build/dockcross/dockcross-linux-armv6 bash -c "cd ./build/build-armv7l && cmake -DBUILD_RELEASE=ON ../.. && make -j$SYS_CORES" || { echo "-> armv7l: Failed to compile release! Exiting..."; exit 1; }
+./build/dockcross/dockcross-linux-armv6 bash -c "cd ./build/build-armv6 && cmake -DBUILD_RELEASE=ON ../.. && make -j$SYS_CORES" || { echo "-> armv6: Failed to compile release! Exiting..."; exit 1; }
 
-cp ./build/build-armv7l/arduino-resource-monitor-server-linux ./build/arduino-resource-monitor-server-$VERSION-armv7l-linux
-chmod +x ./build/arduino-resource-monitor-server-$VERSION-armv7l-linux
+cp ./build/build-armv6/arduino-resource-monitor-server-linux ./build/arduino-resource-monitor-server-$VERSION-armv6-linux
+chmod +x ./build/arduino-resource-monitor-server-$VERSION-armv6-linux
 
 
 # Compile and rename release + clientLessMode mode
-echo "-> armv7l: Compiling release + clientLessMode..."
+echo "-> armv6: Compiling release + clientLessMode..."
 
-rm ./build/build-armv7l/CMakeCache.txt # Sadly required for cmake to use our -DBUILD_RELEASE_CLIENT_LESS flag
+rm ./build/build-armv6/CMakeCache.txt # Sadly required for cmake to use our -DBUILD_RELEASE_CLIENT_LESS flag
 
-./build/dockcross/dockcross-linux-armv6 bash -c "cd ./build/build-armv7l && cmake -DBUILD_RELEASE_CLIENT_LESS=ON ../.. && make -j$SYS_CORES" || { echo "-> armv7l: Failed to compile release + clientLessMode! Exiting..."; exit 1; }
+./build/dockcross/dockcross-linux-armv6 bash -c "cd ./build/build-armv6 && cmake -DBUILD_RELEASE_CLIENT_LESS=ON ../.. && make -j$SYS_CORES" || { echo "-> armv6: Failed to compile release + clientLessMode! Exiting..."; exit 1; }
 
-cp ./build/build-armv7l/arduino-resource-monitor-server-linux ./build/arduino-resource-monitor-server-$VERSION-armv7l-linux-clientLessMode
-chmod +x ./build/arduino-resource-monitor-server-$VERSION-armv7l-linux-clientLessMode
+cp ./build/build-armv6/arduino-resource-monitor-server-linux ./build/arduino-resource-monitor-server-$VERSION-armv6-linux-clientLessMode
+chmod +x ./build/arduino-resource-monitor-server-$VERSION-armv6-linux-clientLessMode
 
 
 # Exit
-echo "-> armv7l: Done!"
+echo "-> armv6: Done!"
