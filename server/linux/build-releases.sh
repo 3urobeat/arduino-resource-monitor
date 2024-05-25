@@ -46,7 +46,7 @@ mkdir ./build/build-x86_64
 
 # Get dockcross binary if it does not exist yet
 if [ ! -f ./build/dockcross/dockcross-manylinux-x64 ]; then
-    echo "-> x86_64: Docker image 'dockcross-manylinux-x64' does not exist yet. Pulling..."
+    echo "-> x86_64: Docker image 'dockcross/manylinux-x64' does not exist yet. Pulling..."
 
     docker pull dockcross/manylinux-x64 || { echo "-> x86_64: Pull failed! Exiting..."; exit 1; }
 
@@ -92,7 +92,7 @@ mkdir ./build/build-armv6
 
 # Get dockcross binary if it does not exist yet
 if [ ! -f ./build/dockcross/dockcross-linux-armv6 ]; then
-    echo "-> armv6: Docker image 'dockcross-linux-armv6' does not exist yet. Pulling..."
+    echo "-> armv6: Docker image 'dockcross/linux-armv6' does not exist yet. Pulling..."
 
     docker pull dockcross/linux-armv6:20200324-880bfd0 || { echo "-> armv6: Pull failed! Exiting..."; exit 1; }
 
@@ -126,3 +126,49 @@ chmod +x ./build/arduino-resource-monitor-server-$VERSION-armv6-linux-clientLess
 
 # Exit
 echo "-> armv6: Done!"
+
+
+
+# ------- aarch64 -------
+echo "-> aarch64: Processing..."
+
+rm -rf ./build/build-aarch64
+mkdir ./build/build-aarch64
+
+
+# Get dockcross binary if it does not exist yet
+if [ ! -f ./build/dockcross/dockcross-linux-aarch64 ]; then
+    echo "-> aarch64: Docker image 'dockcross/linux-arm64-lts' does not exist yet. Pulling..."
+
+    docker pull dockcross/linux-arm64-lts || { echo "-> aarch64: Pull failed! Exiting..."; exit 1; }
+
+
+    echo "-> aarch64: Creating binary 'dockcross-linux-aarch64'..."
+
+    docker run --rm dockcross/linux-arm64-lts > ./build/dockcross/dockcross-linux-aarch64
+    chmod +x ./build/dockcross/dockcross-linux-aarch64
+fi
+
+
+# Compile and rename release mode
+echo "-> aarch64: Compiling release..."
+
+./build/dockcross/dockcross-linux-aarch64 bash -c "cd ./build/build-aarch64 && cmake -DBUILD_RELEASE=ON ../.. && make -j$SYS_CORES" || { echo "-> aarch64: Failed to compile release! Exiting..."; exit 1; }
+
+cp ./build/build-aarch64/arduino-resource-monitor-server-linux ./build/arduino-resource-monitor-server-$VERSION-aarch64-linux
+chmod +x ./build/arduino-resource-monitor-server-$VERSION-aarch64-linux
+
+
+# Compile and rename release + clientLessMode mode
+echo "-> aarch64: Compiling release + clientLessMode..."
+
+rm ./build/build-aarch64/CMakeCache.txt # Sadly required for cmake to use our -DBUILD_RELEASE_CLIENT_LESS flag
+
+./build/dockcross/dockcross-linux-aarch64 bash -c "cd ./build/build-aarch64 && cmake -DBUILD_RELEASE_CLIENT_LESS=ON ../.. && make -j$SYS_CORES" || { echo "-> aarch64: Failed to compile release + clientLessMode! Exiting..."; exit 1; }
+
+cp ./build/build-aarch64/arduino-resource-monitor-server-linux ./build/arduino-resource-monitor-server-$VERSION-aarch64-linux-clientLessMode
+chmod +x ./build/arduino-resource-monitor-server-$VERSION-aarch64-linux-clientLessMode
+
+
+# Exit
+echo "-> aarch64: Done!"
