@@ -24,7 +24,7 @@ SYS_CORES=$( grep -c ^processor /proc/cpuinfo )
 echo "-> System Cores: $SYS_CORES"
 
 # Get version
-VERSION=$( grep "#define version" server.h | awk '{split($0,a," "); print $3}' | sed 's/"//g' )
+VERSION=$( grep "#define version" src/server.h | awk '{split($0,a," "); print $3}' | sed 's/"//g' )
 
 echo "-> Building Version: $VERSION"
 

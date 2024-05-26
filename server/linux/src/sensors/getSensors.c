@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 13:22:22
+ * Last Modified: 2024-05-26 14:13:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-#include "helpers.h"
+#include "sensors.h"
 
 #include <dirent.h>
 #include <errno.h>
