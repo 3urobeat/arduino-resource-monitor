@@ -4,7 +4,7 @@
  * Created Date: 2024-05-22 17:57:28
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-22 18:14:53
+ * Last Modified: 2024-05-26 13:22:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -18,6 +18,27 @@
 #include "helpers.h"
 
 #include <errno.h>
+
+
+/**
+ * Checks if a directory exists. Outputs error to stdout if directory could not be opened
+ */
+bool fileExists(const char *path)
+{
+    errno = 0;
+    FILE* sensorFileP = fopen(path, "r");
+
+    if (sensorFileP)
+    {
+        (void) fclose(sensorFileP);
+        return true;
+    }
+    else
+    {
+        printf("Error: Failed to open sensor '%s'! Ignoring it. Error: %s\n", path, strerror(errno));
+        return false;
+    }
+}
 
 
 /**

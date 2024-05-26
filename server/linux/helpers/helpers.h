@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:14:44
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-22 18:34:35
+ * Last Modified: 2024-05-26 13:31:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -52,6 +52,7 @@ extern void getMeasurements();
 
 extern void getSensors();
 
+extern bool fileExists(const char *path);
 extern void getCmdStdout(char *dest, int size, const char *cmd);
 extern void getFileContent(char *dest, int size, const char *path, const char delim);
 #define getFileContentFull(dest, size, path) getFileContent(dest, size, path, '\0') // Overload to omit delimiter and read till null byte
