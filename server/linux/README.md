@@ -40,6 +40,18 @@ If you'd like to compile the server yourself instead of downloading it from the 
 <summary>(Click to expand)</summary>
 &nbsp;
 
+**Are you a user?** Make sure you have `make` & `cmake` installed. Then simply run:  
+```bash
+rm -rf ./build/build-x86_64 && mkdir -p ./build/build-x86_64 && cd build/build-x86_64 && cmake -DBUILD_RELEASE=ON ../.. && make -j4 && cp arduino-resource-monitor-server-linux ~/arduino-resource-monitor-server-linux ; cd ../..
+```
+**This command will:** Clean the build folder, Create a new build folder, Go into it, Compile the binary, Copy it into your home directory and Go back to the this directory.  
+
+This is suitable when compiling the binary only for your own (this) machine. You can skip right ahead to [Running](#running)! 
+
+&nbsp;
+
+**Are you a maintainer/developer? Continue reading:**
+
 **Prerequisites:**  
 We are using docker to build for multiple architectures and to link against an older version of glibc, which is required to support older Linux installations.  
 Project used: https://github.com/dockcross/dockcross  
@@ -52,7 +64,8 @@ See/Run the [build-releases.sh](./build-releases.sh) script to clean-build all p
 # Pull x86_64 image once
 docker pull dockcross/manylinux-x64
 
-# Create 'build' & 'dockcross' folders (if not already done)
+# Clean build folder and create folders (if not already done)
+rm -rf ./build/build-x86_64     # It is important to clean up to make sure cmake does not use flags from a previous built
 mkdir -p build/build-x86_64
 mkdir -p build/dockcross
 
@@ -85,14 +98,16 @@ chmod +x ./build/build-x86_64/arduino-resource-monitor-server-linux
 
 **One-liner for x86 development:**  
 ```bash
-./build/dockcross/dockcross-manylinux-x64 bash -c "cd ./build/build-x86_64 && cmake ../.. && make -j4" && ./build/build-x86_64/arduino-resource-monitor-server-linux
+# Clean up once before compiling the first time during your session to remove CMakeCache containing flags from previous attempts
+rm -rf ./build/build-x86_64 && mkdir -p ./build/build-x86_64
+
+# Build and run repeatedly using
+cd build/build-x86_64 && cmake ../.. && make -j4 ; cd ../.. && ./build/build-x86_64/arduino-resource-monitor-server-linux
 ```
 
-> [!NOTE]
-> It does make sense to compile locally during development and to only use dockcross before publishing.  
-> Compile Errors will have broken links when compiling using dockcross, making it harder to jump to them quickly.
-
-Use the build.sh script for compiling binaries meant for releasing instead!
+> [!IMPORTANT]
+> Use the one-liner during development - Compile Errors will have broken links when compiling using dockcross, making it harder to jump to them quickly.
+> When done, **use the `build-releases.sh` script to compile all binaries meant to be released!**
 
 </details>
 
