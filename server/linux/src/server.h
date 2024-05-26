@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-24 13:03:59
+ * Last Modified: 2024-05-26 14:06:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -18,6 +18,7 @@
 #pragma once
 
 
+// Include library headers
 #include <stdio.h>   // printf, fopen, gcvt, getdelim...
 #include <stdint.h>  // uint32_t, ...
 #include <stdlib.h>  // exit, atoi, ...
@@ -27,7 +28,12 @@
 #include <time.h>    // clock
 #include <math.h>    // round
 
+
+// Include project headers
+#include "comm/comm.h"
+#include "data/data.h"
 #include "helpers/helpers.h"
+#include "sensors/sensors.h"
 
 
 // Configuration variables

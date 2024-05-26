@@ -42,16 +42,18 @@ add_library(serial STATIC ${serial_SRCS})
 
 # Add all source files to compile
 set(SOURCES
-    server.c
-    server.h
-    helpers/getMeasurements.c
-    helpers/getSensors.c
-    helpers/handleStreams.c
-    helpers/helpers.h
-    helpers/makeConnection.c
-    helpers/misc.c
-    helpers/sendMeasurements.c
-    helpers/serialWrapper.c
+    src/comm/comm.h
+    src/comm/makeConnection.c
+    src/comm/sendMeasurements.c
+    src/comm/serialWrapper.c
+    src/data/data.h
+    src/data/handleStreams.c
+    src/helpers/helpers.h
+    src/helpers/misc.c
+    src/sensors/getMeasurements.c
+    src/sensors/getSensors.c
+    src/server.c
+    src/server.h
 )
 
 
