@@ -17,9 +17,6 @@
 
 #include "data.h"
 
-#include <errno.h>
-
-
 
 /**
  * Reads a FILE stream until encountering delim or EOF and writes into dest

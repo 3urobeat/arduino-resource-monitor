@@ -4,7 +4,7 @@
  * Created Date: 2022-02-04 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 20:42:46
+ * Last Modified: 2024-05-27 17:17:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -31,7 +31,9 @@ int main()
     printf("Server for Linux %s starting...\n\n", version);
 
 
-    // Validate settings
+    // Import config and validate settings
+    importConfigFile();
+
     if (checkInterval < 1000)
     {
         printf("Error: Setting checkInterval is too low! Please set it to at least 1000!\n");

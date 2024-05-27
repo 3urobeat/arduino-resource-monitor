@@ -46,6 +46,7 @@ set(SOURCES
     src/comm/makeConnection.c
     src/comm/sendMeasurements.c
     src/comm/serialWrapper.c
+    src/data/configWrapper.c
     src/data/data.h
     src/data/handleStreams.c
     src/helpers/helpers.h
