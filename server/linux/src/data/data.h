@@ -21,6 +21,9 @@
 
 
 // Functions to export
+extern void importConfigFile();
+extern void exportConfigFile();
+
 extern void getCmdStdout(char *dest, int size, const char *cmd);
 extern void getFileContent(char *dest, int size, const char *path, const char delim);
 #define getFileContentFull(dest, size, path) getFileContent(dest, size, path, '\0') // Overload to omit delimiter and read till null byte

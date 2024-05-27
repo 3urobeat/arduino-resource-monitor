@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:06:21
+ * Last Modified: 2024-05-27 22:50:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,8 @@
 #include <stdint.h>  // uint32_t, ...
 #include <stdlib.h>  // exit, atoi, ...
 #include <stdbool.h> // Datatype bool in C
-#include <string.h>  // strcat, strcpy, ...
+#include <string.h>  // strcat, strcpy, ..
+#include <errno.h>   // Error codes
 #include <unistd.h>  // sleep, usleep
 #include <time.h>    // clock
 #include <math.h>    // round
@@ -44,6 +45,22 @@
 
 #define checkInterval 1000               // 1 second is lowest value possibe as mpstat takes a second to collect data
 #define gpuType 0                        // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-settings will be used)
+
+#define autoCreateConfig 1               // Should the config be automatically created if it doesn't exist?
+
+#define defaultConfig "lastSeenVersion = " version \
+                        "\n\n[timeouts]" \
+                        "\narduinoReplyTimeout = 5000" \
+                        "\nconnectionRetryTimeout = 5000" \
+                        "\nconnectionRetryAmount = 10" \
+                        "\nconnectionRetryMultiplier = 0.5" \
+                        "\n\n[sensors]" \
+                        "\ngpuType = AMD" \
+                        "\ncpuTempSensor = " \
+                        "\ngpuLoadSensor = " \
+                        "\ngpuTempSensor = " \
+                        "\ncheckInterval = 1000" \
+                        "\n"
 
 
 // Debug Settings: Force debug and clientLessMode if flag is set, otherwise use your setting
