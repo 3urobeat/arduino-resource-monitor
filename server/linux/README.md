@@ -29,6 +29,8 @@ It is located at the bottom in the 'Assets' section.
 
 You can copy the binary on your system to anywhere you like.
 
+If you have an Nvidia card, you also need to have `nvidia-settings` installed.
+
 &nbsp;
 
 <a id="compiling"></a>

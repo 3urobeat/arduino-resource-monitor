@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:32:48
+ * Last Modified: 2024-05-26 22:37:37
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -372,13 +372,13 @@ void getSensors()
         strcpy(measurements.cpuTemp, "/");
     }
 
-    if (strlen(sensorPaths.gpuLoad) == 0)
+    if (strlen(sensorPaths.gpuLoad) == 0 && gpuType == 0)
     {
         printf("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuLoad, "/");
     }
 
-    if (strlen(sensorPaths.gpuTemp) == 0)
+    if (strlen(sensorPaths.gpuTemp) == 0 && gpuType == 0)
     {
         printf("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuTemp, "/");
