@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 11:19:03
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-27 22:52:26
+ * Last Modified: 2024-05-27 22:55:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -20,17 +20,17 @@
 #include <sys/stat.h>
 
 
-// Concat shit together
 #define configDir ".config/arduino-resource-monitor/"
 #define configFile "config.toml"
 
-//#define configPath configDir "/" configFile
 #define mkdirCmd "mkdir -p " configDir
 
 
 char _configDirPath[128] = "";
 char _configFilePath[128] = "";
 char _configContent[512] = "";
+
+struct ConfigValues config;
 
 
 /**

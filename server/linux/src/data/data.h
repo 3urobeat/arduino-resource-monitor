@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 14:00:50
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:32:58
+ * Last Modified: 2024-05-28 17:21:08
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -18,6 +18,42 @@
 #pragma once
 
 #include "../server.h"
+
+
+// Default configuration data. This is used to create config.toml or when config.toml does not specify a value
+#define defaultConfig   "[general]" \
+                        "\nlastSeenVersion = " version \
+                        "\n\n[timeouts]" \
+                        "\narduinoReplyTimeout = 5000" \
+                        "\nconnectionRetryTimeout = 5000" \
+                        "\nconnectionRetryAmount = 10" \
+                        "\nconnectionRetryMultiplier = 0.5" \
+                        "\n\n[sensors]" \
+                        "\ngpuType = AMD" \
+                        "\ncpuTempSensorPath = " \
+                        "\ngpuLoadSensorPath = " \
+                        "\ngpuTempSensorPath = " \
+                        "\ncheckInterval = 1000" \
+                        "\n"
+
+
+// Stores currently imported config
+struct ConfigValues {
+    char lastSeenVersion[16];
+
+    uint16_t arduinoReplyTimeout;       // How long to wait for an answer from the USB port in ms before giving up
+    uint16_t connectionRetryTimeout;    // How long to wait between attempts to connect again in ms after all USB ports have failed
+    uint16_t connectionRetryAmount;     // How often to retry finding a connection
+    float connectionRetryMultiplier;    // retry * connectionRetryTimeout * connectionRetryMultiplier
+
+    uint8_t gpuType;                    // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-settings will be used)
+    char cpuTempSensorPath[128];
+    char gpuLoadSensorPath[128];
+    char gpuTempSensorPath[128];
+    uint16_t checkInterval;             // 1 second is lowest value possibe as mpstat takes a second to collect data
+};
+
+extern struct ConfigValues config;
 
 
 // Functions to export

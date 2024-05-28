@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 22:37:37
+ * Last Modified: 2024-05-28 18:29:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -115,7 +115,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // HwMon GPU Temp: Check if sensor matches a known name
-    if (strStartsWith("amdgpu", sensorName) && gpuType == 0) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
+    if (strStartsWith("amdgpu", sensorName) && config.gpuType == 0) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths.gpuLoad) == 0) // Check if user already configured this sensor
         {
@@ -372,13 +372,13 @@ void getSensors()
         strcpy(measurements.cpuTemp, "/");
     }
 
-    if (strlen(sensorPaths.gpuLoad) == 0 && gpuType == 0)
+    if (strlen(sensorPaths.gpuLoad) == 0 && config.gpuType == 0)
     {
         printf("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuLoad, "/");
     }
 
-    if (strlen(sensorPaths.gpuTemp) == 0 && gpuType == 0)
+    if (strlen(sensorPaths.gpuTemp) == 0 && config.gpuType == 0)
     {
         printf("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuTemp, "/");
