@@ -4,7 +4,7 @@
  * Created Date: 2022-02-04 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-27 17:17:11
+ * Last Modified: 2024-05-28 18:27:54
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -34,7 +34,7 @@ int main()
     // Import config and validate settings
     importConfigFile();
 
-    if (checkInterval < 1000)
+    if (config.checkInterval < 1000)
     {
         printf("Error: Setting checkInterval is too low! Please set it to at least 1000!\n");
         exit(1);
@@ -73,7 +73,7 @@ void dataLoop()
         #endif
 
         // Delay for checkInterval ms
-        usleep(checkInterval * 1000);
+        usleep(config.checkInterval * 1000);
     }
 }
 
@@ -91,15 +91,15 @@ void connect()
 
         if (!serialIsOpen())
         {
-            if (connectionRetry > connectionRetryAmount)
+            if (connectionRetry > config.connectionRetryAmount)
             {
                 printf("Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
                 exit(1);
             }
 
-            int delay = (int) (connectionRetryTimeout * connectionRetryMultiplier) * (connectionRetry + 1); // Milliseconds
+            int delay = (int) (config.connectionRetryTimeout * config.connectionRetryMultiplier) * (connectionRetry + 1); // Milliseconds
 
-            printf("Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, connectionRetryAmount);
+            printf("Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, config.connectionRetryAmount);
 
             usleep(delay * 1000);
             connect();

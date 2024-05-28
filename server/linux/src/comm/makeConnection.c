@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:13:10
+ * Last Modified: 2024-05-28 18:26:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -68,7 +68,7 @@ void makeConnection()
     {
         char *port = usbPorts[i];
 
-        logDebug("Attempting to connect on port '%s', timeout is set to %dms...", port, arduinoReplyTimeout);
+        logDebug("Attempting to connect on port '%s', timeout is set to %dms...", port, config.arduinoReplyTimeout);
 
 
         // Open a new connection with timeout set in config
@@ -107,7 +107,7 @@ void makeConnection()
         clock_t  timestamp  = clock();
 
         while (serialIsOpen()
-                && timestamp + arduinoReplyTimeout > clock()
+                && timestamp + config.arduinoReplyTimeout > clock()
                 && offset < sizeof(buffer) - 1)
         {
             if (!serialRead(&buffer[offset])) break;

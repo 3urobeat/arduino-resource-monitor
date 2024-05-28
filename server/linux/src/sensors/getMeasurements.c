@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:13:27
+ * Last Modified: 2024-05-28 18:29:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -180,11 +180,14 @@ void getMeasurements()
 
 
     // Get GPU load & temp
-    #if gpuType == 1 // TODO: I do not know yet if Nvidia GPUs can be read through the fs, therefore we're still using the old method here
+    if (config.gpuType == 0) // TODO: I do not know yet if Nvidia GPUs can be read through the fs, therefore we're still using the old method here
+    {
         getCmdStdout(measurements.gpuLoad, sizeof(measurements.gpuLoad), "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
 
         getCmdStdout(measurements.gpuTemp, sizeof(measurements.gpuTemp), "nvidia-settings -q GPUCoreTemp -t");
-    #else
+    }
+    else
+    {
         if (sensorPaths.gpuLoad[0] != '\0') // Check if a sensor was found before attempting to use it
         {
             getFileContentFull(measurements.gpuLoad, sizeof(dataSize), sensorPaths.gpuLoad); // Sensor 'gpu_busy_percent' returns value straight up like it is
@@ -195,5 +198,5 @@ void getMeasurements()
             getFileContentFull(buffer, sizeof(buffer), sensorPaths.gpuTemp);
             gcvt(atoi(buffer) / 1000, 3, measurements.gpuTemp); // Buffer to int, divide by 1000 (sensors report 50°C as 50000), round, restrict to 3 digits (0-100°C) and write into cpuTemp
         }
-    #endif
+    }
 }
