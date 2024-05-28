@@ -2,6 +2,7 @@
 [⬅️ Go back to the main page](../..#readme)
 
 Reads the CPU, RAM & GPU usage of your Linux PC and sends it to the Arduino.  
+The utilization data is collected from the Linux Kernel `sysfs` & `procfs`.
 
 This server uses the [C-Periphery](https://github.com/vsergeev/c-periphery) library. It is licensed under the [MIT](https://opensource.org/license/MIT) license.
 

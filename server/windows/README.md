@@ -78,7 +78,9 @@ TODO
 
 ## Troubleshooting
 **Server does not find the Arduino**  
-TODO
+You might need to install a USB driver for your board (I did as well).  
+My distributor AzDelivery lists a CH340 driver on their [Store Page](https://www.az-delivery.de/en/products/nano-v3-mit-ch340-arduino-kompatibel).  
+Check the product page of your seller, or try installing this [C340 Driver](https://cdn.shopify.com/s/files/1/1509/1638/files/ch340.zip?v=1683899825) as well.
 
 **Sensor data is missing/wrong**  
 TODO
