@@ -29,7 +29,7 @@ The Arduino receives the data and updates the screen.
 Using this project, you always have your PC stats at a quick glance, even when gaming.  
 Monitor your PC without needing to tab out, open another application or using another screen altogether!
 
-**Linux x86_64 (64-bit)**, **Linux armv6 (ARM 32-bit)**, **Linux aarch64 (ARM 64-bit)** and **Windows x86 (64-bit)** are supported.  
+**Linux x86_64 (64-bit)**, **Linux armv6 (ARM 32-bit)**, **Linux aarch64 (ARM 64-bit)** and **Windows x86_64 (64-bit)** are supported.  
 
 &nbsp;
 
@@ -54,7 +54,7 @@ I have successfully tested the project with:
 - **Linux aarch64:**
   - **Debian 4.9.253-tegra:** NVIDIA Jetson Nano Developer Kit - ARMv8 Processor rev 1 (v8l) *(Configure GPU Load manually: `/sys/devices/57000000.gpu/load`)*
 
-- **Windows 64-bit:** 
+- **Windows x86_64:** 
   - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
 
 &nbsp;
@@ -84,7 +84,7 @@ It explains relevant information about required permissions for reading sensor d
   You need 4 cables to connect the display to the Arduino.
 - Optional: Backlight Switch ([Amazon](https://www.amazon.com/s?k=breadboard+mini+toggle+slide+switch))  
   This allows you to toggle on/off the display backlight. You need 2 more jumper cables!
-- Optional: Mini USB cable, if not delivered with the Arduino Nano
+- Optional: USB cable, if not delivered with the Arduino Nano
 - Optional: Some sort of case to house the Arduino & Display in
 
 Combined this should cost $20-$30.

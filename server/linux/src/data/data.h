@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 14:00:50
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-28 17:21:08
+ * Last Modified: 2024-05-28 23:01:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -39,13 +39,16 @@
 
 // Stores currently imported config
 struct ConfigValues {
+    // General
     char lastSeenVersion[16];
 
+    // Timeouts
     uint16_t arduinoReplyTimeout;       // How long to wait for an answer from the USB port in ms before giving up
     uint16_t connectionRetryTimeout;    // How long to wait between attempts to connect again in ms after all USB ports have failed
     uint16_t connectionRetryAmount;     // How often to retry finding a connection
     float connectionRetryMultiplier;    // retry * connectionRetryTimeout * connectionRetryMultiplier
 
+    // Sensors
     uint8_t gpuType;                    // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-settings will be used)
     char cpuTempSensorPath[128];
     char gpuLoadSensorPath[128];
