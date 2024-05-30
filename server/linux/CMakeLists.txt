@@ -40,6 +40,14 @@ set(serial_SRCS lib/c-periphery/src/serial.h lib/c-periphery/src/serial.c)
 add_library(serial STATIC ${serial_SRCS})
 
 
+# TOMLC99
+include_directories(lib/tomlc99)
+
+set(tomlc99_SRCS lib/tomlc99/toml.c lib/tomlc99/toml.h)
+
+add_library(tomlc99 STATIC ${tomlc99_SRCS})
+
+
 # Add all source files to compile
 set(SOURCES
     src/comm/comm.h
@@ -61,3 +69,4 @@ set(SOURCES
 # DO IT
 add_executable(arduino-resource-monitor-server-linux ${SOURCES})
 target_link_libraries(arduino-resource-monitor-server-linux serial)
+target_link_libraries(arduino-resource-monitor-server-linux tomlc99)
