@@ -44,6 +44,7 @@ int main()
 
     // Attempt to find sensors. Terminate if sensors are missing and user intervention is required
     getSensors();
+    printf("\n");
 
     // Begin
     connect();

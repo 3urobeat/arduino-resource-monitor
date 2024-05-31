@@ -4,7 +4,7 @@
  * Created Date: 2024-05-22 17:57:28
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:34:01
+ * Last Modified: 2024-05-28 17:17:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -90,7 +90,7 @@ void getFileContent(char *dest, int size, const char *path, const char delim)
 
     if (!streamPtr)
     {
-        printf("Error: Failed to read sensor '%s'! Error: %s\n", path, strerror(errno));
+        printf("Error: Failed to read '%s'! Error: %s\n", path, strerror(errno));
         return;
     }
 
