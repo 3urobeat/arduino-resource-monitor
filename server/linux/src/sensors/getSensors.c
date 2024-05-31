@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-28 18:29:14
+ * Last Modified: 2024-05-31 10:31:16
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -383,6 +383,4 @@ void getSensors()
         printf("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuTemp, "/");
     }
-
-    printf("\n");
 }

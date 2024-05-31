@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-28 18:29:00
+ * Last Modified: 2024-05-31 10:22:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -180,7 +180,7 @@ void getMeasurements()
 
 
     // Get GPU load & temp
-    if (config.gpuType == 0) // TODO: I do not know yet if Nvidia GPUs can be read through the fs, therefore we're still using the old method here
+    if (config.gpuType == 1) // TODO: I do not know yet if Nvidia GPUs can be read through the fs, therefore we're still using the old method here
     {
         getCmdStdout(measurements.gpuLoad, sizeof(measurements.gpuLoad), "nvidia-settings -q GPUUtilization -t | awk -F '[,= ]' '{ print $2 }'"); // awk cuts response down to only the graphics parameter
 

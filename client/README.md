@@ -54,7 +54,7 @@ TODO
 Connect your display like this:  
 `SDA` -> `A4`  
 `SDC` -> `A5`  
-`VCC` -> `5V`  
+`VCC` -> `5V` or `VIN`  
 `GND` -> `GND`  
 
 (left is the display side, right the Arduino side)
