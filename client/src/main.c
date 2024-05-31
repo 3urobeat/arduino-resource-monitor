@@ -4,7 +4,7 @@
  * Created Date: 2024-05-20 21:21:42
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-20 22:20:36
+ * Last Modified: 2024-05-31 11:04:00
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -32,6 +32,14 @@ void setup_c()
 
     // Init Serial
     setupSerial(baud);
+
+    // Init measurementsCache with "/"
+    strcpy(measurementsCache.cpuLoad, "/ ");
+    strcpy(measurementsCache.cpuTemp, "/  ");
+    strcpy(measurementsCache.ramUsage, "/  ");
+    strcpy(measurementsCache.swapUsage, "/  ");
+    strcpy(measurementsCache.gpuLoad, "/ ");
+    strcpy(measurementsCache.gpuTemp, "/  ");
 
     // Print startup screen
     lcdDisplaySplashScreen("Waiting...");
@@ -96,6 +104,8 @@ void serialEvent_c()
     // If transmission starts with + then the server just initiated a new connection
     if (inputString[0] == '+')
     {
+        lcdCenterPrint("Handshaking...", 3, false);
+
         serialPrint("+ResourceMonitorClient-");
         serialPrint(version);
         serialPrint("#");
