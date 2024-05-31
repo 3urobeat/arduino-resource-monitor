@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 11:19:03
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-30 23:37:06
+ * Last Modified: 2024-05-31 10:28:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -176,10 +176,45 @@ void importConfigFile()
     _parseConfig();
 
 
+    // Ignore reading config file if none exists
+    struct stat st = {0};
+
+    if (stat(_configFilePath, &st) == -1)
+    {
+        printf("No config found at '%s', continuing with default settings...\n", _configFilePath);
+        return;
+    }
+
     // Read config content
     logDebug("importConfigFile(): Importing and parsing config file...");
 
+    getFileContentFull(_configContent, sizeof(_configContent), _configFilePath);
 
+    // Abort if read failed and continue with default setting
+    if (strlen(_configContent) == 0) return;
+
+    // Parse result if something was read
+    _parseConfig();
+
+
+    // Write sensorPath into sensor struct if defined
+    if (strlen(config.cpuTempSensorPath) > 0)
+    {
+        printf("Found pre-configured cpuTemp sensor path in config: '%s'\n", config.cpuTempSensorPath);
+        strncpy(sensorPaths.cpuTemp, config.cpuTempSensorPath, sizeof(sensorPaths.cpuTemp));
+    }
+
+    if (strlen(config.gpuLoadSensorPath) > 0)
+    {
+        printf("Found pre-configured gpuLoad sensor path in config: '%s'\n", config.gpuLoadSensorPath);
+        strncpy(sensorPaths.gpuLoad, config.gpuLoadSensorPath, sizeof(sensorPaths.gpuLoad));
+    }
+
+    if (strlen(config.gpuTempSensorPath) > 0)
+    {
+        printf("Found pre-configured gpuTemp sensor path in config: '%s'\n", config.gpuTempSensorPath);
+        strncpy(sensorPaths.gpuTemp, config.gpuTempSensorPath, sizeof(sensorPaths.gpuTemp));
+    }
 }
 
 
