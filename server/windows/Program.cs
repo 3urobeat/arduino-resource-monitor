@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 22:02:07
+ * Last Modified: 2024-06-01 13:54:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -53,7 +53,7 @@ public class MainClass
         // Find all sensors
         Console.WriteLine("Attempting to find configured sensors...");
 
-        Measurements.FindSensors();
+        Sensors.FindSensors();
 
 
         // Begin
@@ -135,7 +135,7 @@ public class MainClass
             }
 
             Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
-        } 
+        }
         else
         {
             Console.WriteLine("Skipped searching for Arduino because clientLessMode is enabled!");
