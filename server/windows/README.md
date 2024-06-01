@@ -84,3 +84,6 @@ Check the product page of your seller, or try installing this [C340 Driver](http
 
 **Sensor data is missing/wrong**  
 TODO
+
+**Visual Studio does not find dependencies**  
+In my case the nuget package source address was missing. Follow [this guide](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio#package-sources) to add it.
