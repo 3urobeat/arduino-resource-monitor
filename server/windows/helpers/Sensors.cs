@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 17:35:17
+ * Last Modified: 2024-06-01 21:07:41
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -52,6 +52,10 @@ public static class Sensors
 
     public static IVisitor updateVisitor = new UpdateVisitor();
 
+    // Store Hardware for Update()
+    public static IHardware? CpuHardware { get; private set; }
+    public static IHardware? MemHardware { get; private set; }
+    public static IHardware? GpuHardware { get; private set; }
 
     // Store sensors
     public static ISensor? CpuLoadSensor { get; private set; }
@@ -118,9 +122,9 @@ public static class Sensors
                 {
                     switch (sensor.Name)
                     {
-                        case "CPU (Tctl/Tdie)": // AMD Ryzen 7000
-                        case "CPU Package":     // Intel 4000
-                        case "CPU Cores":       // AMD family 1Xh
+                        case "Core (Tctl/Tdie)": // AMD Ryzen 7000
+                        case "CPU Package":      // Intel 4000
+                        case "CPU Cores":        // AMD family 1Xh
                             if (CpuTempSensor == null)
                             {
                                 CpuTempSensor = sensor;
@@ -176,7 +180,6 @@ public static class Sensors
                     switch (sensor.Name)
                     {
                         case "GPU Core":    // AMD && Nvidia
-                        case "D3D 3D":      // AMD
                             if (GpuLoadSensor == null)
                             {
                                 GpuLoadSensor = sensor;
@@ -232,7 +235,11 @@ public static class Sensors
         computer.Open();
         computer.Accept(updateVisitor);
 
-        // Reset sensors
+        // Reset
+        CpuHardware = null;
+        MemHardware = null;
+        GpuHardware = null;
+
         CpuLoadSensor = null;
         CpuTempSensor = null;
         RamUsedSensor = null;
@@ -254,12 +261,14 @@ public static class Sensors
                 case HardwareType.Cpu:
                     MainClass.LogDebug($"CPU Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
+                    CpuHardware = hardware;
                     ProcessCpuSensors(hardware);
                     break;
 
                 case HardwareType.Memory:
                     MainClass.LogDebug($"Memory Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
+                    MemHardware = hardware;
                     ProcessMemSensors(hardware);
                     break;
 
@@ -268,6 +277,7 @@ public static class Sensors
                 case HardwareType.GpuIntel:
                     MainClass.LogDebug($"GPU Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
+                    GpuHardware = hardware;
                     ProcessGpuSensors(hardware);
                     break;
             }
