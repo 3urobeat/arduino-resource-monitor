@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 17:35:21
+ * Last Modified: 2024-06-01 21:07:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -61,17 +61,11 @@ public class MainClass
 
 
         // Begin
-        Connect();
-
-        // So uhhh, this is the most clever thing you'll ever see:
-        // This while loop keeps the process alive. Calling async functions without await would cause the process to exit even though the async function is still doing something.
-        // Since I don't want to complicate the whole process flow with awaits (as Connect() is also called from try catch in Communication.cs), this should be okay.
-        // (I am aware of how async await works and how to use it, this is a "hack" which I'm 100% ok with in this project)
-        while (true) { }
+        Connect().Wait();
     }
 
 
-    public static async void DataLoop()
+    public static void DataLoop()
     {
         Console.WriteLine("\nStarting to send data...");
 
@@ -86,7 +80,7 @@ public class MainClass
                 Communication.SendMeasurements();
 
                 // Delay next iteration for checkInterval ms
-                await Task.Delay(Settings.checkInterval);
+                System.Threading.Thread.Sleep(Settings.checkInterval);
             }
         }
         else
@@ -100,7 +94,7 @@ public class MainClass
                 Communication.LogMeasurements();
 
                 // Delay next iteration for checkInterval ms
-                await Task.Delay(Settings.checkInterval);
+                System.Threading.Thread.Sleep(Settings.checkInterval);
             }
         }
     }
@@ -118,6 +112,7 @@ public class MainClass
 
             serialConnection = await Connection.ConnectToArduino();
 
+            // Retry establishing connection if ConnectToArduino() failed
             if (serialConnection == null)
             {
                 if (connectionRetry > Settings.connectionRetryAmount)
@@ -125,7 +120,6 @@ public class MainClass
                     Console.WriteLine($"Couldn't connect after {connectionRetry} attempts! Exiting in 5 seconds...");
                     System.Threading.Thread.Sleep(5000);
                     System.Environment.Exit(1);
-                    return;
                 }
 
                 int delay = (int)(Settings.connectionRetryMultiplier * Settings.connectionRetryTimeout) * (connectionRetry + 1);
@@ -133,23 +127,27 @@ public class MainClass
                 Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{Settings.connectionRetryAmount})...");
 
                 System.Threading.Thread.Sleep(delay);
-                Connect();
-
-                return;
+                Connect().Wait();
             }
+            else
+            {
+                Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
 
-            Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
+                // Start getting and sending sensor data
+                Communication.ResetCache();
+
+                DataLoop();
+            }
         }
         else
         {
             Console.WriteLine("Skipped searching for Arduino because clientLessMode is enabled!");
+
+            // Start getting and sending sensor data
+            Communication.ResetCache();
+
+            DataLoop();
         }
-
-
-        // Start getting and sending sensor data
-        Communication.ResetCache();
-
-        DataLoop();
     }
 
 
@@ -171,7 +169,7 @@ public class MainClass
         // Reset connection tries
         connectionRetry = 0;
 
-        Connect();
+        Connect().Wait();
     }
 
 

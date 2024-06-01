@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 18:13:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 13:54:25
+ * Last Modified: 2024-06-01 21:10:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -35,37 +35,40 @@ public class Measurements
     // Reads from all sensors and refreshes MeasurementsCache
     public static void GetMeasurements()
     {
-        computer.Accept(updateVisitor); // Update all sensor
+        // Update measurements
+        CpuHardware?.Update();
+        MemHardware?.Update();
+        GpuHardware?.Update();
 
         MainClass.LogDebug("Updating sensor values...");
 
         // CPU Utilization in %
         if (CpuLoadSensor != null)
         {
-            MeasurementsCache.cpuLoad = ((int)CpuLoadSensor.Value).ToString();  // Ignore decimals
+            MeasurementsCache.cpuLoad = ((int)CpuLoadSensor.Value!).ToString();  // Ignore decimals
         }
 
         // CPU Temperature in °C
         if (CpuTempSensor != null)
         {
-            MeasurementsCache.cpuTemp = ((int)CpuTempSensor.Value).ToString(); // Ignore decimals
+            MeasurementsCache.cpuTemp = ((int)CpuTempSensor.Value!).ToString(); // Ignore decimals
         }
 
         // RAM Usage in GB
         if (RamUsedSensor != null)
         {
-            MeasurementsCache.ramUsage = Math.Round((float)RamUsedSensor.Value, 1).ToString(".0");
+            MeasurementsCache.ramUsage = Math.Round((float)RamUsedSensor.Value!, 1).ToString(".0");
         }
 
         // GPU Utilization in %
         if (GpuLoadSensor != null)
         {
-            MeasurementsCache.gpuLoad = ((int)GpuLoadSensor.Value).ToString();
+            MeasurementsCache.gpuLoad = ((int)GpuLoadSensor.Value!).ToString();
         }
 
         // GPU Core Temperature in °C
         if (GpuTempSensor != null) {
-            MeasurementsCache.gpuTemp = ((int)GpuTempSensor.Value).ToString();
+            MeasurementsCache.gpuTemp = ((int)GpuTempSensor.Value!).ToString();
         }
     }
 }
