@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 17:35:24
+ * Last Modified: 2024-06-01 21:33:45
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -25,6 +25,9 @@ public class Settings
         // Timeouts
 
         // Sensors
+        public string cpuHardwareName;
+        public string gpuHardwareName;
+
         public string cpuLoadSensorName;
         public string cpuTempSensorName;
         public string ramUsedSensorName;

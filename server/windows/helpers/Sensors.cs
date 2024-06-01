@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 21:07:41
+ * Last Modified: 2024-06-01 21:33:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -259,6 +259,13 @@ public static class Sensors
             switch (hardware.HardwareType)
             {
                 case HardwareType.Cpu:
+                    // Check if specific cpu is defined in config and skip if this does not match
+                    if (config.cpuHardwareName.Length > 0 && config.cpuHardwareName != hardware.Name)
+                    {
+                        MainClass.LogDebug($"Found CPU '{hardware.Name}' but skipping because config.cpuHardwareName is defined");
+                        continue;
+                    }
+
                     MainClass.LogDebug($"CPU Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
                     CpuHardware = hardware;
@@ -275,6 +282,13 @@ public static class Sensors
                 case HardwareType.GpuAmd:
                 case HardwareType.GpuNvidia:
                 case HardwareType.GpuIntel:
+                    // Check if specific gpu is defined in config and skip if this does not match
+                    if (config.gpuHardwareName.Length > 0 && config.gpuHardwareName != hardware.Name)
+                    {
+                        MainClass.LogDebug($"Found GPU '{hardware.Name}' but skipping because config.gpuHardwareName is defined");
+                        continue;
+                    }
+
                     MainClass.LogDebug($"GPU Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
                     GpuHardware = hardware;
