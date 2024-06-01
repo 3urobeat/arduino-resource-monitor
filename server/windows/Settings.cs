@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 13:54:29
+ * Last Modified: 2024-06-01 17:35:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,24 @@
 
 public class Settings
 {
+    // Stores currently imported config
+    public struct ConfigValues
+    {
+        // General
+
+        // Timeouts
+
+        // Sensors
+        public string cpuLoadSensorName;
+        public string cpuTempSensorName;
+        public string ramUsedSensorName;
+        public string gpuLoadSensorName;
+        public string gpuTempSensorName;
+    }
+
+    public static ConfigValues config = new ConfigValues();
+
+
     // Configuration variables
     public const int arduinoReplyTimeout = 5000;         // How long to wait for an answer from the USB port in ms before giving up
     public const int connectionRetryTimeout = 5000;      // How long to wait between attempts to connect again in ms after all USB ports have failed
