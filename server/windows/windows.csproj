@@ -6,6 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Authors>3urobeat</Authors>
+    <AssemblyName>arduino-resource-monitor-server-windows</AssemblyName>
+    <Title>Arduino Resource Monitor Server for Windows</Title>
   </PropertyGroup>
 
   <ItemGroup>
