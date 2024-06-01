@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 21:33:36
+ * Last Modified: 2024-06-01 21:47:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -180,7 +180,8 @@ public static class Sensors
                     switch (sensor.Name)
                     {
                         case "GPU Core":    // AMD && Nvidia
-                            if (GpuLoadSensor == null)
+                        case "D3D 3D":      // Prioritize if available, readouts make more sense, at least on my RX 7900XT
+                            if (GpuLoadSensor == null || (GpuLoadSensor.Name == "GPU Core" && sensor.Name == "D3D 3D"))
                             {
                                 GpuLoadSensor = sensor;
                                 gpuLoadAutoDiscovered = true;
