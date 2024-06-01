@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 17:00:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 17:35:08
+ * Last Modified: 2024-06-01 21:33:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -21,6 +21,9 @@ public class Config
 {
     public static void ImportConfig()
     {
+        config.cpuHardwareName = "";
+        config.gpuHardwareName = "";
+
         config.cpuLoadSensorName = "";
         config.cpuTempSensorName = "";
         config.ramUsedSensorName = "";
