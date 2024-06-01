@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-22 18:45:25
+ * Last Modified: 2024-06-01 13:54:29
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -31,19 +31,19 @@ public class Settings
 
 
     // Sensor names: These might change depending on your hardware
-    public const string cpuLoadSensor = "CPU Total"; // Name of the sensor
-    public const int cpuLoadSensorIndex = 0;         // Set index of the correct sensor should multiple exist
+    public const string cpuLoadSensor = "customCpuLoad"; // Name of the sensor
+    public const int cpuLoadSensorIndex = 0;             // Set index of the correct sensor should multiple exist
 
-    public const string cpuTempSensor = "Core (Tctl/Tdie)";
+    public const string cpuTempSensor = "customCpuTemp";
     public const int cpuTempSensorIndex = 0;
 
-    public const string ramUsedSensor = "Memory Used";
+    public const string ramUsedSensor = "customRam";
     public const int ramUsedSensorIndex = 0;
 
-    public const string gpuLoadSensor = "D3D 3D";
+    public const string gpuLoadSensor = "customGpuLoad";
     public const int gpuLoadSensorIndex = 0;
 
-    public const string gpuTempSensor = "GPU Core";
+    public const string gpuTempSensor = "customGpuTemp";
     public const int gpuTempSensorIndex = 0;
 
 
