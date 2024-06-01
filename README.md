@@ -41,9 +41,9 @@ Monitor your PC without needing to tab out, open another application or using an
 I have successfully tested the project with:
 - **Linux x86_64:**
   - **Arch 6.8.9-arch1-2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
-  - **Arch 6.8.9-arch1-2:** Thinkpad Z13 - AMD Ryzen 5 PRO 6650U with Radeon 660M
-  - **Arch 6.8.5-arch1-1:** Thinkpad T430 - Intel i5 3320M *(iGPU readout not supported)*
-  - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 *(iGPU readout not supported)*
+  - **Arch 6.9.1-arch1-2:** Thinkpad Z13 - AMD Ryzen 5 PRO 6650U with Radeon 660M
+  - **Arch 6.8.5-arch1-1:** Thinkpad T430 - Intel i5 3320M *(No iGPU hwmon sensor)*
+  - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 *(No iGPU hwmon sensor)*
   - **Debian 5.15.74-1-pve:** Desktop/Server - AMD Ryzen 5 2600
   - **Kali 6.5.0-kali3-amd64:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature & GPU readout not supported)*
 
@@ -55,7 +55,8 @@ I have successfully tested the project with:
   - **Debian 4.9.253-tegra:** NVIDIA Jetson Nano Developer Kit - ARMv8 Processor rev 1 (v8l) *(Configure GPU Load manually: `/sys/devices/57000000.gpu/load`)*
 
 - **Windows x86_64:** 
-  - **Windows 10:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
+  - **Windows 10 22H2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
+  - **Windows 10 22H2:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature & GPU readout not supported)*
 
 &nbsp;
 
