@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 13:53:10
+ * Last Modified: 2024-06-01 17:35:17
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,7 @@
 
 
 using LibreHardwareMonitor.Hardware;
+using static Settings;
 
 
 // From lib documentation: https://github.com/LibreHardwareMonitor/LibreHardwareMonitor#developer-information
@@ -37,6 +38,7 @@ public class UpdateVisitor : IVisitor
 
 public static class Sensors
 {
+    // Init lib
     public static Computer computer = new Computer
     {
         IsCpuEnabled = true,
@@ -59,102 +61,225 @@ public static class Sensors
     public static ISensor? GpuTempSensor { get; private set; }
 
 
+    // Used for printing warning when multiple CPU/GPUs were auto-discovered
+    private static bool cpuLoadAutoDiscovered;
+    private static bool cpuTempAutoDiscovered;
+    private static bool gpuLoadAutoDiscovered;
+    private static bool gpuTempAutoDiscovered;
+
+
+    // Finds interesting CPU sensors from Cpu Hardware
+    private static void ProcessCpuSensors(IHardware hardware)
+    {
+        foreach (ISensor sensor in hardware.Sensors)
+        {
+            MainClass.LogDebug($"\tCPU Sensor - name: \"{sensor.Name}\", type: {sensor.SensorType}, value: {sensor.Value}");
+
+            // Load
+            if (sensor.SensorType == SensorType.Load)
+            {
+                // Check for user defined sensor name first and overwrite any previous stored sensor
+                if (config.cpuLoadSensorName.Length > 0 && config.cpuLoadSensorName == sensor.Name)
+                {
+                    CpuLoadSensor = sensor;
+                    Console.WriteLine($"Found pre-configured CPU Load sensor '{sensor.Name}'!");
+                }
+                else
+                {
+                    switch (sensor.Name)
+                    {
+                        case "CPU Total":
+                            if (CpuLoadSensor == null)          // How many indentations do you want? Yes.
+                            {
+                                CpuLoadSensor = sensor;
+                                cpuLoadAutoDiscovered = true;
+                                Console.WriteLine($"Found CPU Load sensor '{sensor.Name}'!");
+                            }
+                            else
+                            {
+                                if (cpuLoadAutoDiscovered) Console.WriteLine("Warning: Your system has multiple CPU load sensors! If the wrong sensor has been chosen, please configure it manually.");
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            // Temperature
+            if (sensor.SensorType == SensorType.Temperature)
+            {
+                // Check for user defined sensor name first and overwrite any previous stored sensor
+                if (config.cpuTempSensorName.Length > 0 && config.cpuTempSensorName == sensor.Name)
+                {
+                    CpuTempSensor = sensor;
+                    Console.WriteLine($"Found pre-configured CPU Temperature sensor '{sensor.Name}'!");
+                }
+                else
+                {
+                    switch (sensor.Name)
+                    {
+                        case "CPU (Tctl/Tdie)": // AMD Ryzen 7000
+                        case "CPU Package":     // Intel 4000
+                        case "CPU Cores":       // AMD family 1Xh
+                            if (CpuTempSensor == null)
+                            {
+                                CpuTempSensor = sensor;
+                                cpuTempAutoDiscovered = true;
+                                Console.WriteLine($"Found CPU Temperature sensor '{sensor.Name}'!");
+                            }
+                            else
+                            {
+                                if (cpuTempAutoDiscovered) Console.WriteLine("Warning: Your system has multiple CPU temperature sensors! If the wrong sensor has been chosen, please configure it manually.");
+                            }
+
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Finds interesting RAM sensors from Memory Hardware
+    private static void ProcessMemSensors(IHardware hardware)
+    {
+        foreach (ISensor sensor in hardware.Sensors)
+        {
+            MainClass.LogDebug($"\tMemory Sensor - name: \"{sensor.Name}\", type: {sensor.SensorType}, value: {sensor.Value}");
+
+            // RAM
+            if (sensor.Name == "Memory Used")
+            {
+                RamUsedSensor = sensor;
+                Console.WriteLine($"Found RAM Used sensor '{sensor.Name}'!");
+            }
+        }
+    }
+
+    // Finds interesting GPU sensors from Gpu Hardware
+    private static void ProcessGpuSensors(IHardware hardware)
+    {
+        foreach (ISensor sensor in hardware.Sensors)
+        {
+            MainClass.LogDebug($"\tGPU Sensor - name: \"{sensor.Name}\", type: {sensor.SensorType}, value: {sensor.Value}");
+
+            // Load
+            if (sensor.SensorType == SensorType.Load)
+            {
+                // Check for user defined sensor name first and overwrite any previous stored sensor
+                if (config.gpuLoadSensorName.Length > 0 && config.gpuLoadSensorName == sensor.Name)
+                {
+                    GpuLoadSensor = sensor;
+                    Console.WriteLine($"Found pre-configured GPU Load sensor '{sensor.Name}'!");
+                }
+                else
+                {
+                    switch (sensor.Name)
+                    {
+                        case "GPU Core":    // AMD && Nvidia
+                        case "D3D 3D":      // AMD
+                            if (GpuLoadSensor == null)
+                            {
+                                GpuLoadSensor = sensor;
+                                gpuLoadAutoDiscovered = true;
+                                Console.WriteLine($"Found GPU Load sensor '{sensor.Name}'!");
+                            }
+                            else
+                            {
+                                if (gpuLoadAutoDiscovered) Console.WriteLine("Warning: Your system has multiple GPU load sensors! If the wrong sensor has been chosen, please configure it manually.");
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            // Temperature
+            if (sensor.SensorType == SensorType.Temperature)
+            {
+                // Check for user defined sensor name first and overwrite any previous stored sensor
+                if (config.gpuTempSensorName.Length > 0 && config.gpuTempSensorName == sensor.Name)
+                {
+                    GpuTempSensor = sensor;
+                    Console.WriteLine($"Found pre-configured GPU Temperature sensor '{sensor.Name}'!");
+                }
+                else
+                {
+                    switch (sensor.Name)
+                    {
+                        case "GPU Core":    // AMD && Nvidia
+                            if (GpuTempSensor == null)
+                            {
+                                GpuTempSensor = sensor;
+                                gpuTempAutoDiscovered = true;
+                                Console.WriteLine($"Found GPU Temperature sensor '{sensor.Name}'!");
+                            }
+                            else
+                            {
+                                if (gpuTempAutoDiscovered) Console.WriteLine("Warning: Your system has multiple GPU temperature sensors! If the wrong sensor has been chosen, please configure it manually.");
+                            }
+
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+
     // Find all sensors and store them above
     public static void FindSensors()
     {
         computer.Open();
         computer.Accept(updateVisitor);
 
-        // Track IDs
-        int gpuId = 0;
+        // Reset sensors
+        CpuLoadSensor = null;
+        CpuTempSensor = null;
+        RamUsedSensor = null;
+        GpuLoadSensor = null;
+        GpuTempSensor = null;
 
-        int cpuLoadSensorIndex = 0;
-        int cpuTempSensorIndex = 0;
-        int ramUsedSensorIndex = 0;
-        int gpuLoadSensorIndex = 0;
-        int gpuTempSensorIndex = 0;
+        // Reset trackers
+        cpuLoadAutoDiscovered = false;
+        cpuTempAutoDiscovered = false;
+        gpuLoadAutoDiscovered = false;
+        gpuTempAutoDiscovered = false;
 
 
         // Iterate through every device and its sensors
         foreach (IHardware hardware in computer.Hardware)
         {
-            //Console.WriteLine("Hardware: {0}", hardware.Name); // Enable to log all sensors
-
-            // Loop through all sensors of this hardware
-            foreach (ISensor sensor in hardware.Sensors)
+            switch (hardware.HardwareType)
             {
-                Console.WriteLine("\tSensor: {0}, value: {1}", sensor.Name, sensor.Value); // Enable to log all sensors
+                case HardwareType.Cpu:
+                    MainClass.LogDebug($"CPU Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
-                // Disable sensor value history to decrease memory usage
-                sensor.ValuesTimeWindow = TimeSpan.Zero;
+                    ProcessCpuSensors(hardware);
+                    break;
 
-                switch (sensor.Name)
-                {
-                    // CPU Utilization in %
-                    case "CPU Total":
-                    case Settings.cpuLoadSensor:
-                        if (cpuLoadSensorIndex == Settings.cpuLoadSensorIndex) CpuLoadSensor = sensor;
+                case HardwareType.Memory:
+                    MainClass.LogDebug($"Memory Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
-                        cpuLoadSensorIndex++;
-                        break;
+                    ProcessMemSensors(hardware);
+                    break;
 
-                    // CPU Temperature in °C
-                    case "CPU (Tctl/Tdie)": // AMD Ryzen 7000
-                    case "CPU Package":     // Intel 4000
-                    case Settings.cpuTempSensor:
-                        if (cpuTempSensorIndex == Settings.cpuTempSensorIndex) CpuTempSensor = sensor;
+                case HardwareType.GpuAmd:
+                case HardwareType.GpuNvidia:
+                case HardwareType.GpuIntel:
+                    MainClass.LogDebug($"GPU Hardware: {hardware.Name}, type: {hardware.HardwareType}, identifier: {hardware.Identifier}");
 
-                        cpuTempSensorIndex++;
-                        break;
-
-                    // RAM Usage in GB
-                    case "Memory Used":
-                    case Settings.ramUsedSensor:
-                        if (ramUsedSensorIndex == Settings.ramUsedSensorIndex) RamUsedSensor = sensor;
-
-                        ramUsedSensorIndex++;
-                        break;
-
-                    // I don't know how Swap works on Windows so let's ignore this for now
-
-                    // GPU Utilization in %
-                    case "D3D 3D":
-                    case Settings.gpuLoadSensor:
-                        if (gpuId == Settings.gpuID)
-                        {
-                            if (gpuLoadSensorIndex == Settings.gpuLoadSensorIndex) GpuLoadSensor = sensor;
-
-                            gpuLoadSensorIndex++;
-                        }
-                        break;
-
-                    // GPU Core Temperature in °C
-                    case "GPU Core":
-                    case Settings.gpuTempSensor:
-                        if (gpuId == Settings.gpuID)
-                        {
-                            if (gpuTempSensorIndex == Settings.gpuTempSensorIndex) GpuTempSensor = sensor;
-
-                            gpuTempSensorIndex++;
-                        }
-                        break;
-                }
-            }
-
-            // Count gpuId to support computers with multiple GPUs (e.g. iGPU & dGPU)
-            if (hardware.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel)
-            {
-                gpuId++;
+                    ProcessGpuSensors(hardware);
+                    break;
             }
         }
 
 
         // Check if any of the sensors could not be found
-        if (CpuLoadSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching cpuLoadSensor!");
-        if (CpuTempSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching cpuTempSensor!");
-        if (RamUsedSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching ramUsedSensor!");
-        if (GpuLoadSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching gpuLoadSensor!");
-        if (GpuTempSensor == null) Console.WriteLine("Warning: Couldn't find any sensor matching gpuTempSensor!");
+        if (CpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Load' sensor! If you have one, please configure it manually.");
+        if (CpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.");
+        if (RamUsedSensor == null) Console.WriteLine("Warn: I could not automatically find any 'Memory Used' sensor! If you have one, please configure it manually.");
+        if (GpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.");
+        if (GpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.");
 
 
         // Don't call computer.close() here, otherwise GetMeasurements() won't be able to refresh readouts

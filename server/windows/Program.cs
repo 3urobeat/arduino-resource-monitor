@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 13:54:27
+ * Last Modified: 2024-06-01 17:35:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -40,7 +40,10 @@ public class MainClass
         Console.WriteLine($"Server for Windows v{Settings.version} starting...\n");
 
 
-        // Validate settings
+        // Import config and validate settings
+        Config.ImportConfig();
+        Console.WriteLine("");
+
         if (Settings.checkInterval < 1000)
         {
             Console.WriteLine("Error: Setting checkInterval is too low! Please set it to at least 1000!");
@@ -50,10 +53,11 @@ public class MainClass
         }
 
 
-        // Find all sensors
+        // Attempt to find sensors
         Console.WriteLine("Attempting to find configured sensors...");
 
         Sensors.FindSensors();
+        Console.WriteLine("");
 
 
         // Begin
