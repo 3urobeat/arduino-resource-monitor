@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 21:47:13
+ * Last Modified: 2024-06-02 15:16:16
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -83,7 +83,7 @@ public static class Sensors
             if (sensor.SensorType == SensorType.Load)
             {
                 // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (config.cpuLoadSensorName.Length > 0 && config.cpuLoadSensorName == sensor.Name)
+                if (!string.IsNullOrEmpty(config.cpuLoadSensorName) && config.cpuLoadSensorName == sensor.Name)
                 {
                     CpuLoadSensor = sensor;
                     Console.WriteLine($"Found pre-configured CPU Load sensor '{sensor.Name}'!");
@@ -113,7 +113,7 @@ public static class Sensors
             if (sensor.SensorType == SensorType.Temperature)
             {
                 // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (config.cpuTempSensorName.Length > 0 && config.cpuTempSensorName == sensor.Name)
+                if (!string.IsNullOrEmpty(config.cpuTempSensorName) && config.cpuTempSensorName == sensor.Name)
                 {
                     CpuTempSensor = sensor;
                     Console.WriteLine($"Found pre-configured CPU Temperature sensor '{sensor.Name}'!");
@@ -170,7 +170,7 @@ public static class Sensors
             if (sensor.SensorType == SensorType.Load)
             {
                 // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (config.gpuLoadSensorName.Length > 0 && config.gpuLoadSensorName == sensor.Name)
+                if (!string.IsNullOrEmpty(config.gpuLoadSensorName) && config.gpuLoadSensorName == sensor.Name)
                 {
                     GpuLoadSensor = sensor;
                     Console.WriteLine($"Found pre-configured GPU Load sensor '{sensor.Name}'!");
@@ -201,7 +201,7 @@ public static class Sensors
             if (sensor.SensorType == SensorType.Temperature)
             {
                 // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (config.gpuTempSensorName.Length > 0 && config.gpuTempSensorName == sensor.Name)
+                if (!string.IsNullOrEmpty(config.gpuTempSensorName) && config.gpuTempSensorName == sensor.Name)
                 {
                     GpuTempSensor = sensor;
                     Console.WriteLine($"Found pre-configured GPU Temperature sensor '{sensor.Name}'!");
@@ -261,7 +261,7 @@ public static class Sensors
             {
                 case HardwareType.Cpu:
                     // Check if specific cpu is defined in config and skip if this does not match
-                    if (config.cpuHardwareName.Length > 0 && config.cpuHardwareName != hardware.Name)
+                    if (!string.IsNullOrEmpty(config.cpuHardwareName) && config.cpuHardwareName != hardware.Name)
                     {
                         MainClass.LogDebug($"Found CPU '{hardware.Name}' but skipping because config.cpuHardwareName is defined");
                         continue;
@@ -284,7 +284,7 @@ public static class Sensors
                 case HardwareType.GpuNvidia:
                 case HardwareType.GpuIntel:
                     // Check if specific gpu is defined in config and skip if this does not match
-                    if (config.gpuHardwareName.Length > 0 && config.gpuHardwareName != hardware.Name)
+                    if (!string.IsNullOrEmpty(config.gpuHardwareName) && config.gpuHardwareName != hardware.Name)
                     {
                         MainClass.LogDebug($"Found GPU '{hardware.Name}' but skipping because config.gpuHardwareName is defined");
                         continue;
