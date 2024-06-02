@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-31 10:51:22
+ * Last Modified: 2024-06-02 16:11:29
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -365,7 +365,7 @@ void getSensors()
     }
 
 
-    // Log warnings for missing sensors and write '/' into respective measurements variable
+    // Log warnings for missing sensors
     if (strlen(sensorPaths.cpuTemp) == 0)
     {
         printf("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.\n");

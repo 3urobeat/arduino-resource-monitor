@@ -32,6 +32,9 @@ echo "-> Building Version: $VERSION"
 mkdir -p ./build
 mkdir -p ./build/dockcross
 
+# Remove old binaries
+rm ./build/arduino-resource-monitor-server-*
+
 # Exit if docker is not installed
 ( docker stats --no-stream > /dev/null ) || { echo "-> Error: Docker not installed or docker daemon not running! Exiting..." ; exit 1; }
 
