@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 21:33:45
+ * Last Modified: 2024-06-02 15:16:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -15,14 +15,19 @@
  */
 
 
-public class Settings
+public static class Settings
 {
     // Stores currently imported config
     public struct ConfigValues
     {
         // General
+        public string lastSeenVersion;
 
         // Timeouts
+        public int arduinoReplyTimeout;          // How long to wait for an answer from the USB port in ms before giving up
+        public int connectionRetryTimeout;       // How long to wait between attempts to connect again in ms after all USB ports have failed
+        public int connectionRetryAmount;        // How often to retry finding a connection
+        public double connectionRetryMultiplier; // retry * connectionRetryTimeout * connectionRetryMultiplier
 
         // Sensors
         public string cpuHardwareName;
@@ -33,6 +38,8 @@ public class Settings
         public string ramUsedSensorName;
         public string gpuLoadSensorName;
         public string gpuTempSensorName;
+
+        public int checkInterval; // How often new measurements should be made, min 1000ms (1 second)
     }
 
     public static ConfigValues config = new ConfigValues();
@@ -46,9 +53,6 @@ public class Settings
 
     public const int checkInterval = 1000; // How often new measurements should be made, min 1000ms (1 second)
     public const int gpuID = 0;            // Set an index here if you've got multiple GPUs. Check the Task Manager Performance tab for reference
-
-    public const bool printDebug = false;
-    public const bool clientLessMode = false;
 
 
     // Sensor names: These might change depending on your hardware
@@ -66,6 +70,13 @@ public class Settings
 
     public const string gpuTempSensor = "customGpuTemp";
     public const int gpuTempSensorIndex = 0;
+
+
+    // Configuration variables
+    public const bool autoCreateConfig = true;
+
+    public const bool printDebug = true;
+    public const bool clientLessMode = false;
 
 
     // Do not modify
