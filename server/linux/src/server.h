@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:48:34
+ * Last Modified: 2024-06-02 16:35:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -55,7 +55,7 @@
 
 
 // Do not modify
-#define version "v0.7.0"
+#define version "v0.8.0"
 
 #define baud 9600
 
