@@ -4,7 +4,7 @@
  * Created Date: 2022-02-05 12:22:33
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-22 18:45:44
+ * Last Modified: 2024-06-02 16:39:50
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -30,7 +30,7 @@
 
 
 // Do not modify
-#define version "v0.7.0"
+#define version "v0.8.0"
 
 #define baud 9600
 #define serialEOL "\r\n"
