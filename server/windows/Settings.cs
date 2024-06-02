@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:49:33
+ * Last Modified: 2024-06-02 16:28:13
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,6 @@ public static class Settings
 
         public string cpuLoadSensorName;
         public string cpuTempSensorName;
-        public string ramUsedSensorName;
         public string gpuLoadSensorName;
         public string gpuTempSensorName;
 
