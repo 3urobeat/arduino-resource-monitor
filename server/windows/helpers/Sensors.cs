@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:49:30
+ * Last Modified: 2024-06-02 16:28:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -85,11 +85,10 @@ public static class Sensors
             // Load
             if (sensor.SensorType == SensorType.Load)
             {
-                // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (!string.IsNullOrEmpty(config.cpuLoadSensorName) && config.cpuLoadSensorName == sensor.Name)
+                // Check if user defined sensor name and ignore auto detection
+                if (!string.IsNullOrEmpty(config.cpuLoadSensorName))
                 {
-                    CpuLoadSensor = sensor;
-                    Console.WriteLine($"Found pre-configured CPU Load sensor '{sensor.Name}'!");
+                    if (config.cpuLoadSensorName == sensor.Name) CpuLoadSensor = sensor;
                 }
                 else
                 {
@@ -100,7 +99,6 @@ public static class Sensors
                             {
                                 CpuLoadSensor = sensor;
                                 cpuLoadAutoDiscovered = true;
-                                Console.WriteLine($"Found CPU Load sensor '{sensor.Name}'!");
                             }
                             else
                             {
@@ -110,16 +108,17 @@ public static class Sensors
                             break;
                     }
                 }
+
+                if (CpuLoadSensor != null && CpuLoadSensor.Name == sensor.Name) Console.WriteLine($"Found CPU Load sensor '{sensor.Name}'!");
             }
 
             // Temperature
             if (sensor.SensorType == SensorType.Temperature)
             {
-                // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (!string.IsNullOrEmpty(config.cpuTempSensorName) && config.cpuTempSensorName == sensor.Name)
+                // Check if user defined sensor name and ignore auto detection
+                if (!string.IsNullOrEmpty(config.cpuTempSensorName))
                 {
-                    CpuTempSensor = sensor;
-                    Console.WriteLine($"Found pre-configured CPU Temperature sensor '{sensor.Name}'!");
+                    if (config.cpuTempSensorName == sensor.Name) CpuTempSensor = sensor;
                 }
                 else
                 {
@@ -132,7 +131,6 @@ public static class Sensors
                             {
                                 CpuTempSensor = sensor;
                                 cpuTempAutoDiscovered = true;
-                                Console.WriteLine($"Found CPU Temperature sensor '{sensor.Name}'!");
                             }
                             else
                             {
@@ -142,6 +140,8 @@ public static class Sensors
                             break;
                     }
                 }
+
+                if (CpuTempSensor != null && CpuTempSensor.Name == sensor.Name) Console.WriteLine($"Found CPU Temperature sensor '{sensor.Name}'!");
             }
         }
     }
@@ -178,11 +178,10 @@ public static class Sensors
             // Load
             if (sensor.SensorType == SensorType.Load)
             {
-                // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (!string.IsNullOrEmpty(config.gpuLoadSensorName) && config.gpuLoadSensorName == sensor.Name)
+                // Check if user defined sensor name and ignore auto detection
+                if (!string.IsNullOrEmpty(config.gpuLoadSensorName))
                 {
-                    GpuLoadSensor = sensor;
-                    Console.WriteLine($"Found pre-configured GPU Load sensor '{sensor.Name}'!");
+                    if (config.gpuLoadSensorName == sensor.Name) GpuLoadSensor = sensor;
                 }
                 else
                 {
@@ -194,7 +193,6 @@ public static class Sensors
                             {
                                 GpuLoadSensor = sensor;
                                 gpuLoadAutoDiscovered = true;
-                                Console.WriteLine($"Found GPU Load sensor '{sensor.Name}'!");
                             }
                             else
                             {
@@ -204,16 +202,17 @@ public static class Sensors
                             break;
                     }
                 }
+
+                if (GpuLoadSensor != null && GpuLoadSensor.Name == sensor.Name) Console.WriteLine($"Found GPU Load sensor '{sensor.Name}'!");
             }
 
             // Temperature
             if (sensor.SensorType == SensorType.Temperature)
             {
-                // Check for user defined sensor name first and overwrite any previous stored sensor
-                if (!string.IsNullOrEmpty(config.gpuTempSensorName) && config.gpuTempSensorName == sensor.Name)
+                // Check if user defined sensor name and ignore auto detection
+                if (!string.IsNullOrEmpty(config.gpuTempSensorName))
                 {
-                    GpuTempSensor = sensor;
-                    Console.WriteLine($"Found pre-configured GPU Temperature sensor '{sensor.Name}'!");
+                    if (config.gpuTempSensorName == sensor.Name) GpuTempSensor = sensor;
                 }
                 else
                 {
@@ -224,7 +223,6 @@ public static class Sensors
                             {
                                 GpuTempSensor = sensor;
                                 gpuTempAutoDiscovered = true;
-                                Console.WriteLine($"Found GPU Temperature sensor '{sensor.Name}'!");
                             }
                             else
                             {
@@ -234,6 +232,8 @@ public static class Sensors
                             break;
                     }
                 }
+
+                if (GpuTempSensor != null && GpuTempSensor.Name == sensor.Name) Console.WriteLine($"Found GPU Temperature sensor '{sensor.Name}'!");
             }
         }
     }
@@ -309,11 +309,10 @@ public static class Sensors
 
 
         // Check if any of the sensors could not be found
-        if (CpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Load' sensor! If you have one, please configure it manually.");
-        if (CpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.");
-        if (RamUsedSensor == null) Console.WriteLine("Warn: I could not automatically find any 'Memory Used' sensor! If you have one, please configure it manually.");
-        if (GpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.");
-        if (GpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.");
+        if (CpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Load' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
+        if (CpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
+        if (GpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
+        if (GpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
 
 
         // Don't call computer.close() here, otherwise GetMeasurements() won't be able to refresh readouts

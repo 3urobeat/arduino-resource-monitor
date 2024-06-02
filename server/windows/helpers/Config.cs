@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 17:00:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:17:58
+ * Last Modified: 2024-06-02 16:28:07
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -36,7 +36,6 @@ cpuHardwareName = """"
 gpuHardwareName = """"
 cpuLoadSensorName = """"
 cpuTempSensorName = """"
-ramUsedSensorName = """"
 gpuLoadSensorName = """"
 gpuTempSensorName = """"
 checkInterval = 1000";
@@ -88,9 +87,6 @@ checkInterval = 1000";
 
             tempStr = conf["sensors:cpuTempSensorName"];
             if (!string.IsNullOrEmpty(tempStr)) config.cpuTempSensorName = tempStr;
-
-            tempStr = conf["sensors:ramUsedSensorName"];
-            if (!string.IsNullOrEmpty(tempStr)) config.ramUsedSensorName = tempStr;
 
             tempStr = conf["sensors:gpuLoadSensorName"];
             if (!string.IsNullOrEmpty(tempStr)) config.gpuLoadSensorName = tempStr;
@@ -154,5 +150,13 @@ checkInterval = 1000";
         IConfigurationBuilder userConfigBuilder = new ConfigurationBuilder().AddIniFile(configPath, false, true);
 
         ParseConfig(userConfigBuilder);
+
+        // Log info if pre-configured sensor names have been found
+        if (!string.IsNullOrEmpty(config.cpuHardwareName)) Console.WriteLine($"Found cpu restriction in config. Only accepting sensors from '{config.cpuHardwareName}'.");
+        if (!string.IsNullOrEmpty(config.gpuHardwareName)) Console.WriteLine($"Found gpu restriction in config. Only accepting sensors from '{config.gpuHardwareName}'.");
+        if (!string.IsNullOrEmpty(config.cpuLoadSensorName)) Console.WriteLine($"Found pre-configured cpuLoad sensor name in config: '{config.cpuLoadSensorName}'!");
+        if (!string.IsNullOrEmpty(config.cpuTempSensorName)) Console.WriteLine($"Found pre-configured cpuTemp sensor name in config: '{config.cpuTempSensorName}'!");
+        if (!string.IsNullOrEmpty(config.gpuLoadSensorName)) Console.WriteLine($"Found pre-configured gpuLoad sensor name in config: '{config.gpuLoadSensorName}'!");
+        if (!string.IsNullOrEmpty(config.gpuTempSensorName)) Console.WriteLine($"Found pre-configured gpuTemp sensor name in config: '{config.gpuTempSensorName}'!");
     }
 }
