@@ -43,7 +43,7 @@ If you'd like to compile the server yourself instead of downloading it from the 
 Open the solution file `src/server/windows/windows.sln` in Visual Studio.  
 Right click on the solution "windows" in your solution explorer and click on Publish.  
 There should be a pre-configured configuration shown to you now. Hit Publish at the top and wait until finished.  
-Your `.exe` is now located under `src/server/windows/bin/Release/net6.0/publish/win-x64/windows.exe`. Rename and copy the .exe to anywhere you like.
+Your `.exe` is now located under `src/server/windows/bin/Release/net6.0/publish/win-x64/arduino-resource-monitor-server-windows.exe`. Rename and copy the .exe to anywhere you like.
 
 You can probably also compile this project without the full Visual Studio editor installed, but I don't know exactly how.
 (I usually develop on Linux)

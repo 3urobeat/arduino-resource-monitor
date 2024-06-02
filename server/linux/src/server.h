@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-28 18:29:40
+ * Last Modified: 2024-06-02 15:48:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -55,12 +55,9 @@
 
 
 // Do not modify
-#define displayCols 20
-#define displayRows 4
+#define version "v0.7.0"
 
 #define baud 9600
-
-#define version "v0.7.0"
 
 
 // Functions implemented in server.c that should be accessible

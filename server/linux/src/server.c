@@ -4,7 +4,7 @@
  * Created Date: 2022-02-04 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-31 10:31:27
+ * Last Modified: 2024-06-01 17:02:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -42,7 +42,7 @@ int main()
     }
 
 
-    // Attempt to find sensors. Terminate if sensors are missing and user intervention is required
+    // Attempt to find sensors
     getSensors();
     printf("\n");
 
