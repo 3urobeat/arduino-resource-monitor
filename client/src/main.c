@@ -4,7 +4,7 @@
  * Created Date: 2024-05-20 21:21:42
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-31 11:04:00
+ * Last Modified: 2024-06-02 17:00:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -20,6 +20,7 @@
 
 // Runtime vars
 uint32_t timeSinceLastSignal = 0;
+uint32_t handshakeStartTimestamp = 0;
 bool     displayingSplashScreen = false;
 
 
@@ -56,6 +57,13 @@ void loop_c()
     // Count checkInterval and display Lost Connection message after 10 seconds
     if (timeSinceLastSignal >= 10000)
     {
+        // Return to Waiting if handshake did not result in a connection
+        if (handshakeStartTimestamp != 0 && millis() - handshakeStartTimestamp > 2500)
+        {
+            lcdDisplaySplashScreen("Waiting...");
+            handshakeStartTimestamp = 0;
+        }
+
         if (displayingSplashScreen) return;
         displayingSplashScreen = true;
 
@@ -104,7 +112,8 @@ void serialEvent_c()
     // If transmission starts with + then the server just initiated a new connection
     if (inputString[0] == '+')
     {
-        lcdCenterPrint("Handshaking...", 3, false);
+        lcdCenterPrint("  Handshaking... ", 3, false); // Surrounded with spaces to overprint "Lost Connection!"
+        handshakeStartTimestamp = millis();
 
         serialPrint("+ResourceMonitorClient-");
         serialPrint(version);
