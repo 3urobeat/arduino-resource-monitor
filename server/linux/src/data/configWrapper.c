@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 11:19:03
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-31 10:28:33
+ * Last Modified: 2024-06-02 16:31:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -169,7 +169,7 @@ void importConfigFile()
 
 
     // Fill configContent with defaultConfig and parse it into config struct. This creates a baseline which the user config can overwrite
-    logDebug("importConfigFile(): Loading default config...");
+    printf("Loading default configuration...\n");
 
     strcpy(_configContent, defaultConfig);
 
@@ -186,7 +186,7 @@ void importConfigFile()
     }
 
     // Read config content
-    logDebug("importConfigFile(): Importing and parsing config file...");
+    printf("Loading user configuration from '%s'...\n", _configFilePath);
 
     getFileContentFull(_configContent, sizeof(_configContent), _configFilePath);
 
