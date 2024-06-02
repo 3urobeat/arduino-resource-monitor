@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:16:16
+ * Last Modified: 2024-06-02 15:49:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -79,6 +79,9 @@ public static class Sensors
         {
             MainClass.LogDebug($"\tCPU Sensor - name: \"{sensor.Name}\", type: {sensor.SensorType}, value: {sensor.Value}");
 
+            // Disable sensor value history to decrease memory usage
+            sensor.ValuesTimeWindow = TimeSpan.Zero;
+
             // Load
             if (sensor.SensorType == SensorType.Load)
             {
@@ -150,6 +153,9 @@ public static class Sensors
         {
             MainClass.LogDebug($"\tMemory Sensor - name: \"{sensor.Name}\", type: {sensor.SensorType}, value: {sensor.Value}");
 
+            // Disable sensor value history to decrease memory usage
+            sensor.ValuesTimeWindow = TimeSpan.Zero;
+
             // RAM
             if (sensor.Name == "Memory Used")
             {
@@ -165,6 +171,9 @@ public static class Sensors
         foreach (ISensor sensor in hardware.Sensors)
         {
             MainClass.LogDebug($"\tGPU Sensor - name: \"{sensor.Name}\", type: {sensor.SensorType}, value: {sensor.Value}");
+
+            // Disable sensor value history to decrease memory usage
+            sensor.ValuesTimeWindow = TimeSpan.Zero;
 
             // Load
             if (sensor.SensorType == SensorType.Load)
