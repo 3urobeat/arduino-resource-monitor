@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 17:00:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 16:28:07
+ * Last Modified: 2024-06-02 16:32:36
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -109,7 +109,7 @@ checkInterval = 1000";
     public static void ImportConfig()
     {
         // Load default config into builder
-        MainClass.LogDebug($"ImportConfig(): Loading default config...");
+        Console.WriteLine("Loading default configuration...");
 
         MemoryStream configStream = new MemoryStream();         // Create stream from defaultConfig string so we can dump it into builder
         StreamWriter writer = new StreamWriter(configStream);
@@ -145,7 +145,7 @@ checkInterval = 1000";
         }
 
         // Load config file
-        MainClass.LogDebug($"ImportConfig(): Loading user config...");
+        Console.WriteLine($"Loading user configuration from '{configPath}'...");
 
         IConfigurationBuilder userConfigBuilder = new ConfigurationBuilder().AddIniFile(configPath, false, true);
 
