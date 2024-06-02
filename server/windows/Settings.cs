@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:16:27
+ * Last Modified: 2024-06-02 15:33:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -43,33 +43,6 @@ public static class Settings
     }
 
     public static ConfigValues config = new ConfigValues();
-
-
-    // Configuration variables
-    public const int arduinoReplyTimeout = 5000;         // How long to wait for an answer from the USB port in ms before giving up
-    public const int connectionRetryTimeout = 5000;      // How long to wait between attempts to connect again in ms after all USB ports have failed
-    public const int connectionRetryAmount = 10;         // How often to retry finding a connection
-    public const double connectionRetryMultiplier = 0.5; // retry * connectionRetryTimeout * connectionRetryMultiplier
-
-    public const int checkInterval = 1000; // How often new measurements should be made, min 1000ms (1 second)
-    public const int gpuID = 0;            // Set an index here if you've got multiple GPUs. Check the Task Manager Performance tab for reference
-
-
-    // Sensor names: These might change depending on your hardware
-    public const string cpuLoadSensor = "customCpuLoad"; // Name of the sensor
-    public const int cpuLoadSensorIndex = 0;             // Set index of the correct sensor should multiple exist
-
-    public const string cpuTempSensor = "customCpuTemp";
-    public const int cpuTempSensorIndex = 0;
-
-    public const string ramUsedSensor = "customRam";
-    public const int ramUsedSensorIndex = 0;
-
-    public const string gpuLoadSensor = "customGpuLoad";
-    public const int gpuLoadSensorIndex = 0;
-
-    public const string gpuTempSensor = "customGpuTemp";
-    public const int gpuTempSensorIndex = 0;
 
 
     // Configuration variables
