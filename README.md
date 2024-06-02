@@ -57,6 +57,8 @@ I have successfully tested the project with:
 - **Windows x86_64:** 
   - **Windows 10 22H2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
   - **Windows 10 22H2:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature & GPU readout not supported)*
+  - **Windows 10 1803:** Desktop - Intel i7 4790, Nvidia RTX 2060
+  - **Windows 10 22H2:** Desktop - Intel i7 4790, Nvidia RTX 2060
 
 &nbsp;
 

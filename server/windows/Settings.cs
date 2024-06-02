@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:33:59
+ * Last Modified: 2024-06-02 15:49:33
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -48,7 +48,7 @@ public static class Settings
     // Configuration variables
     public const bool autoCreateConfig = true;
 
-    public const bool printDebug = true;
+    public const bool printDebug = false;
     public const bool clientLessMode = false;
 
 
