@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:16:22
+ * Last Modified: 2024-06-02 15:33:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -62,7 +62,7 @@ public class MainClass
 
 
         // Begin
-        Connect().Wait();
+        Connect();
     }
 
 
@@ -81,7 +81,7 @@ public class MainClass
                 Communication.SendMeasurements();
 
                 // Delay next iteration for checkInterval ms
-                System.Threading.Thread.Sleep(Settings.checkInterval);
+                System.Threading.Thread.Sleep(config.checkInterval);
             }
         }
         else
@@ -95,14 +95,14 @@ public class MainClass
                 Communication.LogMeasurements();
 
                 // Delay next iteration for checkInterval ms
-                System.Threading.Thread.Sleep(Settings.checkInterval);
+                System.Threading.Thread.Sleep(config.checkInterval);
             }
         }
     }
 
 
     // Attempts to find & connect to device and starts to measure & send data
-    public static async Task Connect()
+    public static void Connect()
     {
         connectionRetry++;
 
@@ -111,24 +111,24 @@ public class MainClass
         {
             Console.WriteLine("Searching for Arduino...");
 
-            serialConnection = await Connection.ConnectToArduino();
+            serialConnection = Connection.ConnectToArduino();
 
             // Retry establishing connection if ConnectToArduino() failed
             if (serialConnection == null)
             {
-                if (connectionRetry > Settings.connectionRetryAmount)
+                if (connectionRetry > config.connectionRetryAmount)
                 {
                     Console.WriteLine($"Couldn't connect after {connectionRetry} attempts! Exiting in 5 seconds...");
                     System.Threading.Thread.Sleep(5000);
                     System.Environment.Exit(1);
                 }
 
-                int delay = (int)(Settings.connectionRetryMultiplier * Settings.connectionRetryTimeout) * (connectionRetry + 1);
+                int delay = (int)(config.connectionRetryMultiplier * config.connectionRetryTimeout) * (connectionRetry + 1);
 
-                Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{Settings.connectionRetryAmount})...");
+                Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{config.connectionRetryAmount})...");
 
                 System.Threading.Thread.Sleep(delay);
-                Connect().Wait();
+                Connect();
             }
             else
             {
@@ -170,7 +170,7 @@ public class MainClass
         // Reset connection tries
         connectionRetry = 0;
 
-        Connect().Wait();
+        Connect();
     }
 
 

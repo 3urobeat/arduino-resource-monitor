@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:58:51
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 22:24:36
+ * Last Modified: 2024-06-02 15:33:47
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,7 @@
 
 using Microsoft.Win32;
 using System.IO.Ports;
+using static Settings;
 
 
 public class Connection
@@ -57,7 +58,7 @@ public class Connection
 
 
     // Attempts to find and connect to the client. Returns the connection on success or null on failure.
-    public static async Task<SerialPort?> ConnectToArduino()
+    public static SerialPort? ConnectToArduino()
     {
         int i = 0;
         var ports = EnumerateArduinos().ToList();
@@ -79,7 +80,7 @@ public class Connection
 
             char[] buffer = new char[32];
 
-            MainClass.LogDebug($"Attempting to connect to port '{port}', timeout is set to {Settings.arduinoReplyTimeout}ms...");
+            MainClass.LogDebug($"Attempting to connect to port '{port}', timeout is set to {config.arduinoReplyTimeout}ms...");
 
             // Attempt to connect to this port
             try
@@ -89,11 +90,11 @@ public class Connection
                 // Set connection information and attempt to open connection
                 _serialPort.PortName    = port;
                 _serialPort.BaudRate    = Settings.baud;
-                _serialPort.ReadTimeout = Settings.arduinoReplyTimeout;
+                _serialPort.ReadTimeout = config.arduinoReplyTimeout;
 
                 _serialPort.Open();
 
-                await Task.Delay(100); // Wait a short moment before transmitting after making a connection
+                System.Threading.Thread.Sleep(2500); // Wait a short moment before transmitting in case the Arduino resets upon connection
 
 
                 // Attempt to send client our header. A header starts with a +, normal data with a ~
