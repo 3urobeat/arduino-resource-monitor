@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 21:07:46
+ * Last Modified: 2024-06-02 15:16:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,7 @@
 
 using System.Globalization;
 using System.IO.Ports;
+using static Settings;
 
 
 public class MainClass
@@ -44,7 +45,7 @@ public class MainClass
         Config.ImportConfig();
         Console.WriteLine("");
 
-        if (Settings.checkInterval < 1000)
+        if (config.checkInterval < 1000)
         {
             Console.WriteLine("Error: Setting checkInterval is too low! Please set it to at least 1000!");
             System.Threading.Thread.Sleep(5000);
@@ -54,7 +55,7 @@ public class MainClass
 
 
         // Attempt to find sensors
-        Console.WriteLine("Attempting to find configured sensors...");
+        Console.WriteLine("Attempting to discover hardware sensors...");
 
         Sensors.FindSensors();
         Console.WriteLine("");

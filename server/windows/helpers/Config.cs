@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 17:00:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:16:11
+ * Last Modified: 2024-06-02 15:17:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -124,5 +124,35 @@ checkInterval = 1000";
         IConfigurationBuilder defaultConfigBuilder = new ConfigurationBuilder().AddIniStream(configStream);
 
         ParseConfig(defaultConfigBuilder);
+
+
+        // Check if we need to create the config
+        if (!File.Exists(configPath))
+        {
+            if (Settings.autoCreateConfig)
+            {
+                MainClass.LogDebug($"ImportConfig(): Config file does not exist yet, creating '{configPath}'...");
+
+                // Create underlying directory if necessary
+                System.IO.FileInfo file = new System.IO.FileInfo(configPath);
+                file.Directory.Create();
+
+                // Write default config to file
+                System.IO.File.WriteAllText(configPath, defaultConfig);
+            }
+            else
+            {
+                Console.WriteLine($"No config found at '{configPath}', continuing with default settings...");
+            }
+
+            return; // No matter if default config has been written or no config exists, we don't need to parse again as there logically cannot be any modification to the default config
+        }
+
+        // Load config file
+        MainClass.LogDebug($"ImportConfig(): Loading user config...");
+
+        IConfigurationBuilder userConfigBuilder = new ConfigurationBuilder().AddIniFile(configPath, false, true);
+
+        ParseConfig(userConfigBuilder);
     }
 }
