@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 11:19:03
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 16:31:57
+ * Last Modified: 2024-06-04 18:03:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -55,7 +55,7 @@ void _createDefaultConfig()
 
         if (!_configFilePtr)
         {
-            printf("Warn: Failed to open stream to config at '%s'! Using default settings. Error: %s\n", _configFilePath, strerror(errno));
+            printf("\033[32mWarn:\033[0m Failed to open stream to config at '%s'! Using default settings. Error: %s\n", _configFilePath, strerror(errno));
             return;
         }
 
@@ -72,7 +72,7 @@ void _parseStringConfigEntry(const toml_table_t *arr, const char *key, char *des
     toml_datum_t value = toml_string_in(arr, key);
 
     if (value.ok) strncpy(dest, value.u.s, size);
-        else printf("Error: Config key '%s' is not ok! Ignoring config key...\n", key);
+        else printf("\033[91mError:\033[0m Config key '%s' is not ok! Ignoring config key...\n", key);
 
     FREE(value.u.s);
 }
@@ -82,7 +82,7 @@ void _parseIntConfigEntry(const toml_table_t *arr, const char *key, int *dest)
     toml_datum_t value = toml_int_in(arr, key);
 
     if (value.ok) *dest = value.u.i;
-        else printf("Error: Config key '%s' is not ok! Ignoring config key...\n", key);
+        else printf("\033[91mError:\033[0m Config key '%s' is not ok! Ignoring config key...\n", key);
 }
 
 void _parseFloatConfigEntry(const toml_table_t *arr, const char *key, float *dest)
@@ -90,7 +90,7 @@ void _parseFloatConfigEntry(const toml_table_t *arr, const char *key, float *des
     toml_datum_t value = toml_double_in(arr, key);
 
     if (value.ok) *dest = (float) value.u.d;
-        else printf("Error: Config key '%s' is not ok! Ignoring config key...\n", key);
+        else printf("\033[91mError:\033[0m Config key '%s' is not ok! Ignoring config key...\n", key);
 }
 
 
@@ -105,7 +105,7 @@ void _parseConfig()
     toml_table_t* conf = toml_parse(_configContent, errbuf, sizeof(errbuf));
 
     if (!conf) {
-        printf("Failed to parse config! Error: %s\n", errbuf);
+        printf("\033[91mError:\033[0m Failed to parse config! Error: %s\n", errbuf);
         exit(1);
     }
 

@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-28 18:26:18
+ * Last Modified: 2024-06-04 18:03:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -32,7 +32,7 @@ void makeConnection()
 
     if (dp == NULL)
     {
-        printf("Error: Failed to open '/sys/class/tty/' to find all used USB ports!\n");
+        printf("\033[91mError:\033[0m Failed to open '/sys/class/tty/' to find all used USB ports!\n");
     }
 
 
@@ -56,7 +56,7 @@ void makeConnection()
 
     if (usbPortsFound == 0)
     {
-        printf("Found no devices! Exiting...\n");
+        printf("\033[91mError:\033[0m Found no devices! Exiting...\n");
         exit(1);
     }
 
@@ -78,7 +78,7 @@ void makeConnection()
 
         if (!serialIsOpen())
         {
-            printf("Failed to connect to device '%s': Port did not open\n", port);
+            printf("\033[91mError:\033[0m Failed to connect to device '%s': Port did not open\n", port);
             continue;
         }
 
@@ -125,14 +125,14 @@ void makeConnection()
         // Check the response
         if (strlen(buffer) == 0)
         {
-            printf("Received no response from client!\n");
+            printf("\033[91mError:\033[0m Received no response from client!\n");
             serialClose();
             continue;
         }
 
         if (strstr(buffer, "+ResourceMonitorClient") == NULL)
         {
-            printf("Received invalid response from client: %s\n", buffer);
+            printf("\033[91mError:\033[0m Received invalid response from client: %s\n", buffer);
             serialClose();
             continue;
         }
@@ -145,7 +145,7 @@ void makeConnection()
 
         if (strcmp(versionStr, version) != 0)
         {
-            printf("Version mismatch! Client runs on %s but we are on %s!\n", versionStr, version);
+            printf("\033[91mError:\033[0m Version mismatch! Client runs on %s but we are on %s!\n", versionStr, version);
             serialClose();
             continue;
         }

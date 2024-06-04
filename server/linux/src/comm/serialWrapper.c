@@ -4,7 +4,7 @@
  * Created Date: 2024-05-20 17:02:14
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:13:04
+ * Last Modified: 2024-06-04 18:03:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -37,7 +37,7 @@ bool serialNewConnection(const char *port, uint32_t baudRate)
 
     if (openSuccess < 0)
     {
-        printf("Failed to open connection to device '%s'! Error: %s\n", port, serial_errmsg(_connection));
+        printf("\033[91mError:\033[0m Failed to open connection to device '%s'! Error: %s\n", port, serial_errmsg(_connection));
         serialClose();
         return false;
     }
@@ -80,7 +80,7 @@ bool serialWrite(const char *data, size_t size)
 
     if (writeSuccess < 0)
     {
-        printf("Failed to write to device! Error: %s\n", serial_errmsg(_connection));
+        printf("\033[91mError:\033[0m Failed to write to device! Error: %s\n", serial_errmsg(_connection));
         return false;
     }
 
@@ -95,7 +95,7 @@ bool serialRead(char *dest)
 
     if (readSuccess < 0)
     {
-        printf("Failed to read from device! Error: %s\n", serial_errmsg(_connection));
+        printf("\033[91mError:\033[0m Failed to read from device! Error: %s\n", serial_errmsg(_connection));
         return false;
     }
 

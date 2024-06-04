@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 16:11:29
+ * Last Modified: 2024-06-04 18:52:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -40,7 +40,7 @@ bool _fileExists(const char *path)
     }
     else
     {
-        printf("Error: Failed to open sensor '%s'! Ignoring it. Error: %s\n", path, strerror(errno));
+        printf("\033[91mError:\033[0m Failed to open sensor '%s'! Ignoring it. Error: %s\n", path, strerror(errno));
         return false;
     }
 }
@@ -79,14 +79,14 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
 
             if (sensorPathExists)
             {
-                printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths.cpuTemp, sensorName);
+                printf("\033[92mFound CPU Temperature sensor '%s' at '%s'!\033[0m\n", sensorPaths.cpuTemp, sensorName);
                 cpuTempAutoDiscovered = true;
             }
             else strcpy(sensorPaths.cpuTemp, "");
         }
         else
         {
-            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
+            if (cpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
         }
     }
 
@@ -103,14 +103,14 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
 
             if (sensorPathExists)
             {
-                printf("Found CPU Temperature sensor '%s' at '%s'!\n", sensorPaths.cpuTemp, sensorName);
+                printf("\033[92mFound CPU Temperature sensor '%s' at '%s'!\033[0m\n", sensorPaths.cpuTemp, sensorName);
                 cpuTempAutoDiscovered = true;
             }
             else strcpy(sensorPaths.cpuTemp, "");
         }
         else
         {
-            if (cpuTempAutoDiscovered) printf("Warning: Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
+            if (cpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
         }
     }
 
@@ -127,13 +127,13 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
 
             if (sensorPathExists)
             {
-                printf("Found GPU Load sensor '%s' at '%s'!\n", sensorPaths.gpuLoad, sensorName);
+                printf("\033[92mFound GPU Load sensor '%s' at '%s'!\033[0m\n", sensorPaths.gpuLoad, sensorName);
                 gpuLoadAutoDiscovered = true;
             } else strcpy(sensorPaths.gpuLoad, "");
         }
         else
         {
-            if (gpuLoadAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
+            if (gpuLoadAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
 
         if (strlen(sensorPaths.gpuTemp) == 0) // Check if user already configured this sensor
@@ -146,13 +146,13 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
 
             if (sensorPathExists)
             {
-                printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths.gpuTemp, sensorName);
+                printf("\033[92mFound GPU Temperature sensor '%s' at '%s'!\033[0m\n", sensorPaths.gpuTemp, sensorName);
                 gpuTempAutoDiscovered = true;
             } else strcpy(sensorPaths.gpuTemp, "");
         }
         else
         {
-            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
+            if (gpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
     }
 
@@ -169,13 +169,13 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
 
             if (sensorPathExists)
             {
-                printf("Found GPU Temperature sensor '%s' at '%s'!\n", sensorPaths.gpuTemp, sensorName);
+                printf("\033[92mFound GPU Temperature sensor '%s' at '%s'!\033[0m\n", sensorPaths.gpuTemp, sensorName);
                 gpuTempAutoDiscovered = true;
             } else strcpy(sensorPaths.gpuTemp, "");
         }
         else
         {
-            if (gpuTempAutoDiscovered) printf("Warning: Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
+            if (gpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
     }
 }
@@ -194,7 +194,7 @@ void _findHwmonSensors()
     struct dirent *ep;
     hwmonDirP = opendir(hwmonDirStr);
 
-    if (hwmonDirP == NULL) printf("Error: Failed to open '/sys/class/hwmon/' to probe all sensors!\n");
+    if (hwmonDirP == NULL) printf("\033[91mError:\033[0m Failed to open '/sys/class/hwmon/' to probe all sensors!\n");
 
 
     // Collect all valid 'hwmon*' directories and check their 'name' files
@@ -277,7 +277,7 @@ void _findThermalZoneSensors()
     struct dirent *ep;
     thermalDirP = opendir(thermalDirStr);
 
-    if (thermalDirP == NULL) printf("Error: Failed to open '/sys/devices/virtual/thermal/' to probe all sensors!\n");
+    if (thermalDirP == NULL) printf("\033[91mError:\033[0m Failed to open '/sys/devices/virtual/thermal/' to probe all sensors!\n");
 
 
     // Collect all valid 'thermal_zone*' directories and check their 'name' files
@@ -368,19 +368,19 @@ void getSensors()
     // Log warnings for missing sensors
     if (strlen(sensorPaths.cpuTemp) == 0)
     {
-        printf("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.\n");
+        printf("\033[32mWarn:\033[0m I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.cpuTemp, "");
     }
 
     if (strlen(sensorPaths.gpuLoad) == 0 && config.gpuType == 0)
     {
-        printf("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
+        printf("\033[32mWarn:\033[0m I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuLoad, "");
     }
 
     if (strlen(sensorPaths.gpuTemp) == 0 && config.gpuType == 0)
     {
-        printf("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
+        printf("\033[32mWarn:\033[0m I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuTemp, "");
     }
 }

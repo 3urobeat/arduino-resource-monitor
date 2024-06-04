@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:56:00
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 16:35:15
+ * Last Modified: 2024-06-04 18:03:35
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -68,7 +68,7 @@ extern void reconnect();
 // Logs debug messages if enabled
 #if printDebug
     #define logDebug(...) \
-        printf("[DEBUG] "); \
+        printf("[\033[96mDEBUG\033[0m] "); \
         printf(__VA_ARGS__, NULL); \
         printf("\n");
 #else
