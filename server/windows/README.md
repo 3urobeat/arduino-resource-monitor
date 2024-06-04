@@ -58,7 +58,9 @@ You can probably also compile this project without the full Visual Studio editor
 Double click the `.exe`, accept the privilege escalation window and a CMD prompt should appear.
 
 > [!NOTE]
-> The server needs to run with Admin privileges in order to use your USB ports to communicate with the Arduino.
+> Why Admin?  
+> The server needs to run with admin privileges to be able to access & read hardware sensors.  
+> This is the same case with well known Hardware Monitoring programs like HwInfo.
 
 The server will now start scanning your USB ports for the Arduino and attempt to connect to it.  
 Once connected, it starts taking measurements and sends them to the Arduino.
@@ -78,7 +80,7 @@ TODO
 
 ## Troubleshooting
 **Server does not find the Arduino**  
-You might need to install a USB driver for your board (I did as well).  
+You might need to install a USB driver for your board (I needed to install one for Win10 1803, but not for Win10 22H2).  
 My distributor AzDelivery lists a CH340 driver on their [Store Page](https://www.az-delivery.de/en/products/nano-v3-mit-ch340-arduino-kompatibel).  
 Check the product page of your seller, or try installing this [C340 Driver](https://cdn.shopify.com/s/files/1/1509/1638/files/ch340.zip?v=1683899825) as well.
 
