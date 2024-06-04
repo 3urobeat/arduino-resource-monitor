@@ -45,7 +45,7 @@ I have successfully tested the project with:
   - **Arch 6.8.5-arch1-1:** Thinkpad T430 - Intel i5 3320M *(No iGPU hwmon sensor)*
   - **Mint 4.15.0-20-generic:** Acer Aspire 5250 - AMD E-300 *(No iGPU hwmon sensor)*
   - **Debian 5.15.74-1-pve:** Desktop/Server - AMD Ryzen 5 2600
-  - **Kali 6.5.0-kali3-amd64:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature & GPU readout not supported)*
+  - **Kali 6.5.0-kali3-amd64:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature not supported)*
 
 - **Linux armv6:**
   - **Debian 6.1.21-v7+:** Raspberry Pi 3 Model B Plus Rev 1.3 - ARMv7 Processor rev 4 (v7l) 
@@ -56,7 +56,7 @@ I have successfully tested the project with:
 
 - **Windows x86_64:** 
   - **Windows 10 22H2:** Desktop - AMD Ryzen 9 7900X, AMD Radeon RX 7900XT
-  - **Windows 10 22H2:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature & GPU readout not supported)*
+  - **Windows 10 22H2:** ***!*** *Virtual Machine* ***!*** - AMD Ryzen 9 7900X *(CPU Temperature not supported)*
   - **Windows 10 1803:** Desktop - Intel i7 4790, Nvidia RTX 2060
   - **Windows 10 22H2:** Desktop - Intel i7 4790, Nvidia RTX 2060
 
@@ -96,6 +96,15 @@ Combined this should cost $20-$30.
 
 <a id="setup"></a>
 
+## 🚀 Client Setup Instructions
+Visit the client README to learn how to setup your Arduino.  
+Click below:
+
+**Arduino:**  
+See [client/README.md](client/README.md)
+
+&nbsp;
+
 ## 🚀 Server Setup Instructions
 The setup instructions are well documented in the respective directory for your platform.  
 Choose below:
@@ -105,12 +114,3 @@ See [server/linux/README.md](server/linux/README.md)
 
 **Windows:**  
 See [server/windows/README.md](server/windows/README.md)
-
-&nbsp;
-
-## 🚀 Client Setup Instructions
-Visit the client README to learn how to setup your Arduino.  
-Click below:
-
-**Arduino:**  
-See [client/README.md](client/README.md)
