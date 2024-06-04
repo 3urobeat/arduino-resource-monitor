@@ -4,7 +4,7 @@
  * Created Date: 2022-02-04 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-01 17:02:09
+ * Last Modified: 2024-06-04 18:45:28
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -27,7 +27,7 @@ int main()
     // Set title and print welcome messages
     printf("\033]0;arduino-resource-monitor Server for Linux %s by 3urobeat\007", version);
 
-    printf("arduino-resource-monitor by 3urobeat\n");
+    printf("\033[96marduino-resource-monitor\033[0m by 3urobeat\n");
     printf("Server for Linux %s starting...\n\n", version);
 
 
@@ -37,7 +37,7 @@ int main()
 
     if (config.checkInterval < 1000)
     {
-        printf("Error: Setting checkInterval is too low! Please set it to at least 1000!\n");
+        printf("\033[91mError:\033[0m Setting checkInterval is too low! Please set it to at least 1000!\n");
         exit(1);
     }
 
@@ -95,13 +95,13 @@ void connect()
         {
             if (connectionRetry > config.connectionRetryAmount)
             {
-                printf("Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
+                printf("\033[91mError:\033[0m Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
                 exit(1);
             }
 
             int delay = (int) (config.connectionRetryTimeout * config.connectionRetryMultiplier) * (connectionRetry + 1); // Milliseconds
 
-            printf("Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, config.connectionRetryAmount);
+            printf("\033[91mError:\033[0m Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, config.connectionRetryAmount);
 
             usleep(delay * 1000);
             connect();
@@ -109,7 +109,7 @@ void connect()
             return;
         }
 
-        printf("Successfully connected to Arduino on port '%s'!\n", serialGetPort());
+        printf("\033[92mSuccessfully connected to Arduino on port '%s'!\033[0m\n", serialGetPort());
     #else
         printf("Skipped searching for Arduino because clientLessMode is enabled!\n");
     #endif

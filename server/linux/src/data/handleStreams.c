@@ -4,7 +4,7 @@
  * Created Date: 2024-05-22 17:57:28
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-28 17:17:35
+ * Last Modified: 2024-06-04 18:03:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -64,7 +64,7 @@ void getCmdStdout(char *dest, int size, const char *cmd)
 
     if (!streamPtr)
     {
-        printf("Error: Failed to run command '%s'! Error: %s\n", cmd, strerror(errno));
+        printf("\033[91mError:\033[0m Failed to run command '%s'! Error: %s\n", cmd, strerror(errno));
         return;
     }
 
@@ -90,7 +90,7 @@ void getFileContent(char *dest, int size, const char *path, const char delim)
 
     if (!streamPtr)
     {
-        printf("Error: Failed to read '%s'! Error: %s\n", path, strerror(errno));
+        printf("\033[91mError:\033[0m Failed to read '%s'! Error: %s\n", path, strerror(errno));
         return;
     }
 
