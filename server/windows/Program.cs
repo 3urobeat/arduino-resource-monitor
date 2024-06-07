@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-07 18:59:59
+ * Last Modified: 2024-06-07 19:29:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -17,11 +17,26 @@
 
 using System.Globalization;
 using System.IO.Ports;
+using System.Runtime.InteropServices;
 using static Settings;
 
 
 public class MainClass
 {
+    // Stuff needed to enable color support because Windows is delusional - https://stackoverflow.com/questions/44574274/setconsolemode-fails-with-zero-lasterror-0
+    const int STD_OUTPUT_HANDLE = -11;
+    const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern IntPtr GetStdHandle(int nStdHandle);
+
+    [DllImport("kernel32.dll")]
+    static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+    [DllImport("kernel32.dll")]
+    static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+
     public static SerialPort? serialConnection;
 
     private static int connectionRetry = 0;
@@ -32,6 +47,13 @@ public class MainClass
     {
         // Force CultureInfo to en-US to guarantee the same number formatting on different devices
         Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+
+        // Manually enable color support - Windows is fucking stupid - https://stackoverflow.com/questions/44574274/setconsolemode-fails-with-zero-lasterror-0
+        IntPtr handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        uint mode;
+        GetConsoleMode(handle, out mode);
+        mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        SetConsoleMode(handle, mode);
 
 
         // Set title and print welcome messages
