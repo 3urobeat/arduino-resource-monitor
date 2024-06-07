@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 17:00:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 16:32:36
+ * Last Modified: 2024-06-07 18:15:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,7 @@ public class Config
 {
     private static readonly string defaultConfig =
 $@"[general]
-lastSeenVersion = ""{Settings.version}""
+createdWithVersion = ""{Settings.version}""
 
 [timeouts]
 arduinoReplyTimeout = 5000
@@ -57,8 +57,8 @@ checkInterval = 1000";
 
 
             // Get 'general' values
-            tempStr = conf["general:lastSeenVersion"];
-            if (!string.IsNullOrEmpty(tempStr)) config.lastSeenVersion = tempStr;
+            tempStr = conf["general:createdWithVersion"];
+            if (!string.IsNullOrEmpty(tempStr)) config.createdWithVersion = tempStr;
 
 
             // Get 'timeouts' values

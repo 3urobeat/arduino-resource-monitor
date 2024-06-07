@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 11:19:03
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-04 18:03:01
+ * Last Modified: 2024-06-07 18:15:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -113,7 +113,7 @@ void _parseConfig()
     // Traverse the 'general' table
     toml_table_t* general = toml_table_in(conf, "general");
 
-    _parseStringConfigEntry(general, "lastSeenVersion", config.lastSeenVersion, sizeof(config.lastSeenVersion));
+    _parseStringConfigEntry(general, "createdWithVersion", config.createdWithVersion, sizeof(config.createdWithVersion));
 
 
     // Traverse the 'timeouts' table

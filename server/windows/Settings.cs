@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 16:35:07
+ * Last Modified: 2024-06-07 18:15:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -21,7 +21,7 @@ public static class Settings
     public struct ConfigValues
     {
         // General
-        public string lastSeenVersion;
+        public string createdWithVersion;
 
         // Timeouts
         public int arduinoReplyTimeout;          // How long to wait for an answer from the USB port in ms before giving up
