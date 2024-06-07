@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:58:51
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:33:47
+ * Last Modified: 2024-06-07 19:00:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -65,7 +65,7 @@ public class Connection
 
         if (ports.Count == 0)
         {
-            Console.WriteLine($"Found no devices! Exiting...");
+            Console.WriteLine($"\x1b[91mError:\x1b[0m Found no devices! Exiting...");
             System.Threading.Thread.Sleep(5000);
             System.Environment.Exit(1);
         }
@@ -132,7 +132,7 @@ public class Connection
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Failed to connect to device {i} at '{port}': {e.Message}");
+                Console.WriteLine($"\x1b[91mError:\x1b[0m Failed to connect to device {i} at '{port}': {e.Message}");
 
                 // Close serial port if still open
                 if (_serialPort != null && _serialPort.IsOpen)

@@ -4,7 +4,7 @@
  * Created Date: 2023-11-13 22:21:38
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-21 21:55:34
+ * Last Modified: 2024-06-07 18:59:55
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -63,7 +63,7 @@ public class Communication
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to send data to device: " + e.Message);
+            Console.WriteLine("\x1b[91mError:\x1b[0m Failed to send data to device: " + e.Message);
             Reconnect();
         }
     }
@@ -117,9 +117,9 @@ public class Communication
     // Logs the current measurements to stdout instead of sending them to the Client
     public static void LogMeasurements()
     {
-        Console.WriteLine($"CPU: {MeasurementsCache.cpuLoad}% {MeasurementsCache.cpuTemp}°C");
+        Console.WriteLine($"CPU: {MeasurementsCache.cpuLoad}% {MeasurementsCache.cpuTemp}ï¿½C");
         Console.WriteLine($"RAM: {MeasurementsCache.ramUsage}GB {MeasurementsCache.swapUsage}GB");
-        Console.WriteLine($"GPU: {MeasurementsCache.gpuLoad}% {MeasurementsCache.gpuTemp}°C");
+        Console.WriteLine($"GPU: {MeasurementsCache.gpuLoad}% {MeasurementsCache.gpuTemp}ï¿½C");
     }
 
 
