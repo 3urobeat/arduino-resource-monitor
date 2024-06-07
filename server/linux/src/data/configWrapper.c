@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 11:19:03
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-07 18:15:34
+ * Last Modified: 2024-06-07 19:05:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -55,7 +55,7 @@ void _createDefaultConfig()
 
         if (!_configFilePtr)
         {
-            printf("\033[32mWarn:\033[0m Failed to open stream to config at '%s'! Using default settings. Error: %s\n", _configFilePath, strerror(errno));
+            printf("\033[33mWarn:\033[0m Failed to open stream to config at '%s'! Using default settings. Error: %s\n", _configFilePath, strerror(errno));
             return;
         }
 
