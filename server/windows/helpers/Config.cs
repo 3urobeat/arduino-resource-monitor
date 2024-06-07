@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 17:00:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-07 18:15:34
+ * Last Modified: 2024-06-07 18:59:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -99,7 +99,7 @@ checkInterval = 1000";
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Failed to parse config! Error: " + ex.ToString());
+            Console.WriteLine("\x1b[91mError:\x1b[0m Failed to parse config! Error: " + ex.ToString());
             return;
         }
     }

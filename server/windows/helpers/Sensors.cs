@@ -4,7 +4,7 @@
  * Created Date: 2024-06-01 13:32:06
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 16:28:10
+ * Last Modified: 2024-06-07 19:01:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -102,14 +102,14 @@ public static class Sensors
                             }
                             else
                             {
-                                if (cpuLoadAutoDiscovered) Console.WriteLine("Warning: Your system has multiple CPU load sensors! If the wrong sensor has been chosen, please configure it manually.");
+                                if (cpuLoadAutoDiscovered) Console.WriteLine("\x1b[32mWarn:\x1b[0m Your system has multiple CPU load sensors! If the wrong sensor has been chosen, please configure it manually.");
                             }
 
                             break;
                     }
                 }
 
-                if (CpuLoadSensor != null && CpuLoadSensor.Name == sensor.Name) Console.WriteLine($"Found CPU Load sensor '{sensor.Name}'!");
+                if (CpuLoadSensor != null && CpuLoadSensor.Name == sensor.Name) Console.WriteLine($"\u001b[92mFound CPU Load sensor '{sensor.Name}'!\u001b[0m");
             }
 
             // Temperature
@@ -134,14 +134,14 @@ public static class Sensors
                             }
                             else
                             {
-                                if (cpuTempAutoDiscovered) Console.WriteLine("Warning: Your system has multiple CPU temperature sensors! If the wrong sensor has been chosen, please configure it manually.");
+                                if (cpuTempAutoDiscovered) Console.WriteLine("\x1b[32mWarn:\x1b[0m Your system has multiple CPU temperature sensors! If the wrong sensor has been chosen, please configure it manually.");
                             }
 
                             break;
                     }
                 }
 
-                if (CpuTempSensor != null && CpuTempSensor.Name == sensor.Name) Console.WriteLine($"Found CPU Temperature sensor '{sensor.Name}'!");
+                if (CpuTempSensor != null && CpuTempSensor.Name == sensor.Name) Console.WriteLine($"\u001b[92mFound CPU Temperature sensor '{sensor.Name}'!\u001b[0m");
             }
         }
     }
@@ -160,7 +160,7 @@ public static class Sensors
             if (sensor.Name == "Memory Used")
             {
                 RamUsedSensor = sensor;
-                Console.WriteLine($"Found RAM Used sensor '{sensor.Name}'!");
+                Console.WriteLine($"\u001b[92mFound RAM Used sensor '{sensor.Name}'!\u001b[0m");
             }
         }
     }
@@ -196,14 +196,14 @@ public static class Sensors
                             }
                             else
                             {
-                                if (gpuLoadAutoDiscovered) Console.WriteLine("Warning: Your system has multiple GPU load sensors! If the wrong sensor has been chosen, please configure it manually.");
+                                if (gpuLoadAutoDiscovered) Console.WriteLine("\x1b[32mWarn:\x1b[0m Your system has multiple GPU load sensors! If the wrong sensor has been chosen, please configure it manually.");
                             }
 
                             break;
                     }
                 }
 
-                if (GpuLoadSensor != null && GpuLoadSensor.Name == sensor.Name) Console.WriteLine($"Found GPU Load sensor '{sensor.Name}'!");
+                if (GpuLoadSensor != null && GpuLoadSensor.Name == sensor.Name) Console.WriteLine($"\u001b[92mFound GPU Load sensor '{sensor.Name}'!\u001b[0m");
             }
 
             // Temperature
@@ -226,14 +226,14 @@ public static class Sensors
                             }
                             else
                             {
-                                if (gpuTempAutoDiscovered) Console.WriteLine("Warning: Your system has multiple GPU temperature sensors! If the wrong sensor has been chosen, please configure it manually.");
+                                if (gpuTempAutoDiscovered) Console.WriteLine("\x1b[32mWarn:\x1b[0m Your system has multiple GPU temperature sensors! If the wrong sensor has been chosen, please configure it manually.");
                             }
 
                             break;
                     }
                 }
 
-                if (GpuTempSensor != null && GpuTempSensor.Name == sensor.Name) Console.WriteLine($"Found GPU Temperature sensor '{sensor.Name}'!");
+                if (GpuTempSensor != null && GpuTempSensor.Name == sensor.Name) Console.WriteLine($"\u001b[92mFound GPU Temperature sensor '{sensor.Name}'!\u001b[0m");
             }
         }
     }
@@ -309,10 +309,10 @@ public static class Sensors
 
 
         // Check if any of the sensors could not be found
-        if (CpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Load' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
-        if (CpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
-        if (GpuLoadSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
-        if (GpuTempSensor == null) Console.WriteLine("Warn: I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
+        if (CpuLoadSensor == null) Console.WriteLine("\x1b[32mWarn:\x1b[0m I could not automatically find any 'CPU Load' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
+        if (CpuTempSensor == null) Console.WriteLine("\x1b[32mWarn:\x1b[0m I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
+        if (GpuLoadSensor == null) Console.WriteLine("\x1b[32mWarn:\x1b[0m I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
+        if (GpuTempSensor == null) Console.WriteLine("\x1b[32mWarn:\x1b[0m I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually. If you already have one configured, it does not seem to exist.");
 
 
         // Don't call computer.close() here, otherwise GetMeasurements() won't be able to refresh readouts

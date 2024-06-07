@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 11:34:19
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-02 15:33:55
+ * Last Modified: 2024-06-07 18:59:59
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -37,7 +37,7 @@ public class MainClass
         // Set title and print welcome messages
         Console.Title = $"arduino-resource-monitor Server for Windows v{Settings.version} by 3urobeat";
 
-        Console.WriteLine("arduino-resource-monitor by 3urobeat");
+        Console.WriteLine("\x1b[96marduino-resource-monitor\x1b[0m by 3urobeat");
         Console.WriteLine($"Server for Windows v{Settings.version} starting...\n");
 
 
@@ -47,7 +47,7 @@ public class MainClass
 
         if (config.checkInterval < 1000)
         {
-            Console.WriteLine("Error: Setting checkInterval is too low! Please set it to at least 1000!");
+            Console.WriteLine("\x1b[91mError:\x1b[0m Setting checkInterval is too low! Please set it to at least 1000!");
             System.Threading.Thread.Sleep(5000);
             System.Environment.Exit(1);
             return;
@@ -118,21 +118,21 @@ public class MainClass
             {
                 if (connectionRetry > config.connectionRetryAmount)
                 {
-                    Console.WriteLine($"Couldn't connect after {connectionRetry} attempts! Exiting in 5 seconds...");
+                    Console.WriteLine($"\u001b[91mError:\u001b[0m Couldn't connect after {connectionRetry} attempts! Exiting in 5 seconds...");
                     System.Threading.Thread.Sleep(5000);
                     System.Environment.Exit(1);
                 }
 
                 int delay = (int)(config.connectionRetryMultiplier * config.connectionRetryTimeout) * (connectionRetry + 1);
 
-                Console.WriteLine($"Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{config.connectionRetryAmount})...");
+                Console.WriteLine($"\u001b[91mError:\u001b[0m Couldn't connect! Attempting again in {delay}ms (attempt {connectionRetry + 1}/{config.connectionRetryAmount})...");
 
                 System.Threading.Thread.Sleep(delay);
                 Connect();
             }
             else
             {
-                Console.WriteLine($"Successfully connected to Arduino on port '{serialConnection.PortName}'!");
+                Console.WriteLine($"\u001b[92mSuccessfully connected to Arduino on port '{serialConnection.PortName}'!\u001b[0m");
 
                 // Start getting and sending sensor data
                 Communication.ResetCache();
@@ -179,7 +179,7 @@ public class MainClass
     {
         if (Settings.printDebug)
         {
-            Console.WriteLine(str);
+            Console.WriteLine("[\u001b[96mDEBUG\u001b[0m] " + str);
         }
     }
 }
