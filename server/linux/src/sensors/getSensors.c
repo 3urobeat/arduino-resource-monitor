@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-04 18:52:14
+ * Last Modified: 2024-06-07 19:05:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -60,7 +60,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     // Check if path is too long to store and ignore it
     if (strlen(sensorPath) > pathSize - 16)
     {
-        logDebug("Warn: Path of sensor name '%s (%s)' is too long (%i chars) to store! Ignoring it...\n", sensorName, sensorPath, strlen(sensorPath));
+        logDebug("\033[33mWarn:\033[0m Path of sensor name '%s (%s)' is too long (%i chars) to store! Ignoring it...\n", sensorName, sensorPath, strlen(sensorPath));
     }
 
 
@@ -86,7 +86,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (cpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
+            if (cpuTempAutoDiscovered) printf("\033[33mWarn:\033[0m Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
         }
     }
 
@@ -110,7 +110,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (cpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
+            if (cpuTempAutoDiscovered) printf("\033[33mWarn:\033[0m Your system has multiple CPU hwmon's! If you have multiple CPUs and the wrong chip's temperature sensor has been chosen, please configure it manually.\n");
         }
     }
 
@@ -133,7 +133,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (gpuLoadAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
+            if (gpuLoadAutoDiscovered) printf("\033[33mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
 
         if (strlen(sensorPaths.gpuTemp) == 0) // Check if user already configured this sensor
@@ -152,7 +152,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (gpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
+            if (gpuTempAutoDiscovered) printf("\033[33mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
     }
 
@@ -175,7 +175,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
         else
         {
-            if (gpuTempAutoDiscovered) printf("\033[32mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
+            if (gpuTempAutoDiscovered) printf("\033[33mWarn:\033[0m Your system has multiple GPU hwmon's! If you have multiple GPUs and the wrong card's load sensor has been chosen, please configure it manually.\n");
         }
     }
 }
@@ -368,19 +368,19 @@ void getSensors()
     // Log warnings for missing sensors
     if (strlen(sensorPaths.cpuTemp) == 0)
     {
-        printf("\033[32mWarn:\033[0m I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.\n");
+        printf("\033[33mWarn:\033[0m I could not automatically find any 'CPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.cpuTemp, "");
     }
 
     if (strlen(sensorPaths.gpuLoad) == 0 && config.gpuType == 0)
     {
-        printf("\033[32mWarn:\033[0m I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
+        printf("\033[33mWarn:\033[0m I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuLoad, "");
     }
 
     if (strlen(sensorPaths.gpuTemp) == 0 && config.gpuType == 0)
     {
-        printf("\033[32mWarn:\033[0m I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
+        printf("\033[33mWarn:\033[0m I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuTemp, "");
     }
 }
