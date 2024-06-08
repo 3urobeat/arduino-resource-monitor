@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-31 10:22:59
+ * Last Modified: 2024-06-08 18:01:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -143,13 +143,9 @@ void _getMemSwapUsage()
 
     floatToFixedLengthStr(measurements.ramUsage, mem);
 
-    if (swapTotal > 0)
+    if (swapTotal > 0) // Is Swap enabled?
     {
         floatToFixedLengthStr(measurements.swapUsage, swap);
-    }
-    else
-    {
-        measurements.swapUsage[0] = '/'; // Swap is disabled
     }
 }
 
