@@ -10,8 +10,8 @@
     </div>
     <br>
     <div>
-      <img width=45% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/display.jpg">  
-      <img align="right" width=45% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/server.jpg">  
+      <img width=48% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/display.jpg">  
+      <img align="right" width=49% height:auto src="https://raw.githubusercontent.com/3urobeat/arduino-resource-monitor/main/.github/img/server.jpg">  
     </div>
 </div>
 
