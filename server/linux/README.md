@@ -43,7 +43,10 @@ If you'd like to compile the server yourself instead of downloading it from the 
 <summary>(Click to expand)</summary>
 &nbsp;
 
-**Are you a user?** Make sure you have `make` & `cmake` installed. Then simply run:  
+**Are you a user?**  
+Make sure you have `make` & `cmake` installed. Open a terminal in *this* (`server/linux/`) folder.
+
+Then simply run:  
 ```bash
 rm -rf ./build/build-x86_64 && mkdir -p ./build/build-x86_64 && cd build/build-x86_64 && cmake -DBUILD_RELEASE=ON ../.. && make -j4 && cp arduino-resource-monitor-server-linux ~/arduino-resource-monitor-server-linux ; cd ../..
 ```

@@ -33,20 +33,52 @@ You can copy the executable on your system to anywhere you like.
 
 <a id="compiling"></a>
 
-### Optional: Compiling yourself
+### Optional: Compiling yourself (x86)
 If you'd like to compile the server yourself instead of downloading it from the releases section, do this:
 
 <details>
 <summary>(Click to expand)</summary>
 &nbsp;
 
+**Are you a user?**  
+Make sure you have [Dotnet SDK 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed. Open a PowerShell window in *this* (`server/windows/`) folder.  
+(You can do this by clicking the blue `File` button in the top left of the file explorer and clicking `Open Windows PowerShell`)
+
+Then simply run:  
+```bash 
+Remove-Item -Path ".\bin" -Force -Recurse ; Remove-Item -Path ".\build" -Force -Recurse ; Remove-Item -Path ".\obj" -Force -Recurse ; mkdir .\build ; dotnet publish -c Release -r win-x64 ; copy .\bin\Release\net6.0\win-x64\publish\arduino-resource-monitor-server-windows.exe .\build\arduino-resource-monitor-server-windows.exe
+```
+<!-- Note: Windows PowerShell is stupid and does not support && but ;. Shit like -AND did not work for me. -->
+
+**This command will:** Remove all three build folders, create new output folder, compile the exe and copy it into `.\build` with the right name.  
+The 3 Remove-Item commands might show an error if the directories do not exist yet (which will be the case with a fresh repository clone). You can ignore them.
+
+This is suitable when compiling the executable only for your own (this) machine. You can skip right ahead to [Running](#running)! 
+
+&nbsp;
+
+**Are you a maintainer/developer? Continue reading:**
+
+**Prerequisites:**  
+Install Visual Studio and dotnet.
+
+This explanation is to compile during development for x86, which your system probably is.  
+See/Run the [build-releases.bat](./build-releases.bat) script to clean-build all platforms!
+
+**Compile from VS:**  
 Open the solution file `src/server/windows/windows.sln` in Visual Studio.  
-Right click on the solution "windows" in your solution explorer and click on Publish.  
-There should be a pre-configured configuration shown to you now. Hit Publish at the top and wait until finished.  
+Right click on the solution "windows" in your solution explorer and click on Publish.
+
+There should be a pre-configured configuration shown to you now.  
+Hit Publish at the top and wait until finished.  
+
 Your `.exe` is now located under `src/server/windows/bin/Release/net6.0/publish/win-x64/arduino-resource-monitor-server-windows.exe`. Rename and copy the .exe to anywhere you like.
 
-You can probably also compile this project without the full Visual Studio editor installed, but I don't know exactly how.
-(I usually develop on Linux)
+&nbsp;
+
+> [!IMPORTANT]
+> Use the VS to compile only during development.  
+> When done, **use the `build-releases.bat` script to compile all executables meant to be released!**
 
 </details>
 
