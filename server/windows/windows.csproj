@@ -10,6 +10,15 @@
     <AssemblyName>arduino-resource-monitor-server-windows</AssemblyName>
     <Title>Arduino Resource Monitor Server for Windows</Title>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <PublishSingleFile>true</PublishSingleFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>RELEASE;TRACE;BUILD_RELEASE_CLIENT_LESS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
