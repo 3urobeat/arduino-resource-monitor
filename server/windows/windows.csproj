@@ -9,7 +9,12 @@
     <Authors>3urobeat</Authors>
     <AssemblyName>arduino-resource-monitor-server-windows</AssemblyName>
     <Title>Arduino Resource Monitor Server for Windows</Title>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.3" />
