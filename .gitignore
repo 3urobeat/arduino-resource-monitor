@@ -7,5 +7,6 @@ arduino-resource-monitor.code-workspace
 server/linux/build
 server/windows/.vs
 server/windows/bin
+server/windows/build
 server/windows/obj
 server/windows/Properties/PublishProfiles/FolderProfile.pubxml.user
