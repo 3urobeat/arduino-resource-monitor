@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-07 19:05:46
+ * Last Modified: 2024-06-09 11:44:51
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -114,8 +114,8 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
         }
     }
 
-    // HwMon GPU Temp: Check if sensor matches a known name
-    if (strStartsWith("amdgpu", sensorName) && config.gpuType == 0) // AMD || Nvidia GPU // TODO: I don't know how nvidia sensors are called
+    // HwMon GPU Load & Temp: Check if sensor matches a known name
+    if (strStartsWith("amdgpu", sensorName) && config.gpuType == 0) // AMD // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths.gpuLoad) == 0) // Check if user already configured this sensor
         {
