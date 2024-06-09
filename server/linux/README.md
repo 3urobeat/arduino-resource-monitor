@@ -263,42 +263,49 @@ amdgpu
 hidpp_battery_0
 ```
 
-> **I found one of those names but the server did not/chose the wrong one:**  
-> Let's use the named strategy from above with `lspci` first to find the correct amdgpu of the two.  
-> For me `lspci` contains:  
-> `03:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Navi 31 [Radeon RX 7900 XT/7900 XTX/7900M] (rev cc)`  
-> I see the ID `03:00.0` again in `ls -al /sys/class/hwmon/hwmon*` (look at the last part before '/hwmon/'):  
-> `lrwxrwxrwx 1 root root 0  9. Jun 08:39 /sys/class/hwmon/hwmon2 -> ../../devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0/hwmon/hwmon2`
->
-> Let's check the contents of that directory `/sys/class/hwmon/hwmon2` to find the sensor for our configuration:  
-> `ls /sys/class/hwmon/hwmon2/`  
->
-> See a `temp1_input` sensor? Configure that path at `gpuTempSensorPath` in the config. In this case it would look like this:  
-> `gpuTempSensorPath = "/sys/class/hwmon/hwmon2/temp1_input"`
->
-> Look around for something that looks like a load/util/busy sensor. In my case the device has a subdirectory `device` with a bunch of more sensors.  
-> Let's look inside: `ls /sys/class/hwmon/hwmon2/device/`  
-> I see a `gpu_busy_percent` sensor! When probing it with `cat /sys/class/hwmon/hwmon2/device/gpu_busy_percent` it returns `6`; a valid looking value.  
-> Config now has: `gpuLoadSensorPath = "/sys/class/hwmon/hwmon2/device/gpu_busy_percent"`
->
-> Found a load sensor that returns values in a different format? Open an [Issue](https://github.com/3urobeat/arduino-resource-monitor/issues/new).
+<br>
 
+**I found one of those names but the server did not/chose the wrong one:**  
+Let's use the named strategy from above with `lspci` first to find the correct amdgpu of the two.  
+For me `lspci` contains:  
+```
+03:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Navi 31 [Radeon RX 7900 XT/7900 XTX/7900M] (rev cc)
+```
+I see the ID `03:00.0` again in `ls -al /sys/class/hwmon/hwmon*` (look at the last part before '/hwmon/'):  
+```
+lrwxrwxrwx 1 root root 0  9. Jun 08:39 /sys/class/hwmon/hwmon2 -> ../../devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0/hwmon/hwmon2
+```
 
-> **I found sensors with other names/the named strategy from above did not work for me:**  
-> Get the name again of every sensor: `cat /sys/class/hwmon/hwmon*/name`  
-> Get the content of all those sensors: `ls /sys/class/hwmon/hwmon*/`
->
-> CPU:  
-> Install the package `stress` and load up your CPU a bit: `stress -c 4`.  
-> Leave this terminal open, open another one, continue reading and use it for running any commands below.
->
-> GPU:  
-> Start a game/4k Video to get a noticeable higher temperature on the right GPU.  
-> 
-> Check each hwmon (by reading the output of the 'ls' command from above) containing a `temp1_input` sensor for a fitting temperature.  
-> In my case, when searching for the CPU, the device `hwmon1` contains a sensor with that name.  
-> The command `cat /sys/class/hwmon/hwmon1/temp1_input` returns `70250` (== 70.25 °C); which looks good.  
-> Config now contains: `cpuTempSensorPath = "/sys/class/hwmon/hwmon1/temp1_input"`
+Let's check the contents of that directory `/sys/class/hwmon/hwmon2` to find the sensor for our configuration:  
+`ls /sys/class/hwmon/hwmon2/`  
+
+See a `temp1_input` sensor? Configure that path at `gpuTempSensorPath` in the config. In this case it would look like this:  
+`gpuTempSensorPath = "/sys/class/hwmon/hwmon2/temp1_input"`
+
+Look around for something that looks like a load/util/busy sensor. In my case the device has a subdirectory `device` with a bunch of more sensors.  
+Let's look inside: `ls /sys/class/hwmon/hwmon2/device/`  
+I see a `gpu_busy_percent` sensor! When probing it with `cat /sys/class/hwmon/hwmon2/device/gpu_busy_percent` it returns `6`; a valid looking value.  
+Config now has: `gpuLoadSensorPath = "/sys/class/hwmon/hwmon2/device/gpu_busy_percent"`
+
+Found a load sensor that returns values in a different format? Open an [Issue](https://github.com/3urobeat/arduino-resource-monitor/issues/new).
+
+<br>
+
+**I found sensors with other names/the named strategy from above did not work for me:**  
+Get the name again of every sensor: `cat /sys/class/hwmon/hwmon*/name`  
+Get the content of all those sensors: `ls /sys/class/hwmon/hwmon*/`
+
+CPU:  
+Install the package `stress` and load up your CPU a bit: `stress -c 4`.  
+Leave this terminal open, open another one, continue reading and use it for running any commands below.
+
+GPU:  
+Start a game/4k Video to get a noticeable higher temperature on the right GPU.  
+ 
+Check each hwmon (by reading the output of the 'ls' command from above) containing a `temp1_input` sensor for a fitting temperature.  
+In my case, when searching for the CPU, the device `hwmon1` contains a sensor with that name.  
+The command `cat /sys/class/hwmon/hwmon1/temp1_input` returns `70250` (== 70.25 °C); which looks good.  
+Config now contains: `cpuTempSensorPath = "/sys/class/hwmon/hwmon1/temp1_input"`
 
 <br>
 
