@@ -3,7 +3,7 @@
 :: Created Date: 2024-06-08 14:49:34
 :: Author: 3urobeat
 ::
-:: Last Modified: 2024-06-08 17:11:53
+:: Last Modified: 2024-06-09 15:22:45
 :: Modified By: 3urobeat
 ::
 :: Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -72,6 +72,18 @@ echo -^> x86_64: Compiling release + clientLessMode...
 dotnet publish -c Release -r win-x64 -p:DefineConstants=BUILD_RELEASE_CLIENT_LESS
 
 copy .\bin\Release\net6.0\win-x64\publish\arduino-resource-monitor-server-windows.exe .\build\arduino-resource-monitor-server-v%VERSION%-x86_64-windows-clientLessMode.exe
+
+
+:: Remove old data
+rd /s /q .\bin 2>nul
+rd /s /q .\obj 2>nul
+
+:: Copy and rename release + printDebug mode
+echo -^> x86_64: Compiling release + printDebug...
+
+dotnet publish -c Release -r win-x64 -p:DefineConstants=BUILD_RELEASE_PRINTDEBUG
+
+copy .\bin\Release\net6.0\win-x64\publish\arduino-resource-monitor-server-windows.exe .\build\arduino-resource-monitor-server-v%VERSION%-x86_64-windows-printDebug.exe
 
 
 :: Exit
