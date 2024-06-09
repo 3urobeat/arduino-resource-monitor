@@ -78,7 +78,9 @@ Your `.exe` is now located under `src/server/windows/bin/Release/net6.0/publish/
 
 > [!IMPORTANT]
 > Use the VS to compile only during development.  
-> When done, **use the `build-releases.bat` script to compile all executables meant to be released!**
+> When done, **use the `build-releases.bat` script to compile all executables meant to be released!**  
+>
+> Note: Dotnet sometimes likes to let building fail, showing red errors. Starting the script again always worked for me.
 
 </details>
 
@@ -87,6 +89,7 @@ Your `.exe` is now located under `src/server/windows/bin/Release/net6.0/publish/
 <a id="running"></a>
 
 ## Running
+Make sure the Arduino is connected to your computer and displays "Waiting...".  
 Double click the `.exe`, accept the privilege escalation window and a CMD prompt should appear.
 
 > [!NOTE]
@@ -104,20 +107,76 @@ When the CMD prompt is closed, the server will exit and the Arduino will display
 <a id="config"></a>
 
 ## Manual Configuration
-TODO
+The server creates a configuration file after the first start, located at `C:\Users\%USERNAME%\AppData\Local\arduino-resource-monitor\config.ini`.  
+This file allows you to customize connection timeouts, your GPU type and sensors.  
+
+See the sensor finding help below at [Troubleshooting](#troubleshooting) for more information.
+
+**This table contains all available settings:**  
+
+| Key | Type | Description |
+| --- | ---- | ----------- |
+| createdWithVersion | string | Stores the version the config file was created with. <br> **Don't modify.** |
+| | &nbsp; |
+| arduinoReplyTimeout | int | Time in milliseconds the server will wait for a response from the Arduino when connecting. <br> Default: 5000 |
+| connectionRetryTimeout | int | Base time (see multiplier below) in milliseconds the server will wait before retrying to connect. <br> Default: 5000 |
+| connectionRetryAmount | int | The amount of times the server will attempt to reconnect before giving up and exiting. <br> Default: 10 |
+| connectionRetryMultiplier | float | The amount by which `connectionRetryTimeout` is multiplied with on every reconnect attempt. <br> Default: 0.5 |
+| | &nbsp; |
+| cpuHardwareName | string | Name of a CPU in your system that should be the only CPU to use sensors from. <br> You can find the name in the Task Manager. <br> Default: "" (empty string to not override default) |
+| gpuHardwareName | string | Name of a GPU in your system that should be the only GPU to use sensors from. <br> You can find the name in the Task Manager. <br> Default: "" (empty string to not override default) |
+| cpuLoadSensorName | string | Name of a CPU Load sensor that should override what the server automatically searches for. <br> Default: "" (empty string to not override default) |
+| cpuTempSensorName | string | Name of a CPU Temperature sensor that should override what the server automatically searches for. <br> Default: "" (empty string to not override default) |
+| gpuLoadSensorName | string | Name of a GPU Load sensor that should override what the server automatically searches for. <br> Default: "" (empty string to not override default) |
+| gpuTempSensorName | string | Name of a GPU Temperature sensor that should override what the server automatically searches for. <br> Default: "" (empty string to not override default) |
+| checkInterval | int | Time in milliseconds the server will wait between taking + sending measurements. Minimum is 1000. <br> Default: 1000 |
 
 &nbsp;
 
 <a id="troubleshooting"></a>
 
 ## Troubleshooting
-**Server does not find the Arduino**  
+**Sensor is missing/data is wrong/I have multiple GPUs and the wrong one is used!**  
+Why does Swap always show "/"?  
+As of now, the Windows Server does not display any value for it because Windows does swapping differently than Linux.  
+
+<details>
+<summary>Wrong device has been chosen: (Click to expand)</summary>
+&nbsp;
+
+If you have multiple GPUs for example, set `gpuHardwareName` in the config to the name of your GPU.  
+In my case, where I have an iGPU and a dGPU in my system, I had to change the setting to:  
+`gpuHardwareName = "AMD Radeon RX 7900 XT"`
+
+You can find the name of your CPU and GPU in the Task Manager under the `Performance` tab.
+
+</details>
+
+<br>
+
+<details>
+<summary>The correct device but the wrong sensor has been chosen: (Click to expand)</summary>
+&nbsp;
+
+Download the `-printDebug` version from the [release section](https://github.com/3urobeat/arduino-resource-monitor/releases/latest).  
+Upon running, it will log all devices, its sensors and their current value.
+
+Look through them and find the correct sensor.  
+Copy its name and set it in the config.
+
+Example for a CPU Temperature sensor:  
+`cpuTempSensorName = "Core (Tctl/Tdie)"`
+
+</details>
+
+&nbsp;
+
+**Server does not find the Arduino!**  
 You might need to install a USB driver for your board (I needed to install one for Win10 1803, but not for Win10 22H2).  
 My distributor AzDelivery lists a CH340 driver on their [Store Page](https://www.az-delivery.de/en/products/nano-v3-mit-ch340-arduino-kompatibel).  
 Check the product page of your seller, or try installing this [C340 Driver](https://cdn.shopify.com/s/files/1/1509/1638/files/ch340.zip?v=1683899825) as well.
 
-**Sensor data is missing/wrong**  
-TODO
+&nbsp;
 
-**Visual Studio does not find dependencies**  
+**Visual Studio does not find dependencies!**  
 In my case the nuget package source address was missing. Follow [this guide](https://learn.microsoft.com/en-us/nuget/consume-packages/install-use-packages-visual-studio#package-sources) to add it.
