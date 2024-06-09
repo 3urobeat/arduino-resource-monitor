@@ -276,12 +276,16 @@ I see the ID `03:00.0` again in `ls -al /sys/class/hwmon/hwmon*` (look at the la
 lrwxrwxrwx 1 root root 0  9. Jun 08:39 /sys/class/hwmon/hwmon2 -> ../../devices/pci0000:00/0000:00:01.1/0000:01:00.0/0000:02:00.0/0000:03:00.0/hwmon/hwmon2
 ```
 
+<br>
+
+Temperature:  
 Let's check the contents of that directory `/sys/class/hwmon/hwmon2` to find the sensor for our configuration:  
 `ls /sys/class/hwmon/hwmon2/`  
 
-See a `temp1_input` sensor? Configure that path at `gpuTempSensorPath` in the config. In this case it would look like this:  
-`gpuTempSensorPath = "/sys/class/hwmon/hwmon2/temp1_input"`
+See a `temp1_input` sensor? Configure that path at `gpuTempSensorPath` in the config.   
+Config now has: `gpuTempSensorPath = "/sys/class/hwmon/hwmon2/temp1_input"`
 
+Load/Util:  
 Look around for something that looks like a load/util/busy sensor. In my case the device has a subdirectory `device` with a bunch of more sensors.  
 Let's look inside: `ls /sys/class/hwmon/hwmon2/device/`  
 I see a `gpu_busy_percent` sensor! When probing it with `cat /sys/class/hwmon/hwmon2/device/gpu_busy_percent` it returns `6`; a valid looking value.  
