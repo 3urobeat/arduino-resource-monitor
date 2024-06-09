@@ -4,7 +4,7 @@
  * Created Date: 2023-11-12 12:59:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-08 17:01:57
+ * Last Modified: 2024-06-09 15:35:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -55,6 +55,9 @@ public static class Settings
 #elif BUILD_RELEASE_CLIENT_LESS
     public const bool printDebug = false;
     public const bool clientLessMode = true;
+#elif BUILD_RELEASE_PRINTDEBUG
+    public const bool printDebug = true;
+    public const bool clientLessMode = false;
 #else
     public const bool printDebug = false;           // Prints (a lot of) additional information during runtime, useful for debugging.
     public const bool clientLessMode = false;       // Disables connecting & sending data to the Arduino Client and only logs results to stdout. Useful during development

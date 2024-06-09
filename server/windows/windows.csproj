@@ -21,6 +21,10 @@
     <DefineConstants>RELEASE;TRACE;BUILD_RELEASE_CLIENT_LESS</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>RELEASE;TRACE;BUILD_RELEASE_PRINTDEBUG</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
