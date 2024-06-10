@@ -77,7 +77,7 @@ Your `.exe` is now located under `src/server/windows/bin/Release/net6.0/publish/
 &nbsp;
 
 > [!IMPORTANT]
-> Use the VS to compile only during development.  
+> Use VS to compile only during development.  
 > When done, **use the `build-releases.bat` script to compile all executables meant to be released!**  
 >
 > Note: Dotnet sometimes likes to let building fail, showing red errors. Starting the script again always worked for me.
