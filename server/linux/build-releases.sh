@@ -1,11 +1,11 @@
 #! /bin/bash
 
-# File: build.sh
+# File: build-releases.sh
 # Project: arduino-resource-monitor
 # Created Date: 2024-05-24 10:15:30
 # Author: 3urobeat
 #
-# Last Modified: 2024-05-24 13:03:15
+# Last Modified: 2024-06-09 15:43:42
 # Modified By: 3urobeat
 #
 # Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
