@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-09 11:44:51
+ * Last Modified: 2024-06-15 14:24:16
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -91,7 +91,8 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // ThermalZone CPU Temp: Check if sensor matches a known name
-    if (strStartsWith("CPU-therm", sensorName)) // Nvidia Jetson Nano
+    if (strStartsWith("CPU-therm", sensorName)          // Nvidia Jetson Nano
+        || strStartsWith("soc_thermal_0", sensorName))  // Milk-V Duo
     {
         if (strlen(sensorPaths.cpuTemp) == 0) // Check if user already configured this sensor
         {

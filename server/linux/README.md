@@ -322,7 +322,7 @@ My x86 machines do not have any `thermal_zone` sensors in that directory.
 
 <br>
 
-My Jetson Nano had its GPU Load sensor at `/sys/devices/57000000.gpu/load`. You might wanna look into `/sys/devices/` as well.
+My Jetson Nano had its GPU Load sensor at `/sys/devices/57000000.gpu/load`. You might wanna look into `/sys/devices/` as well.  
 
 <br>
 

@@ -42,7 +42,7 @@ Make sure the correct path to the USB device is set in `platformio.ini` at `uplo
 
 <br>
 
-**Method 1:** CLI, more suited for only installing 
+**Method 1:** *CLI, more suited for only installing*  
 Install PlatformIO Core through your package manager (`platformio-core` on Arch) or using a installer from their [website](https://platformio.org/install/cli).  
 Open the `client` subdirectory (this one) in your terminal/PowerShell.
 
@@ -52,7 +52,7 @@ New: `platformio run --target upload --environment nanoNew`
 
 <br>
 
-**Method 2:** Code Editor, more suited for development  
+**Method 2:** *Code Editor, more suited for development*  
 Install VsCodium and the PlatformIO extension from the Extensions tab.  
 Open the `client` subdirectory (this one) in VsCodium. PlatformIO should detect the configuration file inside it.  
 
