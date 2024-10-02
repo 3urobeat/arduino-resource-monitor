@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 11:19:03
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-07 19:05:46
+ * Last Modified: 2024-10-02 22:27:54
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -132,8 +132,8 @@ void _parseConfig()
     char temp[16] = "";
     _parseStringConfigEntry(sensors, "gpuType", temp, sizeof(temp));
 
-    if (strcmp(temp, "amd") == 0)    config.gpuType = 0;
-    if (strcmp(temp, "nvidia") == 0) config.gpuType = 1;
+    if (strcmp(temp, "amd") == 0)    config.gpuType = AMD;
+    if (strcmp(temp, "nvidia") == 0) config.gpuType = NVIDIA;
 
     _parseStringConfigEntry(sensors, "cpuTempSensorPath", config.cpuTempSensorPath, sizeof(config.cpuTempSensorPath));
     _parseStringConfigEntry(sensors, "gpuLoadSensorPath", config.gpuLoadSensorPath, sizeof(config.gpuLoadSensorPath));

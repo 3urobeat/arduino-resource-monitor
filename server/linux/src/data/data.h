@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 14:00:50
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-07 18:15:34
+ * Last Modified: 2024-10-02 22:21:24
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -36,6 +36,11 @@
                         "\ncheckInterval = 1000" \
                         "\n"
 
+// GpuType to int mapping
+enum GpuType {
+    AMD    = 0,
+    NVIDIA = 1
+};
 
 // Stores currently imported config
 struct ConfigValues {
@@ -43,17 +48,17 @@ struct ConfigValues {
     char createdWithVersion[16];
 
     // Timeouts
-    int arduinoReplyTimeout;       // How long to wait for an answer from the USB port in ms before giving up
-    int connectionRetryTimeout;    // How long to wait between attempts to connect again in ms after all USB ports have failed
-    int connectionRetryAmount;     // How often to retry finding a connection
-    float connectionRetryMultiplier;    // retry * connectionRetryTimeout * connectionRetryMultiplier
+    int arduinoReplyTimeout;         // How long to wait for an answer from the USB port in ms before giving up
+    int connectionRetryTimeout;      // How long to wait between attempts to connect again in ms after all USB ports have failed
+    int connectionRetryAmount;       // How often to retry finding a connection
+    float connectionRetryMultiplier; // retry * connectionRetryTimeout * connectionRetryMultiplier
 
     // Sensors
-    uint8_t gpuType;                    // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-settings will be used)
+    enum GpuType gpuType;            // 0 for automatic discovery (AMD), 1 for Nvidia (nvidia-settings will be used)
     char cpuTempSensorPath[128];
     char gpuLoadSensorPath[128];
     char gpuTempSensorPath[128];
-    int checkInterval;             // 1 second is lowest value possibe as mpstat takes a second to collect data
+    int checkInterval;               // 1 second is lowest value possibe as mpstat takes a second to collect data
 };
 
 extern struct ConfigValues config;
