@@ -4,7 +4,7 @@
  * Created Date: 2024-05-18 13:48:34
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-15 14:24:16
+ * Last Modified: 2024-10-02 22:27:34
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
@@ -50,7 +50,6 @@ bool _fileExists(const char *path)
 bool cpuTempAutoDiscovered = false; // Used for printing warning when multiple CPU/GPUs were auto-discovered
 bool gpuLoadAutoDiscovered = false;
 bool gpuTempAutoDiscovered = false;
-
 
 /**
  * Checks for known sensor names and populates sensorPaths
@@ -116,7 +115,7 @@ void _processSensorName(const char *sensorPath, const char *sensorName)
     }
 
     // HwMon GPU Load & Temp: Check if sensor matches a known name
-    if (strStartsWith("amdgpu", sensorName) && config.gpuType == 0) // AMD // TODO: I don't know how nvidia sensors are called
+    if (strStartsWith("amdgpu", sensorName) && config.gpuType == AMD) // AMD // TODO: I don't know how nvidia sensors are called
     {
         if (strlen(sensorPaths.gpuLoad) == 0) // Check if user already configured this sensor
         {
@@ -373,13 +372,13 @@ void getSensors()
         strcpy(measurements.cpuTemp, "");
     }
 
-    if (strlen(sensorPaths.gpuLoad) == 0 && config.gpuType == 0)
+    if (strlen(sensorPaths.gpuLoad) == 0 && config.gpuType == AMD)
     {
         printf("\033[33mWarn:\033[0m I could not automatically find any 'GPU Load' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuLoad, "");
     }
 
-    if (strlen(sensorPaths.gpuTemp) == 0 && config.gpuType == 0)
+    if (strlen(sensorPaths.gpuTemp) == 0 && config.gpuType == AMD)
     {
         printf("\033[33mWarn:\033[0m I could not automatically find any 'GPU Temperature' sensor! If you have one, please configure it manually.\n");
         strcpy(measurements.gpuTemp, "");
