@@ -1,5 +1,5 @@
 /*
- * File: handleDisplay.cpp
+ * File: displayWrapper.cpp
  * Project: arduino-resource-monitor
  * Created Date: 2023-11-17 19:04:54
  * Author: 3urobeat
