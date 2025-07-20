@@ -4,10 +4,10 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-04 18:03:01
+ * Last Modified: 2025-07-20 12:22:38
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -60,7 +60,7 @@ void makeConnection()
         exit(1);
     }
 
-    printf("Found %d eligible device(s)...\n", usbPortsFound);
+    printf("Found %d eligible device(s)!\n", usbPortsFound);
 
 
     // Attempt to connect to all ports
@@ -68,7 +68,7 @@ void makeConnection()
     {
         char *port = usbPorts[i];
 
-        logDebug("Attempting to connect on port '%s', timeout is set to %dms...", port, config.arduinoReplyTimeout);
+        printf("Attempting to connect on port '%s', timeout is set to %dms...\n", port, config.arduinoReplyTimeout);
 
 
         // Open a new connection with timeout set in config
@@ -104,12 +104,21 @@ void makeConnection()
         // Attempt to listen for a response as long as port is open, we haven't run into arduinoReplyTimeout and buffer has enough space
         char     buffer[64] = "";
         uint32_t offset     = 0;
-        clock_t  timestamp  = clock();
+
+        struct timespec timeStruct;
+        clock_gettime(CLOCK_REALTIME, &timeStruct);
+        time_t timestamp = timeStruct.tv_sec * 1000L;
+
 
         while (serialIsOpen()
-                && timestamp + config.arduinoReplyTimeout > clock()
+                && timestamp + config.arduinoReplyTimeout > (timeStruct.tv_sec * 1000L)
                 && offset < sizeof(buffer) - 1)
         {
+            // Refresh time struct
+            clock_gettime(CLOCK_REALTIME, &timeStruct);
+            logDebug("Remaining time for this connection attempt: %ldms", (timestamp + config.arduinoReplyTimeout) - (timeStruct.tv_sec * 1000L));
+
+            // Attempt to read
             if (!serialRead(&buffer[offset])) break;
 
             // Do not increment iteration if nothing was read or pipeline was cleared and let next iteration overwrite char
