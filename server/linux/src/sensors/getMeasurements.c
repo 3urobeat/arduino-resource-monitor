@@ -4,10 +4,10 @@
  * Created Date: 2023-01-24 17:40:48
  * Author: 3urobeat
  *
- * Last Modified: 2024-10-02 22:27:08
+ * Last Modified: 2025-12-16 21:15:19
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -145,7 +145,14 @@ void _getMemSwapUsage()
 
     if (swapTotal > 0) // Is Swap enabled?
     {
-        floatToFixedLengthStr(measurements.swapUsage, swap);
+        if (swap < 0.01) // Do not try to convert values below 10 MB (0.01 GB)
+        {
+            strcpy(measurements.swapUsage, "0.00");
+        }
+        else
+        {
+            floatToFixedLengthStr(measurements.swapUsage, swap);
+        }
     }
 }
 
