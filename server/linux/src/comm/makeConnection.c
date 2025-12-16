@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 18:39:14
+ * Last Modified: 2025-12-16 19:12:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -21,9 +21,9 @@
 
 
 /**
- * Helper to read serial message into buffer
+ * Helper to read serial message into buffer. Returns success.
  */
-void _readSerialIntoBuffer(char *dest, uint32_t size, uint32_t timeout)
+bool _readSerialIntoBuffer(char *dest, uint32_t size, uint32_t timeout)
 {
     // Get current time
     struct timespec timeStruct;
@@ -54,6 +54,21 @@ void _readSerialIntoBuffer(char *dest, uint32_t size, uint32_t timeout)
 
         offset++;
     }
+
+
+    // Basic success checks
+    if (strlen(dest) == 0) // No response
+    {
+        return false;
+    }
+
+    if (strstr(dest, serialClientHeader) == NULL) // Response with invalid header
+    {
+        printf("\033[91mError:\033[0m Received invalid response from client: %s\n", dest);
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -141,23 +156,14 @@ void makeConnection()
         // Attempt to listen for a response
         char buffer[64] = "";
 
-        _readSerialIntoBuffer(buffer, sizeof buffer, config.arduinoReplyTimeout);
+        bool readSuccess = _readSerialIntoBuffer(buffer, sizeof buffer, config.arduinoReplyTimeout);
 
-
-        // Check the response
-        if (strlen(buffer) == 0)
+        if (!readSuccess)
         {
-            printf("\033[91mError:\033[0m Received no response from client!\n");
-            serialClose();
+            printf("\033[91mError:\033[0m Received no or invalid response from client: %s\n", buffer);
             continue;
         }
 
-        if (strstr(buffer, serialClientHeader) == NULL)
-        {
-            printf("\033[91mError:\033[0m Received invalid response from client: %s\n", buffer);
-            serialClose();
-            continue;
-        }
 
         // Compare version
         char versionStr[16] = "";
