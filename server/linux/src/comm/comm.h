@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 14:01:12
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 18:07:05
+ * Last Modified: 2025-12-16 18:55:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 - 2025 3urobeat <https://github.com/3urobeat>
@@ -19,6 +19,7 @@
 
 #include "../server.h"
 
+#define serialClientHeader "+ResourceMonitorClient"
 #define serialEOL '#'
 
 // Functions to export

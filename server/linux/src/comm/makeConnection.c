@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 18:21:20
+ * Last Modified: 2025-12-16 18:39:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -152,7 +152,7 @@ void makeConnection()
             continue;
         }
 
-        if (strstr(buffer, "+ResourceMonitorClient") == NULL)
+        if (strstr(buffer, serialClientHeader) == NULL)
         {
             printf("\033[91mError:\033[0m Received invalid response from client: %s\n", buffer);
             serialClose();
@@ -162,7 +162,7 @@ void makeConnection()
         // Compare version
         char versionStr[16] = "";
 
-        strncpy(versionStr, buffer + strlen("+ResourceMonitorClient-"), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
+        strncpy(versionStr, buffer + strlen(serialClientHeader), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
         versionStr[strlen(versionStr) - 1] = '\0'; // Remove last char which is the end char #
 
         if (strcmp(versionStr, version) != 0)

@@ -4,7 +4,7 @@
  * Created Date: 2024-05-20 21:21:42
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 17:43:42
+ * Last Modified: 2025-12-16 18:54:09
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 - 2025 3urobeat <https://github.com/3urobeat>
@@ -116,6 +116,7 @@ void serialEvent_c()
         handshakeStartTimestamp = millis();
 
         serialPrint(serialHeader);
+        serialPrint("-"); // Char - indicates initial handshake
         serialPrint(version);
         serialPrint(serialEOL);
     }
