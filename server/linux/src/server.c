@@ -4,10 +4,10 @@
  * Created Date: 2022-02-04 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-06-04 18:45:28
+ * Last Modified: 2025-12-16 17:28:04
  * Modified By: 3urobeat
  *
- * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2022 - 2025 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -58,12 +58,13 @@ void dataLoop()
 
     strcpy(measurements.cpuLoad, "/"); // Init with '/' because it takes 2 measurements to display
 
-    #if !clientLessMode
-        while (serialIsOpen) // Run intervalEvent() every checkInterval ms as long as connection is not NULL
-    #else
-        while(true) // Run forever until process is manually terminated
-    #endif
+#if !clientLessMode
+    while (serialIsOpen()) // Run intervalEvent() every checkInterval ms as long as connection is not NULL
     {
+#else
+    while(true) // Run forever until process is manually terminated
+    {
+#endif
         // Get current measurements
         getMeasurements();
 
@@ -86,33 +87,33 @@ void connect()
     connectionRetry++;
 
     // Find and establish connection to Arduino
-    #if !clientLessMode
-        printf("Searching for Arduino...\n");
+#if !clientLessMode
+    printf("Searching for Arduino...\n");
 
-        makeConnection();
+    makeConnection();
 
-        if (!serialIsOpen())
+    if (!serialIsOpen())
+    {
+        if (connectionRetry > config.connectionRetryAmount)
         {
-            if (connectionRetry > config.connectionRetryAmount)
-            {
-                printf("\033[91mError:\033[0m Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
-                exit(1);
-            }
-
-            int delay = (int) (config.connectionRetryTimeout * config.connectionRetryMultiplier) * (connectionRetry + 1); // Milliseconds
-
-            printf("\033[91mError:\033[0m Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, config.connectionRetryAmount);
-
-            usleep(delay * 1000);
-            connect();
-
-            return;
+            printf("\033[91mError:\033[0m Couldn't connect after %d attempts! Exiting...\n", connectionRetry);
+            exit(1);
         }
 
-        printf("\033[92mSuccessfully connected to Arduino on port '%s'!\033[0m\n", serialGetPort());
-    #else
-        printf("Skipped searching for Arduino because clientLessMode is enabled!\n");
-    #endif
+        int delay = (int) (config.connectionRetryTimeout * config.connectionRetryMultiplier) * (connectionRetry + 1); // Milliseconds
+
+        printf("\033[91mError:\033[0m Couldn't connect! Attempting again in %dms (attempt %d/%d)...\n", delay, connectionRetry + 1, config.connectionRetryAmount);
+
+        usleep(delay * 1000);
+        connect();
+
+        return;
+    }
+
+    printf("\033[92mSuccessfully connected to Arduino on port '%s'!\033[0m\n", serialGetPort());
+#else
+    printf("Skipped searching for Arduino because clientLessMode is enabled!\n");
+#endif
 
 
     // Start getting and sending sensor data
