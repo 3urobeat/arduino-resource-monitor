@@ -4,10 +4,10 @@
  * Created Date: 2023-01-24 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-05-26 14:13:07
+ * Last Modified: 2025-12-16 20:48:25
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -53,6 +53,15 @@ void _sendSerial(const char *str, MeasurementPrefixIDsType id)
 
     strncat(sendTempStr, str, sizeof(sendTempStr) - 5); // 5 because of prefix char, type char, separator, end delimiter and null byte
     strcat(sendTempStr, "#");
+
+    // Delay sending message if necessary to give Arduino time to process previous message, cutie is a little sloow
+    const clock_t lastWriteDiff = clock() - lastWriteTime;
+
+    if (lastWriteDiff < 500)
+    {
+        logDebug("_sendSerial: Delaying sending message by %ims to give Arduino processing time", (500 - lastWriteDiff))
+        usleep((500 - lastWriteDiff) * 1000);
+    }
 
     // Send content (team yippee)
     if (!serialWrite(sendTempStr, strlen(sendTempStr)))
