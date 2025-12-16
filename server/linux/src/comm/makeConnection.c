@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 17:35:21
+ * Last Modified: 2025-12-16 17:45:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -49,7 +49,7 @@ void _readSerialIntoBuffer(char *dest, uint32_t size, uint32_t timeout)
         if (*(dest + offset) == '\0' || *(dest + offset) == '\n') continue;
 
         // Break loop if end char was received
-        if (*(dest + offset) == '#') break;
+        if (*(dest + offset) == serialEOL) break;
 
         offset++;
     }
