@@ -4,7 +4,7 @@
  * Created Date: 2024-05-26 14:01:12
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 17:46:26
+ * Last Modified: 2025-12-16 18:07:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2024 - 2025 3urobeat <https://github.com/3urobeat>
@@ -34,5 +34,5 @@ extern bool serialIsOpen();
 extern void serialClose();
 extern void serialFlushOutput();
 extern bool serialWrite(const char *data, size_t size); // Returns bool if write succeeded/failed
-extern bool serialRead(char *dest); // Returns bool if read succeeded/failed
+extern bool serialRead(char *dest, uint32_t timeout); // Returns bool if read succeeded/failed
 extern char *serialGetPort();
