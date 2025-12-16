@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 17:45:39
+ * Last Modified: 2025-12-16 18:21:20
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -28,7 +28,7 @@ void _readSerialIntoBuffer(char *dest, uint32_t size, uint32_t timeout)
     // Get current time
     struct timespec timeStruct;
     clock_gettime(CLOCK_REALTIME, &timeStruct);
-    time_t timestamp = timeStruct.tv_sec * 1000L;
+    const time_t timestamp = timeStruct.tv_sec * 1000L;
 
 
     // Read response as long as port is open, we haven't run into timeout and buffer has enough space
@@ -38,12 +38,13 @@ void _readSerialIntoBuffer(char *dest, uint32_t size, uint32_t timeout)
             && timestamp + timeout > (timeStruct.tv_sec * 1000L)
             && offset < size - 1)
     {
-        // Refresh time struct
-        clock_gettime(CLOCK_REALTIME, &timeStruct);
         logDebug("_readSerialIntoBuffer: Remaining time for this message: %ldms", (timestamp + timeout) - (timeStruct.tv_sec * 1000L));
 
         // Attempt to read
-        if (!serialRead(dest + offset)) break;
+        if (!serialRead(dest + offset, timeout)) break;
+
+        // Refresh time struct
+        clock_gettime(CLOCK_REALTIME, &timeStruct);
 
         // Do not increment iteration if nothing was read or pipeline was cleared and let next iteration overwrite char
         if (*(dest + offset) == '\0' || *(dest + offset) == '\n') continue;
