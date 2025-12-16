@@ -4,7 +4,7 @@
  * Created Date: 2022-02-04 20:47:18
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 17:28:04
+ * Last Modified: 2025-12-16 18:04:53
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2025 3urobeat <https://github.com/3urobeat>
@@ -61,19 +61,21 @@ void dataLoop()
 #if !clientLessMode
     while (serialIsOpen()) // Run intervalEvent() every checkInterval ms as long as connection is not NULL
     {
+        // Check if client sent something into our serial buffer
+        checkForClientInterrupt();
+
+        // Get current measurements and send them to the client
+        getMeasurements();
+
+        sendMeasurements();
 #else
     while(true) // Run forever until process is manually terminated
     {
-#endif
-        // Get current measurements
+        // Get current measurements and log them to stdout
         getMeasurements();
 
-        // Send measurements to Client under normal operation, log to stdout when operating in clientLessMode
-        #if !clientLessMode
-            sendMeasurements();
-        #else
-            logMeasurements();
-        #endif
+        logMeasurements();
+#endif
 
         // Delay for checkInterval ms
         usleep(config.checkInterval * 1000);

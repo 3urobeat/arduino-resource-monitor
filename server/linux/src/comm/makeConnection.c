@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 19:12:46
+ * Last Modified: 2025-12-16 19:49:26
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -164,11 +164,18 @@ void makeConnection()
             continue;
         }
 
+        // Check whether the received message is of type initial handshake
+        if (*(buffer + strlen(serialClientHeader)) != '-')
+        {
+            printf("\033[91mError:\033[0m Received response from client of invalid type: %s\n", buffer);
+            continue;
+        }
+
 
         // Compare version
         char versionStr[16] = "";
 
-        strncpy(versionStr, buffer + strlen(serialClientHeader), sizeof(versionStr) - 1); // Offset buffer by header content infront of version
+        strncpy(versionStr, buffer + strlen(serialClientHeader) + 1, sizeof(versionStr) - 1); // Offset buffer by header content infront of message content
         versionStr[strlen(versionStr) - 1] = '\0'; // Remove last char which is the end char #
 
         if (strcmp(versionStr, version) != 0)
@@ -181,5 +188,40 @@ void makeConnection()
 
         logDebug("Received valid response from client: %s", buffer);
         break;
+    }
+}
+
+
+/**
+ * Checks whether client sent an interrupt message and handle it
+ */
+void checkForClientInterrupt()
+{
+    // Attempt to read into buffer
+    char buffer[64] = "";
+
+    logDebug("checkForClientInterrupt: Checking for interrupt...");
+    bool readSuccess = _readSerialIntoBuffer(buffer, sizeof buffer, 500);
+
+    if (!readSuccess
+        || *(buffer + strlen(serialClientHeader)) != '*')
+    {
+        logDebug("checkForClientInterrupt: No message or invalid type: %s", buffer);
+        return;
+    }
+
+    // Interpret the response
+    logDebug("checkForClientInterrupt: Received message: %s", buffer);
+
+    char interruptStr[16] = "";
+
+    strncpy(interruptStr, buffer + strlen(serialClientHeader) + 1, sizeof(interruptStr) - 1); // Offset buffer by header content infront of message content
+    interruptStr[strlen(interruptStr) - 1] = '\0'; // Remove last char which is the end char #
+
+    if (strcmp(interruptStr, "DEVICE_RESET") == 0) // TODO: Switch to numbered message type enum system? Like the arduino does for comparing measurement type
+    {
+        printf("Received 'RESET' interrupt message from Arduino, clearing local measurement cache...\n");
+        resetCache();
+        return;
     }
 }
