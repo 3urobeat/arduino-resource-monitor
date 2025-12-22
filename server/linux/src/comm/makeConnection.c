@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 19:49:26
+ * Last Modified: 2025-12-16 21:08:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -161,6 +161,7 @@ void makeConnection()
         if (!readSuccess)
         {
             printf("\033[91mError:\033[0m Received no or invalid response from client: %s\n", buffer);
+            serialClose();
             continue;
         }
 
@@ -168,6 +169,7 @@ void makeConnection()
         if (*(buffer + strlen(serialClientHeader)) != '-')
         {
             printf("\033[91mError:\033[0m Received response from client of invalid type: %s\n", buffer);
+            serialClose();
             continue;
         }
 
