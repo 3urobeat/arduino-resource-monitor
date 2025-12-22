@@ -4,7 +4,7 @@
  * Created Date: 2023-11-15 22:31:32
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 21:08:03
+ * Last Modified: 2025-12-22 15:37:03
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -205,12 +205,17 @@ void checkForClientInterrupt()
     logDebug("checkForClientInterrupt: Checking for interrupt...");
     bool readSuccess = _readSerialIntoBuffer(buffer, sizeof buffer, 500);
 
-    if (!readSuccess
-        || *(buffer + strlen(serialClientHeader)) != '*')
+    if (!readSuccess)
     {
-        logDebug("checkForClientInterrupt: No message or invalid type: %s", buffer);
         return;
     }
+
+    if (*(buffer + strlen(serialClientHeader)) != '*')
+    {
+        printf("\033[91mError:\033[0m Received interrupt message from client of invalid type: %s\n", buffer);
+        return;
+    }
+
 
     // Interpret the response
     logDebug("checkForClientInterrupt: Received message: %s", buffer);
