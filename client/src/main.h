@@ -4,7 +4,7 @@
  * Created Date: 2022-02-05 12:22:33
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 18:52:49
+ * Last Modified: 2025-12-16 20:43:23
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2025 3urobeat <https://github.com/3urobeat>
@@ -34,7 +34,7 @@
 #define version "v0.8.0"
 
 #define baud 9600
-#define serialEOL "#\r\n"
+#define serialEOL "#\n"
 
 
 // C++ functions need a prefix when viewed from a C++ compiler in order to allow C files to call them

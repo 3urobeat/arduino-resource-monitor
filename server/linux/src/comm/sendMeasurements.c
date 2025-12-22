@@ -4,7 +4,7 @@
  * Created Date: 2023-01-24 17:41:01
  * Author: 3urobeat
  *
- * Last Modified: 2025-12-16 20:48:25
+ * Last Modified: 2025-12-22 15:38:05
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2025 3urobeat <https://github.com/3urobeat>
@@ -52,7 +52,7 @@ void _sendSerial(const char *str, MeasurementPrefixIDsType id)
     sendTempStr[2] = '-';      // Add a separator
 
     strncat(sendTempStr, str, sizeof(sendTempStr) - 5); // 5 because of prefix char, type char, separator, end delimiter and null byte
-    strcat(sendTempStr, "#");
+    strcat(sendTempStr, "#\n");
 
     // Delay sending message if necessary to give Arduino time to process previous message, cutie is a little sloow
     const clock_t lastWriteDiff = clock() - lastWriteTime;
